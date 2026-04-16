@@ -295,7 +295,7 @@ class TestCloudSecurityAgent:
         cloud_sec.add_account("456", CloudProvider.AZURE, "Azure Prod", "production", "owner")
         
         # Add findings
-        account = cloud_sec.accounts.values()[0]
+        account = list(cloud_sec.accounts.values())[0]
         cloud_sec.create_finding("Critical", "Desc", Severity.CRITICAL, "res-1", account.account_id)
         cloud_sec.create_finding("High", "Desc", Severity.HIGH, "res-2", account.account_id)
         

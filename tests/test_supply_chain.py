@@ -326,7 +326,7 @@ class TestSupplyChainAgent:
         sc_agent.add_package("pkg2", "1.0", PackageType.PYPI)
         
         # Add vulnerability
-        pkg = sc_agent.packages.values()[0]
+        pkg = list(sc_agent.packages.values())[0]
         sc_agent.add_vulnerability("CVE-TEST", pkg.package_id, "*", "fixed", 7.0, "desc")
         
         # Add vendor

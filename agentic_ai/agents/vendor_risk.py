@@ -120,8 +120,8 @@ class Question:
     domain: RiskDomain
     question_text: str
     control_objective: str
-    weight: float = 1.0
     response_type: str  # yes_no, multiple_choice, text, evidence_required
+    weight: float = 1.0
     response_options: List[str] = field(default_factory=list)
     response: Optional[str] = None
     evidence_provided: bool = False
