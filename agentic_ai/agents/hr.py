@@ -75,9 +75,9 @@ class Onboarding:
     onboarding_id: str
     employee_id: str
     tasks: List[Dict[str, Any]]
-    progress: float = 0.0
     start_date: datetime
     expected_end: datetime
+    progress: float = 0.0
     status: str = "in_progress"  # in_progress, completed
     completed_at: Optional[datetime] = None
 
