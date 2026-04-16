@@ -1,0 +1,18 @@
+apiVersion: v2
+name: agentic-ai
+description: Enterprise-grade multi-agent AI platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - agents
+  - orchestration
+  - machine-learning
+  - automation
+home: https://github.com/wezzels/agentic-ai
+sources:
+  - https://github.com/wezzels/agentic-ai
+maintainers:
+  - name: Wesley Robbins
+    email: wlrobbi@gmail.com

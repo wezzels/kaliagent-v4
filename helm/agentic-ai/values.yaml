@@ -1,0 +1,177 @@
+# Default values for Agentic AI
+# This is a YAML-formatted file.
+
+# Replica count
+replicaCount: 3
+
+# Image configuration
+image:
+  repository: wezzels/agentic-ai
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+# Image pull secrets
+imagePullSecrets: []
+
+# Deployment name override
+nameOverride: ""
+fullnameOverride: ""
+
+# Service account configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext: {}
+
+# Security context
+securityContext: {}
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 8000
+  targetPort: 8000
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: agentic-ai.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+# Autoscaling configuration
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity rules
+affinity: {}
+
+# Redis configuration
+redis:
+  enabled: true
+  architecture: replication
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 8Gi
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "agentic-ai-password"
+    database: agentic_ai
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+  readReplicas:
+    replicaCount: 1
+
+# Environment variables
+env:
+  REDIS_URL: "redis://agentic-ai-redis-master:6379"
+  DATABASE_URL: "postgresql://postgres:agentic-ai-password@agentic-ai-postgresql:5432/agentic_ai"
+  LOG_LEVEL: "INFO"
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+
+# ConfigMap for additional configuration
+config:
+  secretKey: "change-me-in-production"
+  jwtExpiry: 3600
+  maxRetries: 3
+  taskTimeout: 300
+
+# Prometheus metrics
+prometheus:
+  enabled: true
+  port: 9090
+  scrapeInterval: 15s
+
+# Grafana dashboard
+grafana:
+  enabled: true
+  dashboards:
+    - name: "Agentic AI Overview"
+      uid: "agentic-ai-overview"
+    - name: "Agent Metrics"
+      uid: "agent-metrics"
+    - name: "Chaos Engineering"
+      uid: "chaos-engineering"
+
+# Liveness and readiness probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Volume mounts
+volumes: []
+volumeMounts: []
+
+# Additional containers
+additionalContainers: []
+
+# Init containers
+initContainers: []
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Network policy
+networkPolicy:
+  enabled: false
+  allowExternal: true

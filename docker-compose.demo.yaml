@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Demo API Server - Mock data for dashboard
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Dashboard - React frontend
+  dashboard:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./dashboard:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Redis - For caching (optional for demo)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: agentic-ai-demo

@@ -1,0 +1,19 @@
+# Demo API Server Dockerfile
+# Standalone mock API for dashboard testing
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY api_server.py .
+
+# Expose port
+EXPOSE 8080
+
+# Run demo API server
+CMD ["python", "api_server.py"]
