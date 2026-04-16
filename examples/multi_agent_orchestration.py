@@ -11,8 +11,6 @@ from agentic_ai.agents.devops import DevOpsAgent, DeploymentStatus, PipelineStat
 from agentic_ai.agents.data_analyst import DataAnalystAgent
 from agentic_ai.agents.support import SupportAgent, TicketPriority, TicketCategory
 from agentic_ai.agents.security import SecurityAgent, SeverityLevel, ThreatType
-from agentic_ai.agents.finance import FinanceAgent
-from agentic_ai.agents.sysadmin import SysAdminAgent
 
 
 def example_incident_response_workflow():
@@ -26,7 +24,6 @@ def example_incident_response_workflow():
     security = SecurityAgent()
     devops = DevOpsAgent()
     support = SupportAgent()
-    finance = FinanceAgent()
     
     print("🚨 INCIDENT DETECTED: SQL Injection Attack\n")
     
@@ -45,17 +42,17 @@ def example_incident_response_workflow():
     print(f"   Auto-response actions: {len(security_incident.response_actions)}")
     print()
     
-    # DevOps Agent creates emergency deployment rollback
-    print("2. DevOps Agent initiates emergency rollback...")
-    rollback = devops.create_deployment(
+    # DevOps Agent creates emergency deployment
+    print("2. DevOps Agent initiates emergency patch...")
+    patch = devops.create_deployment(
         application="security-patch",
         version="1.0.1-hotfix",
         environment="production",
         deployed_by="security-agent",
     )
-    devops.update_deployment_status(rollback.deployment_id, DeploymentStatus.DEPLOYING)
-    devops.update_deployment_status(rollback.deployment_id, DeploymentStatus.DEPLOYED)
-    print(f"   Emergency patch deployed: {rollback.version}")
+    devops.update_deployment_status(patch.deployment_id, DeploymentStatus.DEPLOYING)
+    devops.update_deployment_status(patch.deployment_id, DeploymentStatus.DEPLOYED)
+    print(f"   Emergency patch deployed: {patch.version}")
     print()
     
     # Support Agent creates high-priority ticket
@@ -72,29 +69,11 @@ def example_incident_response_workflow():
     print(f"   Priority: {ticket.priority.value}")
     print()
     
-    # Finance Agent tracks incident cost
-    print("4. Finance Agent tracks incident costs...")
-    finance.record_transaction(
-        category="security_incident",
-        amount=5000.0,
-        description="Emergency response costs",
-        transaction_type="expense",
-    )
-    finance.record_transaction(
-        category="security_incident",
-        amount=10000.0,
-        description="Potential data breach liability",
-        transaction_type="liability",
-    )
-    print(f"   Incident cost tracked: $15,000")
-    print()
-    
     # Generate incident report
-    print("5. Incident Summary:")
+    print("4. Incident Summary:")
     print(f"   ✓ Security incident logged")
     print(f"   ✓ Emergency patch deployed")
     print(f"   ✓ Support ticket created")
-    print(f"   ✓ Costs tracked")
     print()
 
 
@@ -109,7 +88,6 @@ def example_product_launch_workflow():
     devops = DevOpsAgent()
     data = DataAnalystAgent()
     support = SupportAgent()
-    finance = FinanceAgent()
     
     print("🚀 PRODUCT LAUNCH: Version 2.0\n")
     
@@ -174,30 +152,12 @@ def example_product_launch_workflow():
     print(f"   ✓ Total articles: {len(support.knowledge_base)}")
     print()
     
-    # Finance: Track launch revenue
-    print("5. Finance Agent tracks launch revenue...")
-    finance.record_transaction(
-        category="revenue",
-        amount=50000.0,
-        description="Launch day revenue",
-        transaction_type="income",
-    )
-    budget = finance.create_budget(
-        name="Launch Marketing",
-        category="marketing",
-        amount=25000.0,
-    )
-    print(f"   ✓ Revenue tracked: $50,000")
-    print(f"   ✓ Marketing budget: ${budget.amount:,.0f}")
-    print()
-    
     # Launch summary
-    print("6. Launch Summary:")
+    print("5. Launch Summary:")
     print(f"   ✓ Pipeline: {pipeline.status.value}")
     print(f"   ✓ Deployment: {deployment.status.value}")
     print(f"   ✓ Metrics: {stats['count']} data points collected")
     print(f"   ✓ Support: KB ready with {len(support.knowledge_base)} articles")
-    print(f"   ✓ Revenue: $50,000 on launch day")
     print()
 
 
@@ -212,7 +172,6 @@ def example_monthly_reporting_workflow():
     devops = DevOpsAgent()
     data = DataAnalystAgent()
     support = SupportAgent()
-    finance = FinanceAgent()
     security = SecurityAgent()
     
     print("📊 MONTHLY REPORT: March 2026\n")
@@ -248,21 +207,8 @@ def example_monthly_reporting_workflow():
     print(f"   SLA Breaches: {support_metrics['sla_breaches']}")
     print()
     
-    # Finance: Financial report
-    print("4. Finance Agent - Financial Report:")
-    finance_report = finance.generate_report(
-        report_name="Monthly Financial Report",
-        report_type="monthly",
-        period_start="2026-03-01",
-        period_end="2026-03-31",
-    )
-    print(f"   Revenue: ${finance_report['revenue']:,.2f}")
-    print(f"   Expenses: ${finance_report['expenses']:,.2f}")
-    print(f"   Net: ${finance_report['net_income']:,.2f}")
-    print()
-    
     # Security: Security report
-    print("5. Security Agent - Security Report:")
+    print("4. Security Agent - Security Report:")
     security_report = security.generate_security_report(period_days=30)
     print(f"   Findings: {security_report['findings']['total']}")
     print(f"   Incidents: {security_report['incidents']['total']}")
@@ -271,12 +217,11 @@ def example_monthly_reporting_workflow():
     print()
     
     # Consolidated report
-    print("6. Consolidated Monthly Report:")
+    print("5. Consolidated Monthly Report:")
     print(f"   ┌─────────────────────────────────────┐")
     print(f"   │ Infrastructure: {infra_summary['total_resources']} resources, ${infra_summary['monthly_cost']:.2f}/mo │")
     print(f"   │ Business: {metrics.row_count} metrics tracked                  │")
     print(f"   │ Support: {support_metrics['total_tickets']} tickets, {support_metrics['avg_satisfaction_score']:.1f}⭐ satisfaction    │")
-    print(f"   │ Finance: ${finance_report['net_income']:,.2f} net income                  │")
     print(f"   │ Security: {security_report['incidents']['total']} incidents, {security_report['findings']['total']} findings      │")
     print(f"   └─────────────────────────────────────┘")
     print()
@@ -291,7 +236,6 @@ def example_cost_optimization_workflow():
     
     # Initialize agents
     devops = DevOpsAgent()
-    finance = FinanceAgent()
     data = DataAnalystAgent()
     
     print("💰 COST OPTIMIZATION ANALYSIS\n")
@@ -308,16 +252,8 @@ def example_cost_optimization_workflow():
             print(f"      - {opp['recommendation'][:60]}...")
     print()
     
-    # Finance: Analyze spending patterns
-    print("2. Finance Agent - Spending Analysis:")
-    spending = finance.analyze_spending("infrastructure")
-    print(f"   Category: {spending['category']}")
-    print(f"   Total Spent: ${spending['total_spent']:,.2f}")
-    print(f"   Avg Monthly: ${spending['average_monthly']:,.2f}")
-    print()
-    
     # Data Analyst: Cost trend analysis
-    print("3. Data Analyst Agent - Cost Trend Analysis:")
+    print("2. Data Analyst Agent - Cost Trend Analysis:")
     cost_data = data.register_dataset("Monthly Costs", "finance", ['month', 'cost'])
     data.load_data(cost_data.dataset_id, [
         {'month': 'Jan', 'cost': 8000},
@@ -334,7 +270,7 @@ def example_cost_optimization_workflow():
     print()
     
     # Recommendations
-    print("4. Optimization Recommendations:")
+    print("3. Optimization Recommendations:")
     print(f"   ✓ Right-size underutilized resources")
     print(f"   ✓ Implement auto-scaling policies")
     print(f"   ✓ Review reserved instance options")
