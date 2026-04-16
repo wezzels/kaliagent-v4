@@ -4,7 +4,7 @@
 # ============================================
 # Stage 1: Builder
 # ============================================
-FROM python:3.12-slim as builder
+FROM python:3.11-slim as builder
 
 WORKDIR /build
 
@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # ============================================
 # Stage 2: Runtime
 # ============================================
-FROM python:3.12-slim as runtime
+FROM python:3.11-slim as runtime
 
 LABEL maintainer="Wesley Robbins <wlrobbi@gmail.com>"
 LABEL version="0.7.0"
@@ -42,10 +42,10 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
-COPY --chown=agentic:agentic . .
+COPY . .
 
-# Install as package
-RUN pip install -e .
+# Install as package (not editable)
+RUN pip install .
 
 # Create directories for data
 RUN mkdir -p /app/data /app/logs /app/config && \

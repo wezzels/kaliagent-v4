@@ -18,8 +18,10 @@ from pydantic import BaseModel
 from agentic_ai.collaboration.workspace import Workspace
 from agentic_ai.collaboration.sessions import SessionManager, CollaborationSession
 from agentic_ai.collaboration.presence import CollaborationHub
-from agentic_ai.agents.lead import LeadAgent
 from agentic_ai.monitoring.metrics import MetricsRegistry
+
+# Note: LeadAgent and other agents are available but not instantiated by default
+# Import as needed: from agentic_ai.agents.lead import LeadAgent
 
 
 # Configuration
@@ -55,7 +57,7 @@ app.add_middleware(
 session_manager = SessionManager()
 collaboration_hub = CollaborationHub()
 metrics = MetricsRegistry()
-lead_agent = LeadAgent()
+# lead_agent = LeadAgent()  # Uncomment when LeadAgent is available
 
 # In-memory workspace store (replace with persistent storage in production)
 workspaces = {}
