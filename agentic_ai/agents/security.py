@@ -32,22 +32,41 @@ class SeverityLevel(Enum):
 
 class ThreatType(Enum):
     """Types of security threats."""
+    # Injection Attacks
     SQL_INJECTION = "sql_injection"
+    NOSQL_INJECTION = "nosql_injection"
+    LDAP_INJECTION = "ldap_injection"
     XSS = "cross_site_scripting"
+    XXE = "xml_external_entity"
+    COMMAND_INJECTION = "command_injection"
+    CODE_INJECTION = "code_injection"
+    
+    # Protocol/Network
     CSRF = "csrf"
     SSRF = "ssrf"
     PATH_TRAVERSAL = "path_traversal"
-    COMMAND_INJECTION = "command_injection"
-    WEAK_CRYPTO = "weak_cryptography"
-    HARDCODED_SECRETS = "hardcoded_secrets"
-    INSECURE_DESERIALIZATION = "insecure_deserialization"
-    XXE = "xml_external_entity"
     UNVALIDATED_REDIRECT = "unvalidated_redirect"
-    PRIVILEGE_ESCALATION = "privilege_escalation"
+    
+    # Cryptography
+    WEAK_CRYPTO = "weak_cryptography"
+    INSECURE_RANDOM = "insecure_random"
+    HARDCODED_SECRETS = "hardcoded_secrets"
+    
+    # Authentication/Session
     BRUTE_FORCE = "brute_force"
     SESSION_HIJACK = "session_hijack"
+    SESSION_FIXATION = "session_fixation"
+    PRIVILEGE_ESCALATION = "privilege_escalation"
+    
+    # Data/Deserialization
+    INSECURE_DESERIALIZATION = "insecure_deserialization"
+    SENSITIVE_DATA_EXPOSURE = "sensitive_data_exposure"
+    
+    # Other
     MALWARE = "malware"
     SUSPICIOUS_ACTIVITY = "suspicious_activity"
+    DEBUG_MODE_ENABLED = "debug_mode_enabled"
+    SECURITY_MISCONFIGURATION = "security_misconfiguration"
 
 
 @dataclass
