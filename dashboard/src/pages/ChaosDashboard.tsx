@@ -124,15 +124,50 @@ const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
 export default function ChaosDashboard() {
   const [selectedExperiment, setSelectedExperiment] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  
-  const filteredExperiments = filterStatus === 'all' 
-    ? mockExperiments 
-    : mockExperiments.filter(e => e.status === filterStatus);
+  const [experiments, setExperiments] = useState(mockExperiments);
+  const [metrics, setMetrics] = useState(mockMetrics);
+  const [resiliencyScores, setResiliencyScores] = useState(mockResiliencyScores);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const runningExperiment = mockExperiments.find(e => e.status === 'running');
+  // Fetch real data from API
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const chaosRes = await fetch('/api/demo/chaos');
+        if (chaosRes.ok) {
+          const data = await chaosRes.json();
+          if (data.experiments) setExperiments(data.experiments);
+          if (data.metrics) setMetrics(data.metrics);
+          if (data.resiliencyScores) setResiliencyScores(data.resiliencyScores);
+        }
+        setError(null);
+      } catch (err) {
+        setError('Failed to load chaos data - using mock data');
+        console.error('Error fetching chaos data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredExperiments = filterStatus === 'all' 
+    ? experiments 
+    : experiments.filter(e => e.status === filterStatus);
+
+  const runningExperiment = experiments.find(e => e.status === 'running');
 
   return (
     <div className="space-y-6">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600" />
+          <p className="text-amber-800 text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
