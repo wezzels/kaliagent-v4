@@ -17,9 +17,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Install as package
-RUN pip install .
-
 # Create directories for data
 RUN mkdir -p /app/data /app/logs /app/config
 
@@ -36,5 +33,5 @@ ENV PYTHONUNBUFFERED=1 \
     AGENTIC_AI_ENV=production \
     AGENTIC_AI_LOG_LEVEL=INFO
 
-# Default command
+# Default command - run server directly
 CMD ["python", "-m", "agentic_ai.server"]
