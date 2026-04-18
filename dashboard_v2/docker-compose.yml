@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agentic-dashboard-backend
+    ports:
+      - "8002:8002"
+    environment:
+      - DASHBOARD_PORT=8002
+      - DASHBOARD_HOST=0.0.0.0
+      - LOG_LEVEL=INFO
+      - ENABLE_WEBSOCKET=true
+    restart: unless-stopped
+    networks:
+      - agentic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Web Server (nginx serving built React app)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: agentic-dashboard-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - agentic-network
+
+networks:
+  agentic-network:
+    driver: bridge

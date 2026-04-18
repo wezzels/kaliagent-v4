@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STSGYM Research Papers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a5568;
+            --primary-light: #718096;
+            --accent: #3182ce;
+            --accent-light: #bee3f8;
+            --success: #38a169;
+            --success-light: #c6f6d5;
+            --warning: #d69e2e;
+            --background: #ffffff;
+            --surface: #f7fafc;
+            --surface-alt: #edf2f7;
+            --text: #2d3748;
+            --text-light: #4a5568;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --border-light: #edf2f7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        nav {
+            background: var(--background);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.25rem 0;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        nav a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .section {
+            margin-bottom: 4rem;
+        }
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 800px;
+        }
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .paper-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .paper-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        .paper-card h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+        .paper-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .paper-card .file-links {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .paper-card .file-links a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .paper-card .file-links a:hover {
+            text-decoration: underline;
+        }
+        .featured {
+            border: 2px solid var(--accent);
+            background: linear-gradient(135deg, var(--surface) 0%, var(--accent-light) 100%);
+        }
+        .featured h3 {
+            color: var(--accent);
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--surface-alt);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tag-new {
+            background: var(--success);
+            color: white;
+        }
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.75rem; }
+            .section-title { font-size: 1.5rem; }
+            .papers-grid { grid-template-columns: 1fr; }
+            nav .nav-inner { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>STSGYM Research Papers</h1>
+        <p>Technical documentation, research papers, and system design documents from STSGYM projects</p>
+    </header>
+    
+    <nav>
+        <div class="nav-inner">
+            <a href="#vimi">Missile Defense</a>
+            <a href="#seismic">Seismic Analysis</a>
+            <a href="#infrastructure">Infrastructure</a>
+            <a href="#ai">AI & Machine Learning</a>
+            <a href="#cyber">🤖 Cyber Division</a>
+            <a href="#security">Security</a>
+            <a href="#hardware">Hardware & RF</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Cyber Division Section (NEW) -->
+        <section class="section" id="cyber">
+            <div class="section-header">
+                <h2 class="section-title">🤖 Cyber Division - Agentic AI Security Agents</h2>
+                <p class="section-desc">Autonomous security agents for modern operations | KaliAgent penetration testing automation | 52 Kali Linux tools | Enterprise-grade security automation</p>
+            </div>
+            <div class="papers-grid">
+                <a href="papers/cyber-division/index.html" class="paper-card featured">
+                    <h3>🚀 KaliAgent v1.0.0 - Complete Documentation</h3>
+                    <p>Enterprise-grade penetration testing automation with 52 Kali Linux tools, 5 automated playbooks, high-fidelity web dashboard, professional PDF reports, and multi-layer safety controls. Documentation quality score: 9.0/10.</p>
+                    <div class="file-links">
+                        <span class="tag tag-new">NEW</span>
+                        <span class="tag">271 KB</span>
+                        Format: <a href="papers/cyber-division/index.html">HTML Documentation Hub</a>
+                    </div>
+                </a>
+                
+                <a href="papers/cyber-division/kaliagent/quickstart/" class="paper-card">
+                    <h3>⚡ KaliAgent Quick Start</h3>
+                    <p>Get started in 15 minutes with step-by-step installation and first playbook execution guide.</p>
+                    <div class="file-links">
+                        <span class="tag">9 KB</span>
+                        Format: <a href="papers/cyber-division/kaliagent/quickstart/">Markdown</a>
+                    </div>
+                </a>
+                
+                <a href="papers/cyber-division/kaliagent/deployment/" class="paper-card">
+                    <h3>🚀 KaliAgent Deployment Guide</h3>
+                    <p>Production deployment instructions for Docker, Kubernetes, AWS, and on-premises installations with high availability setup.</p>
+                    <div class="file-links">
+                        <span class="tag">20 KB</span>
+                        Format: <a href="papers/cyber-division/kaliagent/deployment/">Markdown</a>
+                    </div>
+                </a>
+                
+                <a href="papers/cyber-division/cyber-agents/" class="paper-card">
+                    <h3>🛡️ Cyber Agents Overview</h3>
+                    <p>Six specialized security agents: SOC, VulnMan, RedTeam, Malware, Security, and CloudSecurity agents working together.</p>
+                    <div class="file-links">
+                        <span class="tag">15 KB</span>
+                        Format: <a href="papers/cyber-division/cyber-agents/">Markdown</a>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- VIMI Missile Defense Section -->
+        <section class="section" id="vimi">
+            <div class="section-header">
+                <h2 class="section-title">Missile Defense Platform</h2>
+                <p class="section-desc">VIMI Test Suite documentation and validation systems</p>
+            </div>
+            <div class="papers-grid">
+                <a href="VIMI-Test-Suite-Platform-Overview.html" class="paper-card">
+                    <h3>VIMI Test Suite: Platform Overview</h3>
+                    <p>Complete overview of the VIMI missile defense test suite platform, including architecture, components, and validation methodology.</p>
+                    <div class="file-links">Format: <a href="VIMI-Test-Suite-Platform-Overview.html">HTML</a></div>
+                </a>
+                
+                <a href="VIMI-SYSTEM-PAPER.html" class="paper-card">
+                    <h3>VIMI System Design</h3>
+                    <p>Technical system design document for the VIMI missile defense simulation and testing platform.</p>
+                    <div class="file-links">Format: <a href="VIMI-SYSTEM-PAPER.html">HTML</a></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Seismic Analysis Section -->
+        <section class="section" id="seismic">
+            <div class="section-header">
+                <h2 class="section-title">Seismic Analysis & Simulation</h2>
+                <p class="section-desc">Earthquake simulation and seismic activity analysis tools</p>
+            </div>
+            <div class="papers-grid">
+                <a href="DoD-Simulator-97-Percent-Accuracy.html" class="paper-card">
+                    <h3>DoD Simulator: 97% Accuracy</h3>
+                    <p>Department of Defense seismic simulation platform achieving 97% accuracy in earthquake prediction and analysis.</p>
+                    <div class="file-links">Format: <a href="DoD-Simulator-97-Percent-Accuracy.html">HTML</a></div>
+                </a>
+                
+                <a href="IEEE-Signal-Detection-Simulation.html" class="paper-card">
+                    <h3>IEEE Signal Detection Simulation</h3>
+                    <p>IEEE-standard signal detection and simulation framework for seismic activity monitoring.</p>
+                    <div class="file-links">Format: <a href="IEEE-Signal-Detection-Simulation.html">HTML</a></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Infrastructure Section -->
+        <section class="section" id="infrastructure">
+            <div class="section-header">
+                <h2 class="section-title">Infrastructure & Systems</h2>
+                <p class="section-desc">System architecture, deployment guides, and infrastructure documentation</p>
+            </div>
+            <div class="papers-grid">
+                <a href="FORGE-System-Design.html" class="paper-card">
+                    <h3>FORGE System Design</h3>
+                    <p>Complete system design documentation for the FORGE platform, including architecture, components, and implementation details.</p>
+                    <div class="file-links">Formats: <a href="FORGE-System-Design.html">HTML</a> | <a href="FORGE-System-Design.docx">DOCX</a> | <a href="FORGE-System-Design.md">Markdown</a></div>
+                </a>
+                
+                <a href="STSGYM-RESEARCH-ECOSYSTEM.html" class="paper-card">
+                    <h3>STSGYM Research Ecosystem</h3>
+                    <p>Overview of the complete STSGYM research ecosystem, including all platforms, tools, and integration points.</p>
+                    <div class="file-links">Formats: <a href="STSGYM-RESEARCH-ECOSYSTEM.html">HTML</a> | <a href="STSGYM-RESEARCH-ECOSYSTEM.pdf">PDF</a></div>
+                </a>
+                
+                <a href="Chaos-Engineering-Infrastructure-Resilience.html" class="paper-card">
+                    <h3>Chaos Engineering & Infrastructure Resilience</h3>
+                    <p>Custom Chaos Monkey implementation for STSGym infrastructure testing, including resilience patterns, failure injection, and automated recovery validation.</p>
+                    <div class="file-links">Format: <a href="Chaos-Engineering-Infrastructure-Resilience.html">HTML</a></div>
+                </a>
+                
+                <a href="Cicerone-Technical-Paper.html" class="paper-card">
+                    <h3>Cicerone Technical Paper</h3>
+                    <p>Technical documentation for the Cicerone administrative AI agent platform.</p>
+                    <div class="file-links">Format: <a href="Cicerone-Technical-Paper.html">HTML</a></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- AI & Machine Learning Section -->
+        <section class="section" id="ai">
+            <div class="section-header">
+                <h2 class="section-title">AI & Machine Learning</h2>
+                <p class="section-desc">Artificial intelligence research, machine learning models, and autonomous agent systems</p>
+            </div>
+            <div class="papers-grid">
+                <a href="Agentic-Multi-Specialized-AI-Teams.html" class="paper-card featured">
+                    <h3>🤖 Agentic AI: Multi-Specialized AI Teams</h3>
+                    <p>Research paper on multi-specialized autonomous agent teams for enterprise operations, including architecture, implementation, and case studies.</p>
+                    <div class="file-links">Format: <a href="Agentic-Multi-Specialized-AI-Teams.html">HTML</a></div>
+                </a>
+                
+                <a href="Multi-Specialized-Agentic-AI-Teams-Paper.pdf" class="paper-card">
+                    <h3>Multi-Specialized Agentic AI Teams (PDF)</h3>
+                    <p>Complete research paper in PDF format with detailed architecture diagrams and implementation examples.</p>
+                    <div class="file-links">Formats: <a href="Multi-Specialized-Agentic-AI-Teams-Paper.pdf">PDF</a> | <a href="Multi-Specialized-Agentic-AI-Teams-Paper.docx">DOCX</a></div>
+                </a>
+                
+                <a href="WezzelOS-RAG-Integration.html" class="paper-card">
+                    <h3>WezzelOS RAG Integration</h3>
+                    <p>Retrieval-Augmented Generation (RAG) integration for WezzelOS, enabling AI-powered system administration.</p>
+                    <div class="file-links">Format: <a href="WezzelOS-RAG-Integration.html">HTML</a></div>
+                </a>
+                
+                <a href="Market-Analysis-Platform.html" class="paper-card">
+                    <h3>Market Analysis Platform</h3>
+                    <p>AI-powered market analysis platform with automated data collection, trend analysis, and predictive modeling.</p>
+                    <div class="file-links">Format: <a href="Market-Analysis-Platform.html">HTML</a></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section class="section" id="security">
+            <div class="section-header">
+                <h2 class="section-title">Security & Compliance</h2>
+                <p class="section-desc">Security platforms, compliance frameworks, and authentication systems</p>
+            </div>
+            <div class="papers-grid">
+                <a href="Wazuh-SIEM-Deployment.html" class="paper-card">
+                    <h3>Wazuh SIEM Deployment</h3>
+                    <p>Complete deployment guide for Wazuh SIEM platform, including configuration, integration, and monitoring setup.</p>
+                    <div class="file-links">Format: <a href="Wazuh-SIEM-Deployment.html">HTML</a></div>
+                </a>
+                
+                <a href="trooper-Auth-Platform.html" class="paper-card">
+                    <h3>Trooper Auth Platform</h3>
+                    <p>Authentication and authorization platform documentation, including SSO integration and security best practices.</p>
+                    <div class="file-links">Format: <a href="trooper-Auth-Platform.html">HTML</a></div>
+                </a>
+                
+                <a href="CMMC-Compliance-Roadmap.html" class="paper-card">
+                    <h3>CMMC Compliance Roadmap</h3>
+                    <p>Cybersecurity Maturity Model Certification (CMMC) compliance roadmap and implementation guide.</p>
+                    <div class="file-links">Format: <a href="CMMC-Compliance-Roadmap.html">HTML</a></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Hardware & RF Section -->
+        <section class="section" id="hardware">
+            <div class="section-header">
+                <h2 class="section-title">Hardware & RF Systems</h2>
+                <p class="section-desc">Hardware design, RF systems, and embedded systems documentation</p>
+            </div>
+            <div class="papers-grid">
+                <a href="PHOTOS-STSGYM-COMPLETE-2026-03-19.pdf" class="paper-card">
+                    <h3>Photos STSGYM Complete</h3>
+                    <p>Complete photo sharing platform documentation, including architecture, deployment, and user guide.</p>
+                    <div class="file-links">Formats: <a href="PHOTOS-STSGYM-COMPLETE-2026-03-19.pdf">PDF</a> | <a href="PHOTOS-STSGYM-COMPLETE-2026-03-19.docx">DOCX</a></div>
+                </a>
+                
+                <a href="PHOTOS-ARCHITECTURE-REVIEW-2026-03-19.pdf" class="paper-card">
+                    <h3>Photos Architecture Review</h3>
+                    <p>Architecture review document for the Photos STSGYM platform, including system design and technical decisions.</p>
+                    <div class="file-links">Formats: <a href="PHOTOS-ARCHITECTURE-REVIEW-2026-03-19.pdf">PDF</a> | <a href="PHOTOS-ARCHITECTURE-REVIEW-2026-03-19.docx">DOCX</a></div>
+                </a>
+                
+                <a href="ADVERTISING-INTEGRATION-PLAN.pdf" class="paper-card">
+                    <h3>Advertising Integration Plan</h3>
+                    <p>Integration plan for advertising systems, including API design, monetization strategy, and implementation roadmap.</p>
+                    <div class="file-links">Formats: <a href="ADVERTISING-INTEGRATION-PLAN.pdf">PDF</a> | <a href="ADVERTISING-INTEGRATION-PLAN.docx">DOCX</a></div>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>STSGYM Research Papers | Last Updated: April 18, 2026</p>
+        <p>
+            <a href="papers/cyber-division/index.html">🤖 Cyber Division</a> •
+            <a href="https://github.com/wezzels/stsgym-work">GitHub</a> •
+            <a href="https://stsgym.com">STSGYM.com</a>
+        </p>
+    </footer>
+</body>
+</html>

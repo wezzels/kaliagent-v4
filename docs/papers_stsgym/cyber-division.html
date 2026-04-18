@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Division - Agentic AI Security Agents | STSGYM Papers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f97316;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-alt: #334155;
+            --text: #f1f5f9;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --border-light: #475569;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+        header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--accent);
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        nav {
+            background: var(--surface-alt);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        nav a:hover {
+            background: var(--accent);
+            color: white;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .hero-cta {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--surface);
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+        }
+        .hero-cta h2 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: white;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+        }
+        .agent-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .agent-card h3 {
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+        .agent-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .agent-card a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .agent-card a:hover {
+            text-decoration: underline;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            color: white;
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.95;
+            color: white;
+        }
+        .docs-section {
+            margin: 3rem 0;
+        }
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .doc-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .doc-card:hover {
+            background: var(--surface-alt);
+            transform: translateX(5px);
+            border-color: var(--accent);
+        }
+        .doc-card h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+        .doc-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .kaliagent-spotlight {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.15));
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        .kaliagent-spotlight h2 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .feature-item {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        .feature-check {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            background: var(--surface);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .hero-cta h2 { font-size: 1.75rem; }
+            .agent-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🤖 Agentic AI - Cyber Division</h1>
+        <p>Autonomous Security Agents for Modern Operations | 6 Specialized Agents | 52 Kali Linux Tools | Production Ready</p>
+    </header>
+    
+    <nav>
+        <div class="nav-inner">
+            <a href="index.html">← Back to Papers</a>
+            <a href="#kaliagent">KaliAgent</a>
+            <a href="#agents">All Agents</a>
+            <a href="#documentation">Documentation</a>
+            <a href="https://agents.bedimsecurity.com" target="_blank">Live Demo</a>
+            <a href="https://github.com/wezzels/agentic-ai" target="_blank">GitHub</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Hero CTA -->
+        <div class="hero-cta">
+            <h2>Enterprise-Grade Security Automation</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 1rem auto;">
+                Complete documentation for the Agentic AI Cyber Division, featuring KaliAgent as our flagship penetration testing automation platform.
+            </p>
+            <div class="cta-buttons">
+                <a href="kaliagent/" class="btn btn-primary">🚀 Explore KaliAgent</a>
+                <a href="kaliagent/quickstart/" class="btn btn-secondary">⚡ Quick Start (15 min)</a>
+                <a href="https://agents.bedimsecurity.com" class="btn btn-primary" target="_blank">🎯 Live Demo</a>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">6</span>
+                <span class="stat-label">Security Agents</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">52</span>
+                <span class="stat-label">Kali Tools</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">92%</span>
+                <span class="stat-label">Test Coverage</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">271KB</span>
+                <span class="stat-label">Documentation</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">35+</span>
+                <span class="stat-label">Diagrams</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">9.0/10</span>
+                <span class="stat-label">Quality Score</span>
+            </div>
+        </div>
+
+        <!-- KaliAgent Spotlight -->
+        <section class="kaliagent-spotlight" id="kaliagent">
+            <h2>🚀 Featured Platform: KaliAgent v1.0.0</h2>
+            <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">
+                Enterprise-Grade Penetration Testing Automation with Professional Reporting
+            </p>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>52 Kali Linux Tools Pre-Configured</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>5 Automated Playbooks</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>High-Fidelity Web Dashboard</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>Professional PDF Reports</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>Multi-Layer Safety Controls</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-check">✅</span>
+                    <span>92% Test Coverage</span>
+                </div>
+            </div>
+            
+            <div class="cta-buttons" style="margin-top: 2rem;">
+                <a href="kaliagent/" class="btn btn-primary">📖 View Full Documentation</a>
+                <a href="kaliagent/quickstart/" class="btn btn-secondary">⚡ Quick Start Guide</a>
+                <a href="kaliagent/deployment/" class="btn btn-secondary">🚀 Deployment Guide</a>
+            </div>
+        </section>
+
+        <!-- Agent Grid -->
+        <section class="docs-section" id="agents">
+            <div class="section-header">
+                <h2 class="section-title">🛡️ Our Security Agents</h2>
+                <p class="section-desc">Six specialized agents working together for comprehensive security automation</p>
+            </div>
+            <div class="agent-grid">
+                <div class="agent-card">
+                    <span class="agent-icon">🛡️</span>
+                    <h3>SOC Agent</h3>
+                    <p>24/7 security monitoring and incident response automation with severity-based prioritization and SLA tracking.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+                
+                <div class="agent-card">
+                    <span class="agent-icon">🔍</span>
+                    <h3>VulnMan Agent</h3>
+                    <p>Complete vulnerability lifecycle management from discovery through remediation verification with Jira integration.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+                
+                <div class="agent-card">
+                    <span class="agent-icon">⚔️</span>
+                    <h3>RedTeam Agent</h3>
+                    <p>Autonomous penetration testing across the complete kill chain with Metasploit integration and PDF reporting.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+                
+                <div class="agent-card">
+                    <span class="agent-icon">🦠</span>
+                    <h3>Malware Agent</h3>
+                    <p>Reverse engineering, static/dynamic analysis, YARA rule creation, and sandbox execution automation.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+                
+                <div class="agent-card">
+                    <span class="agent-icon">🔐</span>
+                    <h3>Security Agent</h3>
+                    <p>Threat detection, pattern matching, IOC searches, SIEM queries, and automated response capabilities.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+                
+                <div class="agent-card">
+                    <span class="agent-icon">☁️</span>
+                    <h3>CloudSecurity Agent</h3>
+                    <p>Multi-cloud CSPM for AWS, Azure, and GCP with compliance checking and misconfiguration detection.</p>
+                    <a href="#">Learn more →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section class="docs-section" id="documentation">
+            <div class="section-header">
+                <h2 class="section-title">📚 KaliAgent Documentation</h2>
+                <p class="section-desc">Comprehensive guides covering installation, usage, deployment, and integration</p>
+            </div>
+            <div class="docs-grid">
+                <a href="kaliagent/quickstart/" class="doc-card">
+                    <h4>⚡ Quick Start</h4>
+                    <p>Get started in 15 minutes with step-by-step installation and first playbook execution.</p>
+                </a>
+                
+                <a href="kaliagent/user-guide/" class="doc-card">
+                    <h4>📖 User Guide</h4>
+                    <p>Comprehensive usage guide with step-by-step instructions, examples, and troubleshooting.</p>
+                </a>
+                
+                <a href="kaliagent/deployment/" class="doc-card">
+                    <h4>🚀 Deployment</h4>
+                    <p>Production deployment guides for Docker, Kubernetes, AWS, and on-premises installations.</p>
+                </a>
+                
+                <a href="kaliagent/integration/" class="doc-card">
+                    <h4>🔗 Integration</h4>
+                    <p>SIEM, ticketing, notifications, and threat intelligence integration guides.</p>
+                </a>
+                
+                <a href="kaliagent/training/" class="doc-card">
+                    <h4>🎓 Training</h4>
+                    <p>Certification program with 4 tracks, hands-on labs, and assessment exams.</p>
+                </a>
+                
+                <a href="resources/presentations/" class="doc-card">
+                    <h4>📊 Presentations</h4>
+                    <p>Professional 15-slide presentation with speaker notes and QR codes for live demos.</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Additional Resources -->
+        <section class="docs-section">
+            <div class="section-header">
+                <h2 class="section-title">📁 Additional Resources</h2>
+                <p class="section-desc">Video tutorials, demo examples, and marketing materials</p>
+            </div>
+            <div class="docs-grid">
+                <a href="resources/videos/" class="doc-card">
+                    <h4>🎥 Video Tutorials</h4>
+                    <p>6 complete video tutorial scripts covering installation, usage, and advanced features.</p>
+                </a>
+                
+                <a href="resources/examples/" class="doc-card">
+                    <h4>💻 Demo Examples</h4>
+                    <p>Ready-to-run demo scripts for quick demonstrations and testing.</p>
+                </a>
+                
+                <a href="resources/presentations/" class="doc-card">
+                    <h4>📊 Presentations</h4>
+                    <p>Professional presentation templates and speaker notes for stakeholder meetings.</p>
+                </a>
+                
+                <a href="resources/social-media/" class="doc-card">
+                    <h4>📢 Social Media</h4>
+                    <p>Complete social media content kit with posts for Twitter, LinkedIn, and Reddit.</p>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>🍀 Made with ❤️ by the Agentic AI Team</p>
+        <p>
+            <a href="https://github.com/wezzels/agentic-ai" target="_blank">GitHub</a> •
+            <a href="https://discord.gg/clawd" target="_blank">Discord</a> •
+            <a href="https://agents.bedimsecurity.com" target="_blank">Live Demo</a>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.875rem;">
+            Documentation Quality Score: <strong>9.0/10</strong> | Last Updated: April 18, 2026 | 
+            <a href="index.html">Back to STSGYM Papers</a>
+        </p>
+    </footer>
+</body>
+</html>
