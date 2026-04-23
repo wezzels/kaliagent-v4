@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-21T13:56:32.478249",
+  "timestamp": "2026-04-22T00:41:48.995712",
   "total": 35,
   "passed": 33,
   "failed": 0,
@@ -11,211 +11,211 @@
       "test": "Tool Manager Initialization",
       "result": "PASS",
       "message": "Loaded 67 tools",
-      "timestamp": "2026-04-21T13:56:32.293819"
+      "timestamp": "2026-04-22T00:41:48.801996"
     },
     {
       "test": "Tool Search",
       "result": "PASS",
       "message": "Found 10 tools in category",
-      "timestamp": "2026-04-21T13:56:32.294431"
+      "timestamp": "2026-04-22T00:41:48.802606"
     },
     {
       "test": "Hardware Detection",
       "result": "PASS",
       "message": "WiFi: 1, SDR: 2",
-      "timestamp": "2026-04-21T13:56:32.348025"
+      "timestamp": "2026-04-22T00:41:48.855823"
     },
     {
       "test": "Installation Profiles",
       "result": "PASS",
       "message": "6 profiles available, recommended: advanced",
-      "timestamp": "2026-04-21T13:56:32.351432"
+      "timestamp": "2026-04-22T00:41:48.860471"
     },
     {
       "test": "Authorization System",
       "result": "PASS",
-      "message": "Authorization levels working, token: 89948b9bf1e43e2b",
-      "timestamp": "2026-04-21T13:56:32.355019"
+      "message": "Authorization levels working, token: d1b23dc1d0b9f943",
+      "timestamp": "2026-04-22T00:41:48.865330"
     },
     {
       "test": "Payload Generator Init",
       "result": "PASS",
-      "message": "Generator initialized at /tmp/weaponization_test_mc_xi4ct",
-      "timestamp": "2026-04-21T13:56:32.357330"
+      "message": "Generator initialized at /tmp/weaponization_test_tm16lpu3",
+      "timestamp": "2026-04-22T00:41:48.868427"
     },
     {
       "test": "Payload Generation (Mock)",
       "result": "SKIP",
       "message": "Mock mode: msfvenom not found. Is Metasploit installed?",
-      "timestamp": "2026-04-21T13:56:32.357923"
+      "timestamp": "2026-04-22T00:41:48.869247"
     },
     {
       "test": "Payload Encoding",
       "result": "PASS",
       "message": "Tested 4 encoders successfully",
-      "timestamp": "2026-04-21T13:56:32.360584"
+      "timestamp": "2026-04-22T00:41:48.872843"
     },
     {
       "test": "AMSI/ETW Patching",
       "result": "PASS",
       "message": "AMSI/ETW patching functions working",
-      "timestamp": "2026-04-21T13:56:32.361107"
+      "timestamp": "2026-04-22T00:41:48.873561"
     },
     {
       "test": "Payload Testing",
       "result": "PASS",
       "message": "Tests: 2/2, Status: PASSED",
-      "timestamp": "2026-04-21T13:56:32.363002"
+      "timestamp": "2026-04-22T00:41:48.876143"
     },
     {
       "test": "Weaponization Engine",
       "result": "PASS",
       "message": "Engine ready, jobs: 0",
-      "timestamp": "2026-04-21T13:56:32.364938"
+      "timestamp": "2026-04-22T00:41:48.878757"
     },
     {
       "test": "AV Signatures",
       "result": "PASS",
       "message": "23 signatures, 1 matches on test data",
-      "timestamp": "2026-04-21T13:56:32.366798"
+      "timestamp": "2026-04-22T00:41:48.881275"
     },
     {
       "test": "Sliver Client Init",
       "result": "PASS",
       "message": "Client initialized, connected: False",
-      "timestamp": "2026-04-21T13:56:32.368995"
+      "timestamp": "2026-04-22T00:41:48.884108"
     },
     {
       "test": "Sliver Implant Config",
       "result": "PASS",
       "message": "1 implants configured",
-      "timestamp": "2026-04-21T13:56:32.369579"
+      "timestamp": "2026-04-22T00:41:48.884809"
     },
     {
       "test": "Empire Client Init",
       "result": "PASS",
       "message": "Client initialized, connected: False",
-      "timestamp": "2026-04-21T13:56:32.417455"
+      "timestamp": "2026-04-22T00:41:48.933313"
     },
     {
       "test": "Empire Listener/Stager",
       "result": "PASS",
       "message": "1 listeners, 1 stagers",
-      "timestamp": "2026-04-21T13:56:32.420120"
+      "timestamp": "2026-04-22T00:41:48.935919"
     },
     {
       "test": "Docker Deployment",
       "result": "PASS",
-      "message": "Compose file: /tmp/c2_test_vo_wecoh/docker-compose.yml",
-      "timestamp": "2026-04-21T13:56:32.434504"
+      "message": "Compose file: /tmp/c2_test_m4abo6le/docker-compose.yml",
+      "timestamp": "2026-04-22T00:41:48.950310"
     },
     {
       "test": "Terraform Templates",
       "result": "PASS",
-      "message": "Terraform: /tmp/c2_test_8r5gzzn_/terraform",
-      "timestamp": "2026-04-21T13:56:32.435074"
+      "message": "Terraform: /tmp/c2_test_svkh0o0d/terraform",
+      "timestamp": "2026-04-22T00:41:48.950884"
     },
     {
       "test": "C2 Orchestration",
       "result": "PASS",
       "message": "Servers: 1, Agents: 0",
-      "timestamp": "2026-04-21T13:56:32.437456"
+      "timestamp": "2026-04-22T00:41:48.953348"
     },
     {
       "test": "System Monitoring",
       "result": "PASS",
       "message": "Status: healthy, CPU: 25.0%, Memory: 50.0%",
-      "timestamp": "2026-04-21T13:56:32.439550"
+      "timestamp": "2026-04-22T00:41:48.955496"
     },
     {
       "test": "Security Audit",
       "result": "PASS",
       "message": "Score: 88/100 (B), Findings: 3",
-      "timestamp": "2026-04-21T13:56:32.447675"
+      "timestamp": "2026-04-22T00:41:48.964118"
     },
     {
       "test": "Audit Logging",
       "result": "PASS",
-      "message": "3 admin actions logged, exported to /tmp/production_test_nn_rltry/audit_export_20260421_135632.json",
-      "timestamp": "2026-04-21T13:56:32.448989"
+      "message": "3 admin actions logged, exported to /tmp/production_test_uld19shx/audit_export_20260422_004148.json",
+      "timestamp": "2026-04-22T00:41:48.965380"
     },
     {
       "test": "Full Weaponization Workflow",
       "result": "SKIP",
       "message": "Weaponization failed (expected in test env)",
-      "timestamp": "2026-04-21T13:56:32.449771"
+      "timestamp": "2026-04-22T00:41:48.966191"
     },
     {
       "test": "Full C2 Workflow",
       "result": "PASS",
       "message": "Health: 1/1 servers online",
-      "timestamp": "2026-04-21T13:56:32.450352"
+      "timestamp": "2026-04-22T00:41:48.966767"
     },
     {
       "test": "Full Monitoring Workflow",
       "result": "PASS",
-      "message": "Status: healthy, Report: /tmp/integration_test_zmbswoyp/report_20260421_135632.json",
-      "timestamp": "2026-04-21T13:56:32.450859"
+      "message": "Status: healthy, Report: /tmp/integration_test_zlkbtk_z/report_20260422_004148.json",
+      "timestamp": "2026-04-22T00:41:48.967317"
     },
     {
       "test": "Tool Database Stats",
       "result": "PASS",
       "message": "Stats: {'total_tools': 67, 'installed_tools': 2, 'coverage_pct': 2.99, 'total_size_mb': 1801.9, 'total_size_gb': 1.76, 'categories': {'information-gathering': {'total': 10, 'installed': 0}, 'vulnerability-analysis': {'total': 5, 'installed': 0}, 'web-application': {'total': 9, 'installed': 0}, 'exploitation': {'total': 5, 'installed': 0}, 'database': {'total': 2, 'installed': 0}, 'password': {'total': 8, 'installed': 0}, 'wireless': {'total': 6, 'installed': 0}, 'sniffing-spoofing': {'total': 5, 'installed': 1}, 'post-exploitation': {'total': 5, 'installed': 0}, 'forensics': {'total': 5, 'installed': 0}, 'reverse-engineering': {'total': 5, 'installed': 1}, 'reporting': {'total': 2, 'installed': 0}}}",
-      "timestamp": "2026-04-21T13:56:32.451393"
+      "timestamp": "2026-04-22T00:41:48.967838"
     },
     {
       "test": "Installation Profile",
       "result": "PASS",
       "message": "Install order returned: list",
-      "timestamp": "2026-04-21T13:56:32.451876"
+      "timestamp": "2026-04-22T00:41:48.968364"
     },
     {
       "test": "Hardware Monitor Mode",
       "result": "PASS",
       "message": "Found 1 adapter(s): WiFiAdapter(interface='wlp2s0', chipset='Unknown', vendor='Unknown', monitor_capable=False, injection_capable=True, monitor_mode=False, monitor_interface=None, driver='Unknown', phy_id=0)",
-      "timestamp": "2026-04-21T13:56:32.468058"
+      "timestamp": "2026-04-22T00:41:48.985047"
     },
     {
       "test": "Authorization Critical Action",
       "result": "PASS",
       "message": "Authorization response: PIN required for CRITICAL authorization",
-      "timestamp": "2026-04-21T13:56:32.468308"
+      "timestamp": "2026-04-22T00:41:48.985341"
     },
     {
       "test": "Payload Obfuscation",
       "result": "PASS",
       "message": "Tested 2 obfuscation techniques",
-      "timestamp": "2026-04-21T13:56:32.468845"
+      "timestamp": "2026-04-22T00:41:48.985876"
     },
     {
       "test": "Sliver Multi-Implant",
       "result": "PASS",
       "message": "Created 0 implant configs",
-      "timestamp": "2026-04-21T13:56:32.469370"
+      "timestamp": "2026-04-22T00:41:48.986405"
     },
     {
       "test": "Empire Multi-Listener",
       "result": "PASS",
       "message": "Created 3 listener configs",
-      "timestamp": "2026-04-21T13:56:32.470291"
+      "timestamp": "2026-04-22T00:41:48.987366"
     },
     {
       "test": "Terraform Multi-Cloud",
       "result": "PASS",
-      "message": "Generated AWS Terraform: /tmp/integration_test_ymh6nf8v/tf_aws",
-      "timestamp": "2026-04-21T13:56:32.470796"
+      "message": "Generated AWS Terraform: /tmp/integration_test_twjv2gj7/tf_aws",
+      "timestamp": "2026-04-22T00:41:48.987874"
     },
     {
       "test": "Security Compliance Check",
       "result": "PASS",
       "message": "Security checks completed, 3 findings",
-      "timestamp": "2026-04-21T13:56:32.477493"
+      "timestamp": "2026-04-22T00:41:48.994955"
     },
     {
       "test": "Monitoring Alerts",
       "result": "PASS",
       "message": "Alerts: 0 active",
-      "timestamp": "2026-04-21T13:56:32.477992"
+      "timestamp": "2026-04-22T00:41:48.995514"
     }
   ]
 }

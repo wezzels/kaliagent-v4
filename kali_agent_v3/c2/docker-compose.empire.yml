@@ -1,0 +1,90 @@
+# Empire C2 Server - Docker Compose Configuration
+# Version: 1.0
+# Date: April 23, 2026
+
+version: '3.8'
+
+services:
+  empire-server:
+    image: bcsecurity/empire:latest
+    container_name: empire-c2
+    hostname: empire-server
+    restart: unless-stopped
+    ports:
+      # Empire REST API
+      - "1337:1337"
+      # Empire Listener (HTTP)
+      - "8080:8080"
+      # Empire Listener (HTTPS)
+      - "4443:4443"
+      # Empire Client (optional)
+      - "1338:1338"
+    volumes:
+      # Persistent data
+      - empire-data:/empire/client
+      - empire-server-data:/empire/server
+      # Configuration
+      - ./empire-config:/empire/config:ro
+      # Stagers/implants
+      - ./stagers:/empire/stagers:rw
+    environment:
+      - EMPIRE_REST_API_HOST=0.0.0.0
+      - EMPIRE_REST_API_PORT=1337
+      - EMPIRE_USERNAME=empireadmin
+      - EMPIRE_PASSWORD=SecurePassword123!
+      # Listener configuration
+      - EMPIRE_HTTP_LISTENER_PORT=8080
+      - EMPIRE_HTTPS_LISTENER_PORT=4443
+      # Database
+      - EMPIRE_DATABASE_URL=sqlite:////empire/server/data.db
+    networks:
+      - c2-network
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1337/api/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Empire Client (separate container)
+  empire-client:
+    image: bcsecurity/empire-client:latest
+    container_name: empire-client
+    hostname: empire-client
+    depends_on:
+      - empire-server
+    ports:
+      - "1338:1338"
+    environment:
+      - EMPIRE_SERVER_HOST=empire-server
+      - EMPIRE_SERVER_PORT=1337
+      - EMPIRE_USERNAME=empireadmin
+      - EMPIRE_PASSWORD=SecurePassword123!
+    networks:
+      - c2-network
+    volumes:
+      - empire-client-data:/empire/client
+
+networks:
+  c2-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  empire-data:
+    driver: local
+  empire-server-data:
+    driver: local
+  empire-client-data:
+    driver: local
