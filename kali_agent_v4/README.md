@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-4.0.0-green.svg)](https://github.com/wezzels/kaliagent-v4)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![Build](https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai/badges/main/pipeline.svg)](https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai/-/pipelines)
+[![Build](https://github.com/wezzels/kaliagent-v4/workflows/CI/badge.svg)](https://github.com/wezzels/kaliagent-v4/actions)
 
 ---
 
@@ -59,8 +59,8 @@
 
 ```bash
 # Clone repository
-git clone https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai.git
-cd agentic-ai/kali_agent_v4
+git clone https://github.com/wezzels/kaliagent-v4.git
+cd kaliagent-v4
 
 # Start all services
 docker-compose up -d
@@ -284,7 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues:** [GitLab Issues](https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai/-/issues)
+- **Issues:** [GitHub Issues](https://github.com/wezzels/kaliagent-v4/issues)
 - **Documentation:** [docs/](docs/)
 - **Email:** security@example.com
 

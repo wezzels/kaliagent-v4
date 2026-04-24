@@ -25,7 +25,7 @@
   - [ ] Test isolation (ping internet → should fail)
 
 - [ ] **1.1.2:** Configure attack machine network
-  - [ ] Add second NIC to trooper1
+  - [ ] Add second NIC to attack-machine
   - [ ] Configure static IP (10.0.100.1)
   - [ ] Disable IPv6 (prevent leaks)
 
@@ -111,7 +111,7 @@
   - [ ] Verify no NAT/masquerading
 
 - [ ] **1.5.2:** Test attack connectivity
-  - [ ] Nmap from trooper1 → all 3 targets
+  - [ ] Nmap from attack-machine → all 3 targets
   - [ ] Verify all ports visible
   - [ ] Test SSH/RDP access
 

@@ -1,0 +1,83 @@
+# KaliAgent v4 - Git Ignore File
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports & Evidence (generated during attacks)
+reports/
+recordings/
+evidence/
+scans/
+data/
+
+# Logs
+*.log
+logs/
+
+# Environment variables (MAY CONTAIN SECRETS)
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# SSL certificates (if generated locally)
+ssl/*.pem
+ssl/*.key
+ssl/*.crt
+
+# Docker
+.docker/
+
+# Kubernetes secrets (never commit these!)
+k8s/*-secret.yaml
+k8s/*-secrets.yaml
+
+# Test artifacts
+test_results/
+screenshots/
+
+# Node (if using any JS tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Backup files
+*.bak
+*.backup
+*.old

@@ -30,8 +30,8 @@
 
 ```bash
 # Clone repository
-git clone https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai.git
-cd agentic-ai/kali_agent_v4
+git clone https://github.com/wezzels/kaliagent-v4.git
+cd kaliagent-v4
 
 # Start all services
 docker-compose up -d
@@ -432,7 +432,7 @@ sudo systemctl restart docker
 For additional help:
 
 - **Documentation:** [docs/](docs/)
-- **Issues:** [GitLab Issues](https://gitlab.idm.wezzel.com/crab-meat-repos/agentic-ai/-/issues)
+- **Issues:** [GitHub Issues](https://github.com/wezzels/kaliagent-v4/issues)
 - **Email:** support@kaliagent.example.com
 
 ---
