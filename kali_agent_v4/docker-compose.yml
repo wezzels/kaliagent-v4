@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # Main KaliAgent Application
+  kaliagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kaliagent-v4
+    restart: unless-stopped
+    ports:
+      - "5007:5007"  # Dashboard
+    volumes:
+      - ./reports:/app/reports
+      - ./recordings:/app/recordings
+      - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock  # For container-based targets
+    environment:
+      - KALIAGENT_ENV=production
+      - KALIAGENT_VERSION=4.0.0
+      - OLLAMA_HOST=http://ollama:11434
+    networks:
+      - kaliagent-network
+      - attack-network
+    depends_on:
+      - redis
+      - ollama
+    cap_add:
+      - NET_ADMIN  # For network attacks
+      - SYS_ADMIN  # For certain exploits
+    devices:
+      - /dev/net/tun:/dev/net/tun  # For VPN/tunneling
+
+  # Redis for WebSocket clustering and caching
+  redis:
+    image: redis:7-alpine
+    container_name: kaliagent-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - kaliagent-network
+    command: redis-server --appendonly yes
+
+  # Ollama for local LLM (AI features)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: kaliagent-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - kaliagent-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # OWASP Juice Shop (Vulnerable Target)
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: kaliagent-juice-shop
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - attack-network
+    labels:
+      - "kaliagent.target=web"
+      - "kaliagent.difficulty=medium"
+
+  # Metasploitable3 (Vulnerable Windows Target)
+  metasploitable3:
+    image: rapid7/metasploitable3:latest
+    container_name: kaliagent-metasploitable3
+    restart: unless-stopped
+    ports:
+      - "445:445"   # SMB
+      - "139:139"   # NetBIOS
+      - "3389:3389" # RDP
+    networks:
+      - attack-network
+    labels:
+      - "kaliagent.target=windows"
+      - "kaliagent.difficulty=easy"
+
+  # Nginx Reverse Proxy (Optional - for HTTPS)
+  nginx:
+    image: nginx:alpine
+    container_name: kaliagent-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - kaliagent-network
+    depends_on:
+      - kaliagent
+    profiles:
+      - https  # Only start with: docker-compose --profile https up
+
+networks:
+  kaliagent-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.100.0/24
+  attack-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.101.0/24
+    labels:
+      - "kaliagent.isolated=true"
+
+volumes:
+  redis-data:
+  ollama-data:

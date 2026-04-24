@@ -1,0 +1,142 @@
+# KaliAgent v4 - GitLab CI/CD Pipeline
+# Automated testing, building, and deployment
+
+stages:
+  - lint
+  - test
+  - build
+  - security
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+# Linting
+lint:
+  stage: lint
+  image: python:3.11-slim
+  script:
+    - pip install flake8 black mypy
+    - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    - black --check .
+    - mypy . --ignore-missing-imports
+  allow_failure: true
+
+# Unit Tests
+unit-tests:
+  stage: test
+  image: python:3.11-slim
+  services:
+    - redis:alpine
+  before_script:
+    - pip install -r requirements.txt
+    - pip install pytest pytest-cov
+  script:
+    - pytest tests/unit -v --cov=. --cov-report=xml --cov-report=html
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - htmlcov/
+    expire_in: 1 week
+
+# End-to-End Tests
+e2e-tests:
+  stage: test
+  image: python:3.11-slim
+  services:
+    - docker:dind
+  before_script:
+    - pip install docker-compose pytest
+    - docker-compose up -d
+    - sleep 30  # Wait for services to start
+  script:
+    - pytest tests/e2e -v --tb=short
+  after_script:
+    - docker-compose down
+  allow_failure: true
+
+# Build Docker Image
+build-docker:
+  stage: build
+  image: docker:24
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+    - tags
+
+# Security Scan
+security-scan:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy fs --security-checks vuln,secret .
+    - trivy image --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:latest
+  allow_failure: true
+  only:
+    - main
+
+# Deploy to Staging
+deploy-staging:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  script:
+    - kubectl apply -f k8s/staging/
+    - kubectl rollout status deployment/kaliagent-staging
+  environment:
+    name: staging
+    url: https://staging.kaliagent.example.com
+  only:
+    - develop
+
+# Deploy to Production
+deploy-production:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  script:
+    - kubectl apply -f k8s/production/
+    - kubectl rollout status deployment/kaliagent-production
+    - kubectl get pods -l app=kaliagent
+  environment:
+    name: production
+    url: https://kaliagent.example.com
+  when: manual
+  only:
+    - tags
+
+# Publish Test Report
+publish-report:
+  stage: deploy
+  image: python:3.11-slim
+  script:
+    - pip install junit2html
+    - junit2html report.xml report.html
+  artifacts:
+    paths:
+      - report.html
+    expire_in: 30 days
+  only:
+    - main
