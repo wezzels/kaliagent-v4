@@ -1,0 +1,70 @@
+🏢 AD Agent initialized: ad-20260425233400
+   Target domain: CORP.LOCAL
+   DC IP: 192.168.1.10
+
+🔐 Authenticating to AD...
+✅ Successfully authenticated as: pentester@CORP.LOCAL
+   Method: password
+
+=== DOMAIN ENUMERATION ===
+
+🔍 Enumerating domain...
+   Domain: CORP.LOCAL
+   Functional Level: Windows Server 2016
+   DC Count: 2
+   Password Policy: Min 7 chars
+
+=== USER ENUMERATION ===
+
+👥 Enumerating users...
+   Found 4 users
+   ⚠️  administrator: adminCount=1
+   ⚠️  svc_sql: SPN detected (MSSQLSvc)
+   ⚠️  jsmith: No preauth required (AS-REP roastable!)
+
+=== KERBEROASTING ===
+
+🎯 Performing Kerberoasting...
+   ✓ Got TGS for svc_sql (MSSQLSvc/sql01.corp.local:1433)
+   Total tickets: 1
+   ⚠️  Hashes can be cracked offline with Hashcat
+
+=== AS-REP ROASTING ===
+
+🎯 Performing AS-REP Roasting...
+   ✓ Got AS-REP hash for jsmith
+   Total hashes: 1
+
+=== DCSYNC ===
+
+☠️  Performing DCSync attack...
+   Target: krbtgt
+   ✅ DCSync successful!
+   Hash: 8846f7eaee8fb117ad06bdd830b7586c
+   ⚠️  CRITICAL: This allows Golden Ticket creation!
+
+=== ACL ABUSE ===
+
+🔍 Checking for ACL abuse...
+   ⚠️  GenericAll on User Object (CVSS 8.0)
+   ⚠️  Force Change Password (CVSS 7.5)
+   ⚠️  Write ServicePrincipalName (CVSS 9.0)
+
+============================================================
+🏢 ACTIVE DIRECTORY ASSESSMENT COMPLETE
+============================================================
+Domain: CORP.LOCAL
+Users: 4
+Computers: 3
+Total Findings: 8
+  Critical: 2
+  High: 4
+  Medium: 1
+  Low: 1
+
+Attack Techniques Used:
+  • kerberoasting
+  • asrep_roasting
+  • dcsync
+  • acl_abuse
+  • laps_dump

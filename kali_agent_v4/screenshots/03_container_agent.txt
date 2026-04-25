@@ -1,0 +1,68 @@
+🐳 Container Agent initialized: container-20260425233400
+   Target: localhost
+   K8s Context: docker-desktop
+
+=== DOCKER DAEMON CHECK ===
+
+🔍 Checking Docker daemon...
+   Docker Version: 24.0.7
+   Containers Running: 12
+   SELinux: False
+   Rootless: False
+
+=== CONTAINER ENUMERATION ===
+
+🔍 Enumerating containers...
+   Found 3 containers
+   ⚠️  /jenkins: PRIVILEGED MODE (CVSS 9.0)
+   ⚠️  /jenkins: Docker socket mounted (CVSS 10.0)
+   ⚠️  /jenkins: SYS_ADMIN capability (CVSS 7.5)
+
+=== ESCAPE VECTORS ===
+
+🔍 Checking for container escape vectors...
+   ⚠️  VULNERABLE: Docker Socket - Full host control possible!
+   ✅ Secure: Proc Mount
+   ✅ Secure: Sys Module
+
+=== SECRETS EXTRACTION ===
+
+🔐 Extracting secrets from containers...
+   Environment Variables: 2
+   ⚠️  DATABASE_URL: postgres://admin:password123@db:5432/app
+   ⚠️  API_KEY: sk-xxxxxxxxxxxxxxxxxxxxxxxx
+   Files: 1
+   ⚠️  /var/lib/postgresql/data/.pgpass: PostgreSQL password file
+
+=== K8S RBAC ===
+
+🔍 Checking K8s RBAC...
+   ⚠️  Cluster Admin Binding (CVSS 9.0)
+   ⚠️  Wildcard Permissions (CVSS 7.5)
+   ⚠️  Pod Exec Permission (CVSS 7.5)
+
+=== POD SECURITY ===
+
+🔍 Checking K8s Pod Security...
+   Found 3 PSS violations
+   ⚠️  production/web-app-7d8f9c: Privileged container
+   ⚠️  production/database-0: Running as root
+   ⚠️  development/test-pod: Host network enabled
+
+============================================================
+🐳 CONTAINER SECURITY ASSESSMENT COMPLETE
+============================================================
+Target: localhost
+Containers: 3
+Images: 3
+Total Findings: 15
+  Critical: 4
+  High: 6
+  Medium: 4
+  Low: 1
+
+Attack Vectors:
+  • container_escape
+  • secrets_extract
+  • k8s_rbac_abuse
+  • supply_chain
