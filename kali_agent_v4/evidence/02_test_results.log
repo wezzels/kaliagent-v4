@@ -1,0 +1,138 @@
+=== E2E TEST EXECUTION ===
+Date: Sat Apr 25 12:47:31 AM UTC 2026
+Python: Python 3.12.3
+Pytest: pytest 7.4.4
+
+=== TEST RESULTS ===
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/wez/stsgym-work/agentic_ai
+configfile: pytest.ini
+plugins: anyio-4.13.0
+collecting ... collected 17 items
+
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_01_dashboard_loads FAILED [  5%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_02_health_check FAILED [ 11%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_03_websocket_connection FAILED [ 17%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_04_scan_network FAILED [ 23%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_05_sql_injection_attack FAILED [ 29%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_06_generate_payload FAILED [ 35%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_07_c2_agent_registration FAILED [ 41%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_08_wifi_scan PASSED [ 47%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_09_llm_analysis FAILED [ 52%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_10_generate_report_pdf FAILED [ 58%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_11_generate_report_html FAILED [ 64%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_12_natural_language_command FAILED [ 70%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_13_attack_history FAILED [ 76%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_14_system_stats FAILED [ 82%]
+tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_15_full_workflow FAILED [ 88%]
+tests/e2e/test_kaliagent_e2e.py::TestSecurity::test_security_headers FAILED [ 94%]
+tests/e2e/test_kaliagent_e2e.py::TestSecurity::test_rate_limiting FAILED [100%]
+
+=================================== FAILURES ===================================
+___________________ TestKaliAgentE2E.test_01_dashboard_loads ___________________
+tests/e2e/test_kaliagent_e2e.py:27: in test_01_dashboard_loads
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+____________________ TestKaliAgentE2E.test_02_health_check _____________________
+tests/e2e/test_kaliagent_e2e.py:34: in test_02_health_check
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+________________ TestKaliAgentE2E.test_03_websocket_connection _________________
+tests/e2e/test_kaliagent_e2e.py:41: in test_03_websocket_connection
+    import socketio
+E   ModuleNotFoundError: No module named 'socketio'
+____________________ TestKaliAgentE2E.test_04_scan_network _____________________
+tests/e2e/test_kaliagent_e2e.py:73: in test_04_scan_network
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+________________ TestKaliAgentE2E.test_05_sql_injection_attack _________________
+tests/e2e/test_kaliagent_e2e.py:92: in test_05_sql_injection_attack
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+__________________ TestKaliAgentE2E.test_06_generate_payload ___________________
+tests/e2e/test_kaliagent_e2e.py:124: in test_06_generate_payload
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+________________ TestKaliAgentE2E.test_07_c2_agent_registration ________________
+tests/e2e/test_kaliagent_e2e.py:147: in test_07_c2_agent_registration
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+____________________ TestKaliAgentE2E.test_09_llm_analysis _____________________
+tests/e2e/test_kaliagent_e2e.py:191: in test_09_llm_analysis
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+_________________ TestKaliAgentE2E.test_10_generate_report_pdf _________________
+tests/e2e/test_kaliagent_e2e.py:225: in test_10_generate_report_pdf
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+________________ TestKaliAgentE2E.test_11_generate_report_html _________________
+tests/e2e/test_kaliagent_e2e.py:247: in test_11_generate_report_html
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+______________ TestKaliAgentE2E.test_12_natural_language_command _______________
+tests/e2e/test_kaliagent_e2e.py:263: in test_12_natural_language_command
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+___________________ TestKaliAgentE2E.test_13_attack_history ____________________
+tests/e2e/test_kaliagent_e2e.py:276: in test_13_attack_history
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+____________________ TestKaliAgentE2E.test_14_system_stats _____________________
+tests/e2e/test_kaliagent_e2e.py:287: in test_14_system_stats
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+____________________ TestKaliAgentE2E.test_15_full_workflow ____________________
+tests/e2e/test_kaliagent_e2e.py:298: in test_15_full_workflow
+    assert scan_response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404]>.status_code
+______________________ TestSecurity.test_security_headers ______________________
+tests/e2e/test_kaliagent_e2e.py:341: in test_security_headers
+    assert 'X-Frame-Options' in response.headers
+E   AssertionError: assert 'X-Frame-Options' in {'Server': 'BaseHTTP/0.6 Python/3.12.3', 'Date': 'Sat, 25 Apr 2026 00:47:32 GMT'}
+E    +  where {'Server': 'BaseHTTP/0.6 Python/3.12.3', 'Date': 'Sat, 25 Apr 2026 00:47:32 GMT'} = <Response [404]>.headers
+_______________________ TestSecurity.test_rate_limiting ________________________
+tests/e2e/test_kaliagent_e2e.py:354: in test_rate_limiting
+    assert 429 in responses or all(r == 200 for r in responses[:10])
+E   assert (429 in [404, 404, 404, 404, 404, 404, ...] or False)
+E    +  where False = all(<generator object TestSecurity.test_rate_limiting.<locals>.<genexpr> at 0x792013cf28e0>)
+=============================== warnings summary ===============================
+../../../../../usr/lib/python3/dist-packages/_pytest/config/__init__.py:1373
+  /usr/lib/python3/dist-packages/_pytest/config/__init__.py:1373: PytestConfigWarning: Unknown config option: asyncio_mode
+  
+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_01_dashboard_loads
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_02_health_check
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_03_websocket_connection
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_04_scan_network
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_05_sql_injection_attack
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_06_generate_payload
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_07_c2_agent_registration
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_09_llm_analysis
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_10_generate_report_pdf
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_11_generate_report_html
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_12_natural_language_command
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_13_attack_history
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_14_system_stats
+FAILED tests/e2e/test_kaliagent_e2e.py::TestKaliAgentE2E::test_15_full_workflow
+FAILED tests/e2e/test_kaliagent_e2e.py::TestSecurity::test_security_headers
+FAILED tests/e2e/test_kaliagent_e2e.py::TestSecurity::test_rate_limiting - as...
+=================== 16 failed, 1 passed, 1 warning in 0.15s ====================
+Tests skipped (dashboard not running)

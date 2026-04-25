@@ -1,0 +1,29 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║  🍀 KALIAGENT V4 - DASHBOARD STARTUP                          ║
+╚═══════════════════════════════════════════════════════════════╝
+
+$ python phase6/dashboard_v2.py
+
+🍀 Starting KaliAgent v4 Dashboard v2...
+📊 Access: http://localhost:5007
+
+[2026-04-24 06:00:00] Initializing dashboard...
+[2026-04-24 06:00:01] ✅ Connected to Redis (port 6379)
+[2026-04-24 06:00:02] ✅ Connected to Ollama (port 11434)
+[2026-04-24 06:00:03] ✅ Sliver C2 active (port 8888)
+[2026-04-24 06:00:03] ✅ Empire C2 active (port 1337)
+[2026-04-24 06:00:04] ✅ Enhanced C2 active (port 8889)
+[2026-04-24 06:00:05] ✅ Lab network verified (10.0.100.0/24)
+
+╔═══════════════════════════════════════════════════════════════╗
+║  📊 SYSTEM STATS                                              ║
+╠═══════════════════════════════════════════════════════════════╣
+║  CPU Usage:     ████████░░░░░░░░░░░░  23.5%                  ║
+║  Memory Usage:  ██████████████░░░░░░  45.2%                  ║
+║  Disk Usage:    ████████████████████░░  67.8%                ║
+║  Network RX:    1024.5 KB/s                                  ║
+║  Network TX:    512.3 KB/s                                   ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🎉 Dashboard ready! Access: http://localhost:5007

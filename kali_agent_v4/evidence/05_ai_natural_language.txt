@@ -1,0 +1,68 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║  🤖 KALIAGENT V4 - AI NATURAL LANGUAGE COMMAND                ║
+╚═══════════════════════════════════════════════════════════════╝
+
+$ ./kaliagent ai "Find all web servers in 10.0.100.0/24 and check for SQL injection"
+
+🤖 Processing natural language command...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧠 AI ANALYSIS:
+
+Input: "Find all web servers in 10.0.100.0/24 and check for SQL injection"
+
+Parsed Intent:
+  • Action: scan + attack
+  • Target Range: 10.0.100.0/24
+  • Filter: Web servers (port 80, 443)
+  • Attack Type: SQL injection
+
+Recommended Plan:
+  1. Scan 10.0.100.0/24 for ports 80,443
+  2. Identify web servers
+  3. Run SQLMap on each target
+  4. Prioritize by vulnerability severity
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Executing Plan...
+
+[1/4] Scanning for web servers...
+  ✓ Found: 10.0.100.10:3000 (Juice Shop)
+  ✓ Found: 10.0.100.10:80 (Apache)
+  ✓ Found: 10.0.100.20:80 (IIS)
+
+[2/4] Analyzing technologies...
+  ✓ Juice Shop: Angular + SQLite (High probability of SQLi)
+  ✓ Apache 2.4.18: PHP + MySQL (Medium probability)
+  ✓ IIS: ASP.NET (Low probability)
+
+[3/4] Running SQLMap on high-priority targets...
+  ✓ Testing 10.0.100.10:3000...
+  [!] VULNERABLE! Boolean-based SQL injection confirmed
+  
+  ✓ Testing 10.0.100.10:80...
+  [!] VULNERABLE! Error-based SQL injection confirmed
+
+[4/4] Generating report...
+  ✓ Documenting findings
+  ✓ Calculating CVSS scores
+  ✓ Writing remediation steps
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 AI COMMAND COMPLETE!
+
+Results:
+  • Web Servers Found: 3
+  • SQL Injection Vulnerabilities: 2
+  • Risk Level: CRITICAL
+
+AI Recommendation:
+  "Immediate patching required for 10.0.100.10. Both web 
+   applications are vulnerable to SQL injection, allowing 
+   complete database compromise."
+
+💾 Full report: reports/ai_scan_20260424_062000.pdf

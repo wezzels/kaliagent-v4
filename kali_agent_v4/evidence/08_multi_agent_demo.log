@@ -1,0 +1,7 @@
+=== MULTI-AGENT DEMONSTRATION ===
+Date: Sat Apr 25 12:47:32 AM UTC 2026
+
+Traceback (most recent call last):
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/phase7/orchestrator.py", line 15, in <module>
+    from .agent_base import AgentBase, AgentRole, AgentStatus, Task, Intelligence, AgentState
+ImportError: attempted relative import with no known parent package

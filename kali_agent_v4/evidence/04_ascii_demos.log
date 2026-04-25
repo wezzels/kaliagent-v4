@@ -1,0 +1,31 @@
+🍀 KaliAgent v4 - Creating Demo Recordings
+============================================================
+
+📝 Creating: Dashboard Startup
+✅ Created: ./recordings/demos/01_dashboard_startup.txt
+
+📝 Creating: Network Scan
+✅ Created: ./recordings/demos/02_network_scan.txt
+
+📝 Creating: SQL Injection Attack
+✅ Created: ./recordings/demos/03_sql_injection.txt
+
+📝 Creating: Report Generation
+✅ Created: ./recordings/demos/04_report_generation.txt
+
+📝 Creating: AI Natural Language
+✅ Created: ./recordings/demos/05_ai_natural_language.txt
+
+============================================================
+✅ All demo recordings created!
+
+Output directory: ./recordings/demos/
+
+Files created:
+  📄 01_dashboard_startup.txt (2,155 bytes)
+  📄 02_network_scan.txt (2,099 bytes)
+  📄 03_sql_injection.txt (3,275 bytes)
+  📄 04_report_generation.txt (4,521 bytes)
+  📄 05_ai_natural_language.txt (2,622 bytes)
+
+💡 Tip: These can be converted to GIFs or embedded in docs!

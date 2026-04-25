@@ -1,0 +1,76 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║  📄 KALIAGENT V4 - PROFESSIONAL REPORT GENERATION             ║
+╚═══════════════════════════════════════════════════════════════╝
+
+$ ./kaliagent report -f pdf --output ./reports
+
+📄 Generating penetration test report...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[1/7] Executive Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Analyzing attack results...
+[✓] Generating risk assessment...
+[✓] Writing executive overview...
+    → 15 vulnerabilities discovered
+    → 2 Critical, 5 High, 8 Medium
+    → Immediate action recommended
+
+[2/7] Scope of Engagement
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Documenting target scope...
+[✓] Listing in-scope systems...
+[✓] Defining rules of engagement...
+
+[3/7] Methodology
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] OSSTMM compliance verified
+[✓] Tools documented
+[✓] Techniques catalogued
+
+[4/7] Detailed Findings
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Finding #1: SQL Injection (Critical)
+[✓] Finding #2: EternalBlue (Critical)
+[✓] Finding #3: Outdated Apache (High)
+[✓] Finding #4: Weak Credentials (High)
+[✓] Finding #5-15: (Medium/Low)
+
+[5/7] Evidence
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Including 23 screenshots
+[✓] Attacking request/response logs
+[✓] Embedding network diagrams
+
+[6/7] Remediation Recommendations
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Prioritized by risk level
+[✓] Step-by-step fix instructions
+[✓] Estimated effort for each
+
+[7/7] CVSS Scoring & Conclusion
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Calculating CVSS 3.1 scores
+[✓] Writing conclusion
+[✓] Final review...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 REPORT GENERATION COMPLETE!
+
+Generated Files:
+  📄 PDF:  reports/pentest_report_20260424_061500.pdf (2.4 MB, 47 pages)
+  🌐 HTML: reports/pentest_report_20260424_061500.html (856 KB)
+  📊 JSON: reports/pentest_report_20260424_061500.json (124 KB)
+
+Preview:
+╔═══════════════════════════════════════════════════════════════╗
+║  PENETRATION TEST REPORT                                      ║
+║  Client: Internal Security Assessment                         ║
+║  Date: April 24, 2026                                         ║
+╠═══════════════════════════════════════════════════════════════╣
+║  EXECUTIVE SUMMARY                                            ║
+║  This assessment identified 15 security vulnerabilities...    ║
+╚═══════════════════════════════════════════════════════════════╝

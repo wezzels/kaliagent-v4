@@ -1,0 +1,47 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║  🔍 KALIAGENT V4 - NETWORK SCAN                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+$ ./kaliagent scan -t 10.0.100.0/24 --type nmap
+
+🔍 Starting nmap scan on 10.0.100.0/24...
+
+Scan Progress:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[████░░░░░░░░░░░░░░░░░░░░] 20% - Host discovery
+  → 10.0.100.1 (Gateway)
+  → 10.0.100.10 (Juice Shop)
+  → 10.0.100.20 (Windows Target)
+  → 10.0.100.30 (Linux Target)
+
+[████████░░░░░░░░░░░░░░░░] 40% - Port scanning
+  → 23 open ports discovered
+
+[████████████░░░░░░░░░░░░] 60% - Service detection
+  → SSH (22), HTTP (80), HTTPS (443)
+  → SMB (445), RDP (3389)
+
+[████████████████░░░░░░░░] 80% - OS detection
+  → Ubuntu 16.04 (10.0.100.10)
+  → Windows Server 2016 (10.0.100.20)
+  → Ubuntu 14.04 (10.0.100.30)
+
+[████████████████████████] 100% - Complete!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 SCAN RESULTS:
+
+  Hosts Discovered:      5
+  Open Ports:           23
+  Services Identified:  47
+  Vulnerabilities:      12
+
+⚠️  CRITICAL FINDINGS:
+  • MS17-010 (EternalBlue) - 10.0.100.20
+  • SQL Injection - 10.0.100.10:3000
+  • Outdated Apache 2.4.18 - 10.0.100.10
+
+💾 Results saved to: scans/scan_20260424_060500.json

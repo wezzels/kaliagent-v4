@@ -1,0 +1,15 @@
+📄 Generating Evidence Reports...
+============================================================
+Traceback (most recent call last):
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/scripts/generate_evidence_reports.py", line 185, in <module>
+    generate_evidence_reports()
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/scripts/generate_evidence_reports.py", line 142, in generate_evidence_reports
+    generator = ReportGenerator(output_dir=output_dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/phase6/report_generator.py", line 27, in __init__
+    self._setup_custom_styles()
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/phase6/report_generator.py", line 58, in _setup_custom_styles
+    self.styles.add(ParagraphStyle(
+  File "/home/wez/.local/lib/python3.12/site-packages/reportlab/lib/styles.py", line 253, in add
+    raise KeyError("Style '%s' already defined in stylesheet" % key)
+KeyError: "Style 'BodyText' already defined in stylesheet"
