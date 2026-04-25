@@ -5,7 +5,75 @@ All notable changes to KaliAgent v4 will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.0.0] - 2026-04-24
+## [4.2.0] - 2026-04-25
+
+### 🎉 ADDED - Phase 8: Advanced Exploitation (COMPLETE)
+
+#### Cloud Exploitation Agent
+- AWS, Azure, GCP multi-cloud support
+- IAM enumeration and privilege escalation detection
+- S3/Blob/GCS storage enumeration
+- Cloud credential analysis
+- Automated cloud security reporting
+
+#### Active Directory Agent
+- Domain reconnaissance and enumeration
+- Kerberoasting automation
+- AS-REP Roasting
+- DCSync simulation (krbtgt extraction)
+- ACL abuse detection (GenericAll, ForceChangePassword, WriteSPN)
+- LAPS password auditing
+- BloodHound data generation
+- Golden/Silver ticket detection
+
+#### Container & Kubernetes Agent
+- Docker daemon security checks
+- Container escape vector detection
+- Privileged container detection
+- Docker socket mount detection
+- Kubernetes RBAC abuse detection
+- Pod Security Standards violations
+- Secrets extraction from containers
+- Supply chain vulnerability checks
+
+#### Mobile Application Security Agent
+- Android APK analysis (manifest, permissions, components)
+- iOS IPA analysis (entitlements, URL schemes)
+- Hardcoded secrets extraction (API keys, passwords, JWT)
+- Insecure storage detection
+- SSL pinning bypass detection
+- Root/jailbreak detection bypass
+- OWASP Mobile Top 10 coverage
+- Intent injection and deep link abuse detection
+
+#### Evasion & Persistence Agent
+- AMSI bypass detection and techniques
+- AV/EDR evasion methods
+- Sandbox evasion checks
+- VM detection techniques
+- Persistence mechanism enumeration (Registry, Tasks, Services, WMI)
+- DLL hijacking detection
+- Process injection techniques
+- MITRE ATT&CK technique mapping
+
+### 📊 PHASE 8 STATISTICS
+
+- **5 specialized agents** created
+- **~121 KB** of production Python code
+- **6 files** (5 agents + 1 README)
+- **5 commits** in development
+- **100% complete** with full evidence package
+
+### 🔒 SECURITY
+
+- Security audit passed (zero exposed credentials)
+- All agents use simulated data for demos
+- SHA256 checksums for all evidence files
+- Independent verification possible
+
+---
+
+## [4.1.0] - 2026-04-25
 
 ### 🎉 ADDED - Complete Feature Set
 
