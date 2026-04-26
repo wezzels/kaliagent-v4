@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+  File "/home/wez/stsgym-work/agentic_ai/kali_agent_v4/phase8/mobile_agent.py", line 107
+    self Decompiled_code = []
+         ^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax
