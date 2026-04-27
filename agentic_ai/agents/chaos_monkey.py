@@ -209,11 +209,11 @@ class ChaosMonkeyAgent:
     """
     Chaos Monkey Agent for chaos engineering experiments,
     failure injection, and resiliency testing.
-    
+
     Inspired by Netflix Chaos Monkey - randomly terminates instances
     and injects failures to build resilient systems.
     """
-    
+
     def __init__(self, agent_id: str = "chaos-monkey-agent"):
         self.agent_id = agent_id
         self.targets: Dict[str, Target] = {}
@@ -223,18 +223,18 @@ class ChaosMonkeyAgent:
         self.blackout_windows: Dict[str, BlackoutWindow] = {}
         self.metric_thresholds: Dict[str, MetricThreshold] = {}
         self.resiliency_scores: Dict[str, ResiliencyScore] = {}
-        
+
         # Default abort thresholds
         self.default_abort_thresholds = {
             'error_rate': 5.0,  # 5% error rate
             'latency_p99': 5000,  # 5 seconds
             'availability': 95.0,  # 95% availability
         }
-    
+
     # ============================================
     # Target Management
     # ============================================
-    
+
     def register_target(
         self,
         target_type: TargetType,
@@ -258,10 +258,10 @@ class ChaosMonkeyAgent:
             tags=tags or [],
             critical=critical,
         )
-        
+
         self.targets[target.target_id] = target
         return target
-    
+
     def get_targets(
         self,
         target_type: Optional[TargetType] = None,
@@ -271,21 +271,21 @@ class ChaosMonkeyAgent:
     ) -> List[Target]:
         """Get targets with filtering."""
         targets = list(self.targets.values())
-        
+
         if target_type:
             targets = [t for t in targets if t.target_type == target_type]
-        
+
         if cloud_provider:
             targets = [t for t in targets if t.cloud_provider == cloud_provider]
-        
+
         if region:
             targets = [t for t in targets if t.region == region]
-        
+
         if critical is not None:
             targets = [t for t in targets if t.critical == critical]
-        
+
         return targets
-    
+
     def select_random_targets(
         self,
         count: int = 1,
@@ -294,20 +294,20 @@ class ChaosMonkeyAgent:
     ) -> List[Target]:
         """Randomly select targets for chaos experiment."""
         candidates = self.get_targets(target_type=target_type)
-        
+
         if exclude_critical:
             candidates = [t for t in candidates if not t.critical]
-        
+
         if not candidates:
             return []
-        
+
         count = min(count, len(candidates))
         return random.sample(candidates, count)
-    
+
     # ============================================
     # Experiment Management
     # ============================================
-    
+
     def create_experiment(
         self,
         name: str,
@@ -338,10 +338,10 @@ class ChaosMonkeyAgent:
             abort_thresholds=abort_thresholds or self.default_abort_thresholds.copy(),
             created_by=created_by,
         )
-        
+
         self.experiments[experiment.experiment_id] = experiment
         return experiment
-    
+
     def schedule_experiment(
         self,
         experiment_id: str,
@@ -351,17 +351,17 @@ class ChaosMonkeyAgent:
         """Schedule experiment for execution."""
         if experiment_id not in self.experiments:
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.scheduled_start = start_time
-        
+
         if end_time:
             experiment.scheduled_end = end_time
         else:
             experiment.scheduled_end = start_time + timedelta(minutes=experiment.duration_minutes)
-        
+
         return True
-    
+
     def assign_targets(
         self,
         experiment_id: str,
@@ -370,61 +370,61 @@ class ChaosMonkeyAgent:
         """Assign targets to experiment."""
         if experiment_id not in self.experiments:
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.targets = target_ids
         experiment.target_count = len(target_ids)
-        
+
         return True
-    
+
     def start_experiment(self, experiment_id: str) -> bool:
         """Start chaos experiment."""
         if experiment_id not in self.experiments:
             return False
-        
+
         # Check blackout windows
         if self._is_in_blackout():
             logger.warning(f"Experiment {experiment_id} blocked by blackout window")
             return False
-        
+
         # Check safety constraints
         if not self._check_safety_constraints(experiment_id):
             logger.warning(f"Experiment {experiment_id} blocked by safety constraints")
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.status = ExperimentStatus.RUNNING
         experiment.started_at = datetime.utcnow()
-        
+
         # Create experiment runs for each target
         for target_id in experiment.targets:
             self._create_experiment_run(experiment_id, target_id)
-        
+
         return True
-    
+
     def _create_experiment_run(self, experiment_id: str, target_id: str) -> ExperimentRun:
         """Create individual experiment run."""
         experiment = self.experiments[experiment_id]
-        
+
         run = ExperimentRun(
             run_id=self._generate_id("run"),
             experiment_id=experiment_id,
             target_id=target_id,
             status="pending",
         )
-        
+
         self.runs[run.run_id] = run
         return run
-    
+
     def execute_termination(self, run_id: str) -> bool:
         """Execute instance termination."""
         if run_id not in self.runs:
             return False
-        
+
         run = self.runs[run_id]
         run.status = "running"
         run.started_at = datetime.utcnow()
-        
+
         # Simulate termination (in real implementation, would call cloud API)
         target = self.targets.get(run.target_id)
         if target:
@@ -435,14 +435,14 @@ class ChaosMonkeyAgent:
                 'cloud_provider': target.cloud_provider,
                 'region': target.region,
             }
-        
+
         # Simulate completion
         run.completed_at = datetime.utcnow()
         run.duration_seconds = (run.completed_at - run.started_at).total_seconds()
         run.status = "completed"
-        
+
         return True
-    
+
     def execute_latency_injection(
         self,
         run_id: str,
@@ -452,26 +452,26 @@ class ChaosMonkeyAgent:
         """Execute latency injection."""
         if run_id not in self.runs:
             return False
-        
+
         run = self.runs[run_id]
         run.status = "running"
         run.started_at = datetime.utcnow()
-        
+
         actual_latency = latency_ms * (1 + random.uniform(-jitter_percent/100, jitter_percent/100))
-        
+
         run.result = {
             'action': 'latency_injection',
             'latency_ms': latency_ms,
             'actual_latency_ms': actual_latency,
             'jitter_percent': jitter_percent,
         }
-        
+
         run.completed_at = datetime.utcnow()
         run.duration_seconds = (run.completed_at - run.started_at).total_seconds()
         run.status = "completed"
-        
+
         return True
-    
+
     def complete_experiment(
         self,
         experiment_id: str,
@@ -481,33 +481,33 @@ class ChaosMonkeyAgent:
         """Complete chaos experiment."""
         if experiment_id not in self.experiments:
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.status = ExperimentStatus.COMPLETED
         experiment.completed_at = datetime.utcnow()
         experiment.actual_outcome = actual_outcome
         experiment.lessons_learned = lessons_learned or []
-        
+
         return True
-    
+
     def abort_experiment(self, experiment_id: str, reason: str) -> bool:
         """Abort chaos experiment."""
         if experiment_id not in self.experiments:
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.status = ExperimentStatus.ABORTED
         experiment.completed_at = datetime.utcnow()
         experiment.lessons_learned.append(f"Aborted: {reason}")
-        
+
         # Abort all running runs
         for run in self.runs.values():
             if run.experiment_id == experiment_id and run.status == "running":
                 run.status = "aborted"
                 run.completed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_experiments(
         self,
         experiment_type: Optional[ExperimentType] = None,
@@ -516,22 +516,22 @@ class ChaosMonkeyAgent:
     ) -> List[Experiment]:
         """Get experiments with filtering."""
         experiments = list(self.experiments.values())
-        
+
         if experiment_type:
             experiments = [e for e in experiments if e.experiment_type == experiment_type]
-        
+
         if status:
             experiments = [e for e in experiments if e.status == status]
-        
+
         if severity:
             experiments = [e for e in experiments if e.severity == severity]
-        
+
         return experiments
-    
+
     # ============================================
     # Safety Constraints
     # ============================================
-    
+
     def add_safety_constraint(
         self,
         name: str,
@@ -547,10 +547,10 @@ class ChaosMonkeyAgent:
             constraint_type=constraint_type,
             parameters=parameters or {},
         )
-        
+
         self.safety_constraints[constraint.constraint_id] = constraint
         return constraint
-    
+
     def add_blackout_window(
         self,
         name: str,
@@ -570,53 +570,53 @@ class ChaosMonkeyAgent:
             timezone=timezone,
             reason=reason,
         )
-        
+
         self.blackout_windows[window.window_id] = window
         return window
-    
+
     def _is_in_blackout(self) -> bool:
         """Check if current time is in blackout window."""
         now = datetime.utcnow()
         current_time = now.strftime("%H:%M")
         current_day = now.strftime("%A").lower()
-        
+
         for window in self.blackout_windows.values():
             if not window.enabled:
                 continue
-            
+
             if window.days and current_day not in window.days:
                 continue
-            
+
             if window.start_time <= current_time <= window.end_time:
                 return True
-        
+
         return False
-    
+
     def _check_safety_constraints(self, experiment_id: str) -> bool:
         """Check if experiment passes safety constraints."""
         experiment = self.experiments.get(experiment_id)
         if not experiment:
             return False
-        
+
         # Check critical target exclusion
         if experiment.blast_radius != BlastRadius.UNCONSTRAINED:
             for target_id in experiment.targets:
                 target = self.targets.get(target_id)
                 if target and target.critical:
                     return False
-        
+
         # Check max percentage constraint
         for constraint in self.safety_constraints.values():
             if not constraint.enabled:
                 continue
-            
+
             if constraint.constraint_type == "max_percentage":
                 max_pct = constraint.parameters.get('max_percentage', 10)
                 # Would check actual percentage here
                 pass
-        
+
         return True
-    
+
     def add_metric_threshold(
         self,
         experiment_id: str,
@@ -632,10 +632,10 @@ class ChaosMonkeyAgent:
             operator=operator,
             threshold_value=threshold_value,
         )
-        
+
         self.metric_thresholds[threshold.threshold_id] = threshold
         return threshold
-    
+
     def check_metric_thresholds(
         self,
         experiment_id: str,
@@ -643,14 +643,14 @@ class ChaosMonkeyAgent:
     ) -> List[str]:
         """Check if any metric thresholds are breached."""
         breached = []
-        
+
         for threshold in self.metric_thresholds.values():
             if threshold.experiment_id != experiment_id:
                 continue
-            
+
             metric_value = metrics.get(threshold.metric_name, 0)
             threshold.current_value = metric_value
-            
+
             # Check threshold
             if threshold.operator == 'gt' and metric_value > threshold.threshold_value:
                 threshold.breached = True
@@ -660,13 +660,13 @@ class ChaosMonkeyAgent:
                 threshold.breached = True
                 threshold.breach_count += 1
                 breached.append(threshold.metric_name)
-        
+
         return breached
-    
+
     # ============================================
     # Resiliency Scoring
     # ============================================
-    
+
     def calculate_resiliency_score(
         self,
         service_name: str,
@@ -682,7 +682,7 @@ class ChaosMonkeyAgent:
             ]
         else:
             service_experiments = list(self.experiments.values())
-        
+
         if not service_experiments:
             return ResiliencyScore(
                 score_id=self._generate_id("score"),
@@ -693,26 +693,26 @@ class ChaosMonkeyAgent:
                 degradation_score=0.0,
                 monitoring_score=0.0,
             )
-        
+
         # Calculate scores
         completed = [e for e in service_experiments if e.status == ExperimentStatus.COMPLETED]
         passed = len([e for e in completed if e.actual_outcome])  # Has outcome = passed
-        
+
         experiments_run = len(service_experiments)
         experiments_passed = passed
-        
+
         # Availability score (based on successful experiments)
         availability_score = (experiments_passed / experiments_run * 100) if experiments_run > 0 else 0
-        
+
         # Recovery score (based on MTTR)
         recovery_score = 80.0  # Default, would calculate from actual recovery times
-        
+
         # Degradation score (how well system degraded)
         degradation_score = 75.0  # Default
-        
+
         # Monitoring score (were issues detected?)
         monitoring_score = 90.0  # Default
-        
+
         # Overall weighted score
         overall_score = (
             availability_score * 0.4 +
@@ -720,7 +720,7 @@ class ChaosMonkeyAgent:
             degradation_score * 0.2 +
             monitoring_score * 0.1
         )
-        
+
         score = ResiliencyScore(
             score_id=self._generate_id("score"),
             service_name=service_name,
@@ -732,33 +732,33 @@ class ChaosMonkeyAgent:
             experiments_run=experiments_run,
             experiments_passed=experiments_passed,
         )
-        
+
         self.resiliency_scores[service_name] = score
         return score
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_chaos_dashboard(self) -> Dict[str, Any]:
         """Generate chaos engineering dashboard."""
         experiments = list(self.experiments.values())
         runs = list(self.runs.values())
-        
+
         # Experiments by status
         by_status = {}
         for status in ExperimentStatus:
             by_status[status.value] = len([e for e in experiments if e.status == status])
-        
+
         # Experiments by type
         by_type = {}
         for etype in ExperimentType:
             by_type[etype.value] = len([e for e in experiments if e.experiment_type == etype])
-        
+
         # Run success rate
         completed_runs = [r for r in runs if r.status == "completed"]
         failed_runs = [r for r in runs if r.status == "failed"]
-        
+
         return {
             'experiments': {
                 'total': len(experiments),
@@ -786,15 +786,15 @@ class ChaosMonkeyAgent:
                 'average_score': sum(s.overall_score for s in self.resiliency_scores.values()) / len(self.resiliency_scores) if self.resiliency_scores else 0,
             },
         }
-    
+
     def get_experiment_report(self, experiment_id: str) -> Dict[str, Any]:
         """Generate experiment report."""
         if experiment_id not in self.experiments:
             return {'error': 'Experiment not found'}
-        
+
         experiment = self.experiments[experiment_id]
         runs = [r for r in self.runs.values() if r.experiment_id == experiment_id]
-        
+
         return {
             'experiment': {
                 'experiment_id': experiment_id,
@@ -826,17 +826,17 @@ class ChaosMonkeyAgent:
                 'completed_at': experiment.completed_at.isoformat() if experiment.completed_at else None,
             },
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -889,7 +889,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = ChaosMonkeyAgent()
-    
+
     # Register targets
     target1 = agent.register_target(
         target_type=TargetType.INSTANCE,
@@ -900,7 +900,7 @@ if __name__ == "__main__":
         tags=['web', 'production'],
         critical=False,
     )
-    
+
     target2 = agent.register_target(
         target_type=TargetType.INSTANCE,
         name="web-server-2",
@@ -910,7 +910,7 @@ if __name__ == "__main__":
         tags=['web', 'production'],
         critical=False,
     )
-    
+
     target3 = agent.register_target(
         target_type=TargetType.INSTANCE,
         name="db-primary",
@@ -920,9 +920,9 @@ if __name__ == "__main__":
         tags=['database', 'production'],
         critical=True,  # Critical - won't be selected for random chaos
     )
-    
+
     print(f"Registered {len(agent.targets)} targets")
-    
+
     # Add blackout window (no chaos during business hours)
     agent.add_blackout_window(
         name="Business Hours",
@@ -932,7 +932,7 @@ if __name__ == "__main__":
         timezone="UTC",
         reason="Protect production during peak hours",
     )
-    
+
     # Add safety constraint
     agent.add_safety_constraint(
         name="Max 10% Capacity",
@@ -940,7 +940,7 @@ if __name__ == "__main__":
         constraint_type="max_percentage",
         parameters={'max_percentage': 10},
     )
-    
+
     # Create chaos experiment
     experiment = agent.create_experiment(
         name="Instance Termination Test",
@@ -961,30 +961,30 @@ if __name__ == "__main__":
         },
         created_by="chaos-team@example.com",
     )
-    
+
     # Select random targets (excluding critical)
     targets = agent.select_random_targets(count=2, target_type=TargetType.INSTANCE)
     target_ids = [t.target_id for t in targets]
-    
+
     agent.assign_targets(experiment.experiment_id, target_ids)
-    
+
     # Schedule experiment
     start_time = datetime.utcnow() + timedelta(hours=1)
     agent.schedule_experiment(experiment.experiment_id, start_time)
-    
+
     print(f"Created experiment: {experiment.name}")
     print(f"Targets: {len(experiment.targets)}")
-    
+
     # Start experiment (would fail if in blackout)
     if agent.start_experiment(experiment.experiment_id):
         print("Experiment started!")
-        
+
         # Execute termination on runs
         runs = [r for r in agent.runs.values() if r.experiment_id == experiment.experiment_id]
         for run in runs:
             agent.execute_termination(run.run_id)
             print(f"  Terminated: {run.result}")
-        
+
         # Complete experiment
         agent.complete_experiment(
             experiment.experiment_id,
@@ -997,16 +997,16 @@ if __name__ == "__main__":
         )
     else:
         print("Experiment blocked by safety constraints or blackout")
-    
+
     # Calculate resiliency score
     score = agent.calculate_resiliency_score("web-service")
     print(f"\nResiliency Score: {score.overall_score:.1f}/100")
-    
+
     # Get dashboard
     dashboard = agent.get_chaos_dashboard()
     print(f"\nChaos Dashboard:")
     print(f"  Experiments: {dashboard['experiments']['total']}")
     print(f"  Success Rate: {dashboard['runs']['success_rate']:.1f}%")
     print(f"  In Blackout: {dashboard['safety']['in_blackout']}")
-    
+
     print(f"\nState: {agent.get_state()}")

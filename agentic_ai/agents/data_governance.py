@@ -161,7 +161,7 @@ class DataGovernanceAgent:
     Data Governance Agent for data classification, retention,
     lineage tracking, quality monitoring, and access management.
     """
-    
+
     def __init__(self, agent_id: str = "data-governance-agent"):
         self.agent_id = agent_id
         self.assets: Dict[str, DataAsset] = {}
@@ -170,7 +170,7 @@ class DataGovernanceAgent:
         self.quality_rules: Dict[str, DataQualityRule] = {}
         self.quality_issues: Dict[str, QualityIssue] = {}
         self.access_requests: Dict[str, AccessRequest] = {}
-        
+
         # Default retention periods by data type
         self.default_retention = {
             DataType.PII: {'period': 730, 'unit': 'days', 'action': RetentionAction.DELETE},
@@ -180,7 +180,7 @@ class DataGovernanceAgent:
             DataType.LOGS: {'period': 90, 'unit': 'days', 'action': RetentionAction.DELETE},
             DataType.ANALYTICS: {'period': 365, 'unit': 'days', 'action': RetentionAction.AGGREGATE},
         }
-        
+
         # Classification criteria
         self.classification_keywords = {
             DataClassification.CRITICAL: ['trade_secret', 'crown_jewel', 'mission_critical'],
@@ -189,11 +189,11 @@ class DataGovernanceAgent:
             DataClassification.INTERNAL: ['internal', 'company_only'],
             DataClassification.PUBLIC: ['public', 'published', 'press'],
         }
-    
+
     # ============================================
     # Data Asset Management
     # ============================================
-    
+
     def register_asset(
         self,
         name: str,
@@ -218,11 +218,11 @@ class DataGovernanceAgent:
             location=location,
             system=system,
         )
-        
+
         self.assets[asset.asset_id] = asset
         logger.info(f"Registered asset: {asset.name}")
         return asset
-    
+
     def update_asset_metrics(
         self,
         asset_id: str,
@@ -232,18 +232,18 @@ class DataGovernanceAgent:
         """Update asset metrics."""
         if asset_id not in self.assets:
             return False
-        
+
         asset = self.assets[asset_id]
         asset.last_modified = datetime.utcnow()
-        
+
         if record_count is not None:
             asset.record_count = record_count
-        
+
         if size_bytes is not None:
             asset.size_bytes = size_bytes
-        
+
         return True
-    
+
     def get_assets(
         self,
         data_type: Optional[DataType] = None,
@@ -252,33 +252,33 @@ class DataGovernanceAgent:
     ) -> List[DataAsset]:
         """Get assets with filtering."""
         assets = list(self.assets.values())
-        
+
         if data_type:
             assets = [a for a in assets if a.data_type == data_type]
-        
+
         if classification:
             assets = [a for a in assets if a.classification == classification]
-        
+
         if owner:
             assets = [a for a in assets if a.owner == owner]
-        
+
         return assets
-    
+
     def classify_data(self, content: str) -> DataClassification:
         """Auto-classify data based on content keywords."""
         content_lower = content.lower()
-        
+
         for classification, keywords in self.classification_keywords.items():
             for keyword in keywords:
                 if keyword in content_lower:
                     return classification
-        
+
         return DataClassification.INTERNAL
-    
+
     # ============================================
     # Retention Policy Management
     # ============================================
-    
+
     def create_retention_policy(
         self,
         name: str,
@@ -299,17 +299,17 @@ class DataGovernanceAgent:
             regulatory_requirement=regulatory_requirement,
             legal_hold=legal_hold,
         )
-        
+
         self.retention_policies[policy.policy_id] = policy
         return policy
-    
+
     def get_retention_period(self, asset_id: str) -> Dict[str, Any]:
         """Get retention period for an asset."""
         if asset_id not in self.assets:
             return {'error': 'Asset not found'}
-        
+
         asset = self.assets[asset_id]
-        
+
         # Check for specific policy
         for policy in self.retention_policies.values():
             if asset.data_type in policy.data_types:
@@ -321,34 +321,34 @@ class DataGovernanceAgent:
                     'action': policy.action.value,
                     'legal_hold': policy.legal_hold,
                 }
-        
+
         # Use default
         default = self.default_retention.get(asset.data_type, {
             'period': 365,
             'unit': 'days',
             'action': RetentionAction.ARCHIVE,
         })
-        
+
         return {
             'policy_id': 'default',
             'retention_period': default['period'],
             'unit': default['unit'],
             'action': default['action'].value,
         }
-    
+
     def get_assets_due_for_action(self, action: RetentionAction) -> List[Dict[str, Any]]:
         """Get assets due for retention action."""
         due = []
         now = datetime.utcnow()
-        
+
         for asset in self.assets.values():
             retention = self.get_retention_period(asset.asset_id)
             if 'error' in retention:
                 continue
-            
+
             # Simulate created_at for demo
             age_days = 400  # In real impl, calculate from asset.created_at
-            
+
             if age_days >= retention['retention_period']:
                 due.append({
                     'asset_id': asset.asset_id,
@@ -356,13 +356,13 @@ class DataGovernanceAgent:
                     'action': retention['action'],
                     'days_overdue': age_days - retention['retention_period'],
                 })
-        
+
         return [d for d in due if d['action'] == action.value]
-    
+
     # ============================================
     # Data Lineage
     # ============================================
-    
+
     def add_lineage(
         self,
         source_asset: str,
@@ -380,10 +380,10 @@ class DataGovernanceAgent:
             process_name=process_name,
             frequency=frequency,
         )
-        
+
         self.lineage[lineage.lineage_id] = lineage
         return lineage
-    
+
     def update_lineage_status(
         self,
         lineage_id: str,
@@ -393,28 +393,28 @@ class DataGovernanceAgent:
         """Update lineage execution status."""
         if lineage_id not in self.lineage:
             return False
-        
+
         lineage = self.lineage[lineage_id]
         lineage.status = status
         lineage.last_run = datetime.utcnow()
         lineage.records_processed = records_processed
-        
+
         return True
-    
+
     def get_lineage(self, asset_id: str, direction: str = "both") -> Dict[str, Any]:
         """Get data lineage for an asset."""
         upstream = [
             l for l in self.lineage.values()
             if l.target_asset == asset_id
         ]
-        
+
         downstream = [
             l for l in self.lineage.values()
             if l.source_asset == asset_id
         ]
-        
+
         result = {'asset_id': asset_id}
-        
+
         if direction in ['upstream', 'both']:
             result['upstream'] = [
                 {
@@ -425,7 +425,7 @@ class DataGovernanceAgent:
                 }
                 for l in upstream
             ]
-        
+
         if direction in ['downstream', 'both']:
             result['downstream'] = [
                 {
@@ -436,13 +436,13 @@ class DataGovernanceAgent:
                 }
                 for l in downstream
             ]
-        
+
         return result
-    
+
     # ============================================
     # Data Quality
     # ============================================
-    
+
     def create_quality_rule(
         self,
         name: str,
@@ -462,25 +462,25 @@ class DataGovernanceAgent:
             threshold=threshold,
             severity=severity,
         )
-        
+
         self.quality_rules[rule.rule_id] = rule
         return rule
-    
+
     def execute_quality_check(self, rule_id: str, result: float) -> bool:
         """Execute quality check and record result."""
         if rule_id not in self.quality_rules:
             return False
-        
+
         rule = self.quality_rules[rule_id]
         rule.last_check = datetime.utcnow()
         rule.last_result = result
-        
+
         # Create issue if below threshold
         if result < rule.threshold:
             self._create_quality_issue(rule, result)
-        
+
         return True
-    
+
     def _create_quality_issue(self, rule: DataQualityRule, result: float):
         """Create quality issue from failed check."""
         issue = QualityIssue(
@@ -491,10 +491,10 @@ class DataGovernanceAgent:
             description=f"Quality check '{rule.name}' failed: {result:.1f}% < {rule.threshold}%",
             status="open",
         )
-        
+
         self.quality_issues[issue.issue_id] = issue
         logger.warning(f"Quality issue detected: {issue.description}")
-    
+
     def resolve_quality_issue(
         self,
         issue_id: str,
@@ -503,14 +503,14 @@ class DataGovernanceAgent:
         """Resolve a quality issue."""
         if issue_id not in self.quality_issues:
             return False
-        
+
         issue = self.quality_issues[issue_id]
         issue.status = "resolved"
         issue.resolved_at = datetime.utcnow()
         issue.remediation = remediation
-        
+
         return True
-    
+
     def get_quality_issues(
         self,
         asset_id: Optional[str] = None,
@@ -519,32 +519,32 @@ class DataGovernanceAgent:
     ) -> List[QualityIssue]:
         """Get quality issues with filtering."""
         issues = list(self.quality_issues.values())
-        
+
         if asset_id:
             issues = [i for i in issues if i.asset_id == asset_id]
-        
+
         if severity:
             issues = [i for i in issues if i.severity == severity]
-        
+
         if status:
             issues = [i for i in issues if i.status == status]
-        
+
         return issues
-    
+
     def get_quality_score(self, asset_id: str) -> Dict[str, Any]:
         """Calculate overall quality score for an asset."""
         rules = [r for r in self.quality_rules.values() if r.asset_id == asset_id]
-        
+
         if not rules:
             return {'asset_id': asset_id, 'score': None, 'message': 'No rules defined'}
-        
+
         scores = [r.last_result for r in rules if r.last_result is not None]
-        
+
         if not scores:
             return {'asset_id': asset_id, 'score': None, 'message': 'No checks executed'}
-        
+
         avg_score = sum(scores) / len(scores)
-        
+
         return {
             'asset_id': asset_id,
             'score': round(avg_score, 1),
@@ -552,27 +552,27 @@ class DataGovernanceAgent:
             'checks_executed': len(scores),
             'dimension_scores': self._get_dimension_scores(rules),
         }
-    
+
     def _get_dimension_scores(self, rules: List[DataQualityRule]) -> Dict[str, float]:
         """Get scores by quality dimension."""
         by_dimension: Dict[str, List[float]] = {}
-        
+
         for rule in rules:
             if rule.last_result is not None:
                 dim = rule.dimension.value
                 if dim not in by_dimension:
                     by_dimension[dim] = []
                 by_dimension[dim].append(rule.last_result)
-        
+
         return {
             dim: round(sum(scores) / len(scores), 1)
             for dim, scores in by_dimension.items()
         }
-    
+
     # ============================================
     # Access Management
     # ============================================
-    
+
     def request_access(
         self,
         asset_id: str,
@@ -590,10 +590,10 @@ class DataGovernanceAgent:
             access_level=access_level,
             justification=justification,
         )
-        
+
         self.access_requests[request.request_id] = request
         return request
-    
+
     def approve_access(
         self,
         request_id: str,
@@ -603,40 +603,40 @@ class DataGovernanceAgent:
         """Approve access request."""
         if request_id not in self.access_requests:
             return False
-        
+
         request = self.access_requests[request_id]
         request.status = "approved"
         request.approved_by = approved_by
         request.approved_at = datetime.utcnow()
         request.expires_at = datetime.utcnow() + timedelta(days=expires_in_days)
-        
+
         return True
-    
+
     def deny_access(self, request_id: str, denied_by: str, reason: str = "") -> bool:
         """Deny access request."""
         if request_id not in self.access_requests:
             return False
-        
+
         request = self.access_requests[request_id]
         request.status = "denied"
         request.approved_by = denied_by
         request.approved_at = datetime.utcnow()
-        
+
         if reason:
             request.justification += f" (Denied: {reason})"
-        
+
         return True
-    
+
     def revoke_access(self, request_id: str) -> bool:
         """Revoke approved access."""
         if request_id not in self.access_requests:
             return False
-        
+
         request = self.access_requests[request_id]
         request.status = "revoked"
-        
+
         return True
-    
+
     def get_access_requests(
         self,
         asset_id: Optional[str] = None,
@@ -645,45 +645,45 @@ class DataGovernanceAgent:
     ) -> List[AccessRequest]:
         """Get access requests with filtering."""
         requests = list(self.access_requests.values())
-        
+
         if asset_id:
             requests = [r for r in requests if r.asset_id == asset_id]
-        
+
         if status:
             requests = [r for r in requests if r.status == status]
-        
+
         if requester:
             requests = [r for r in requests if r.requester == requester]
-        
+
         return requests
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_governance_report(self) -> Dict[str, Any]:
         """Generate data governance report."""
         assets = list(self.assets.values())
         issues = list(self.quality_issues.values())
         requests = list(self.access_requests.values())
-        
+
         # Classification distribution
         by_classification = {}
         for cls in DataClassification:
             by_classification[cls.value] = len([a for a in assets if a.classification == cls])
-        
+
         # Data type distribution
         by_type = {}
         for dtype in DataType:
             by_type[dtype.value] = len([a for a in assets if a.data_type == dtype])
-        
+
         # Quality metrics
         open_issues = len([i for i in issues if i.status == 'open'])
         critical_issues = len([i for i in issues if i.severity == 'critical' and i.status == 'open'])
-        
+
         # Access metrics
         pending_requests = len([r for r in requests if r.status == 'pending'])
-        
+
         return {
             'assets': {
                 'total': len(assets),
@@ -711,16 +711,16 @@ class DataGovernanceAgent:
                 'policies_count': len(self.retention_policies),
             },
         }
-    
+
     def get_compliance_summary(self) -> Dict[str, Any]:
         """Get compliance summary for regulated data."""
         regulated_types = [DataType.PII, DataType.PHI, DataType.PCI]
-        
+
         regulated_assets = [
             a for a in self.assets.values()
             if a.data_type in regulated_types
         ]
-        
+
         summary = {}
         for dtype in regulated_types:
             assets = [a for a in regulated_assets if a.data_type == dtype]
@@ -729,23 +729,23 @@ class DataGovernanceAgent:
                 'classifications': list(set(a.classification.value for a in assets)),
                 'owners': list(set(a.owner for a in assets)),
             }
-        
+
         return {
             'regulated_data_types': summary,
             'total_regulated_assets': len(regulated_assets),
             'retention_policies': len(self.retention_policies),
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -797,7 +797,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = DataGovernanceAgent()
-    
+
     # Register assets
     customers = agent.register_asset(
         name="Customer Database",
@@ -810,9 +810,9 @@ if __name__ == "__main__":
         system="CRM",
         tags=['customers', 'pii', 'gdpr'],
     )
-    
+
     print(f"Registered asset: {customers.name}")
-    
+
     # Create retention policy
     policy = agent.create_retention_policy(
         name="PII Retention",
@@ -821,11 +821,11 @@ if __name__ == "__main__":
         action=RetentionAction.DELETE,
         regulatory_requirement="GDPR Art. 5(1)(e)",
     )
-    
+
     # Get retention period
     retention = agent.get_retention_period(customers.asset_id)
     print(f"Retention: {retention['retention_period']} {retention['unit']}")
-    
+
     # Add lineage
     lineage = agent.add_lineage(
         source_asset=customers.asset_id,
@@ -834,7 +834,7 @@ if __name__ == "__main__":
         process_name="daily_customer_etl",
         frequency="daily",
     )
-    
+
     # Create quality rules
     completeness_rule = agent.create_quality_rule(
         name="Email Completeness",
@@ -844,14 +844,14 @@ if __name__ == "__main__":
         threshold=95.0,
         severity="high",
     )
-    
+
     # Execute quality check
     agent.execute_quality_check(completeness_rule.rule_id, result=92.5)
-    
+
     # Get quality score
     score = agent.get_quality_score(customers.asset_id)
     print(f"Quality Score: {score['score']}")
-    
+
     # Request access
     access = agent.request_access(
         asset_id=customers.asset_id,
@@ -860,15 +860,15 @@ if __name__ == "__main__":
         access_level="read",
         justification="Business analysis for quarterly report",
     )
-    
+
     # Approve access
     agent.approve_access(access.request_id, "data-owner@example.com", expires_in_days=30)
-    
+
     # Get governance report
     report = agent.get_governance_report()
     print(f"\nGovernance Report:")
     print(f"  Total Assets: {report['assets']['total']}")
     print(f"  Open Issues: {report['quality']['open_issues']}")
     print(f"  Pending Access: {report['access']['pending']}")
-    
+
     print(f"\nState: {agent.get_state()}")

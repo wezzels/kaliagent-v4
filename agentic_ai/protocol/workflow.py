@@ -48,13 +48,13 @@ class RetryStrategy(str, Enum):
 @dataclass
 class RetryConfig:
     """Retry configuration for a task."""
-    
+
     strategy: RetryStrategy = RetryStrategy.NONE
     max_retries: int = 3
     initial_delay_ms: int = 1000
     max_delay_ms: int = 60000
     multiplier: float = 2.0
-    
+
     def get_delay(self, attempt: int) -> int:
         """Calculate delay for given attempt number."""
         if self.strategy == RetryStrategy.NONE:
@@ -72,73 +72,73 @@ class RetryConfig:
 @dataclass
 class Condition:
     """Conditional execution rule."""
-    
+
     condition_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     type: str = "expression"
     expression: Optional[str] = None
     function: Optional[Callable] = None
     required_status: Optional[TaskStatus] = None
-    
+
     def evaluate(self, context: Dict[str, Any]) -> bool:
         """Evaluate the condition."""
         if self.type == "status" and self.required_status:
             task_status = context.get("status")
             return task_status == self.required_status.value
-        
+
         if self.type == "expression" and self.expression:
             try:
                 safe_context = {k: v for k, v in context.items() if not k.startswith('_')}
                 return eval(self.expression, {"__builtins__": {}}, safe_context)
             except Exception:
                 return False
-        
+
         if self.type == "function" and self.function:
             try:
                 return self.function(context)
             except Exception:
                 return False
-        
+
         return True
 
 
 @dataclass
 class Task:
     """Enhanced task with advanced features."""
-    
+
     task_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     task_type: str = ""
     description: str = ""
     agent_type: str = ""
     payload: Dict[str, Any] = field(default_factory=dict)
-    
+
     status: TaskStatus = TaskStatus.PENDING
     execution_mode: ExecutionMode = ExecutionMode.SEQUENTIAL
     priority: int = 0
-    
+
     dependencies: List[str] = field(default_factory=list)
     conditions: List[Condition] = field(default_factory=list)
-    
+
     retry_config: RetryConfig = field(default_factory=RetryConfig)
     retry_count: int = 0
     last_error: Optional[str] = None
-    
+
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     started_at: Optional[str] = None
     completed_at: Optional[str] = None
     timeout_ms: Optional[int] = None
-    
+
     result: Optional[Dict[str, Any]] = None
-    
+
     rollback_task_id: Optional[str] = None
     compensating_transaction: Optional[Dict[str, Any]] = None
-    
+
     def can_start(self, completed_tasks: Dict[str, 'Task']) -> bool:
         """Check if task can start (dependencies met)."""
         for dep_id in self.dependencies:
             dep_task = completed_tasks.get(dep_id)
             if not dep_task or dep_task.status != TaskStatus.COMPLETED:
                 return False
-        
+
         for condition in self.conditions:
             context = {
                 "task": self,
@@ -147,19 +147,19 @@ class Task:
             }
             if not condition.evaluate(context):
                 return False
-        
+
         return True
-    
+
     def should_retry(self) -> bool:
         """Check if task should be retried."""
         if self.retry_config.strategy == RetryStrategy.NONE:
             return False
         return self.retry_count < self.retry_config.max_retries
-    
+
     def get_retry_delay(self) -> int:
         """Get delay before next retry."""
         return self.retry_config.get_delay(self.retry_count + 1)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -183,31 +183,31 @@ class Task:
 @dataclass
 class Workflow:
     """Enhanced workflow with advanced features."""
-    
+
     workflow_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     name: str = ""
     description: str = ""
     tasks: List[Task] = field(default_factory=list)
-    
+
     status: str = "draft"
     execution_mode: ExecutionMode = ExecutionMode.SEQUENTIAL
     parallel_limit: int = 5
-    
+
     enable_rollback: bool = True
     rollback_tasks: List[Task] = field(default_factory=list)
-    
+
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     started_at: Optional[str] = None
     completed_at: Optional[str] = None
     timeout_ms: Optional[int] = None
-    
+
     result: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
-    
+
     def add_task(self, task: Task):
         """Add a task to the workflow."""
         self.tasks.append(task)
-    
+
     def get_pending_tasks(self, completed_tasks: Dict[str, Task]) -> List[Task]:
         """Get tasks ready to execute."""
         pending = []
@@ -216,7 +216,7 @@ class Workflow:
                 if task.can_start(completed_tasks):
                     pending.append(task)
         return pending
-    
+
     def get_parallel_tasks(self, completed_tasks: Dict[str, Task]) -> List[Task]:
         """Get tasks that can run in parallel."""
         pending = self.get_pending_tasks(completed_tasks)
@@ -225,14 +225,14 @@ class Workflow:
             if t.execution_mode == ExecutionMode.PARALLEL
         ]
         return parallel_tasks[:self.parallel_limit]
-    
+
     def get_rollback_tasks(self, failed_task: Task) -> List[Task]:
         """Get rollback tasks for a failed task."""
         if not self.enable_rollback:
             return []
-        
+
         rollback = []
-        
+
         if failed_task.rollback_task_id:
             rollback_task = next(
                 (t for t in self.tasks if t.task_id == failed_task.rollback_task_id),
@@ -240,25 +240,25 @@ class Workflow:
             )
             if rollback_task:
                 rollback.append(rollback_task)
-        
+
         rollback.extend(self.rollback_tasks)
-        
+
         return rollback
-    
+
     def is_complete(self) -> bool:
         """Check if workflow is complete."""
         completed_count = sum(
             1 for t in self.tasks if t.status == TaskStatus.COMPLETED
         )
         return completed_count == len(self.tasks)
-    
+
     def has_failed(self) -> bool:
         """Check if workflow has failed."""
         failed_count = sum(
             1 for t in self.tasks if t.status == TaskStatus.FAILED
         )
         return failed_count > 0 and not any(t.should_retry() for t in self.tasks if t.status == TaskStatus.FAILED)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {

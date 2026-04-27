@@ -157,7 +157,7 @@ class SupplyChainAgent:
     Supply Chain Agent for SBOM management, dependency tracking,
     vendor risk assessment, and supply chain security.
     """
-    
+
     def __init__(self, agent_id: str = "supply-chain-agent"):
         self.agent_id = agent_id
         self.packages: Dict[str, Package] = {}
@@ -166,7 +166,7 @@ class SupplyChainAgent:
         self.vendors: Dict[str, Vendor] = {}
         self.assessments: Dict[str, VendorAssessment] = {}
         self.incidents: Dict[str, SecurityIncident] = {}
-        
+
         # Risk assessment criteria
         self.risk_criteria = {
             'security_practices': 0.3,
@@ -175,11 +175,11 @@ class SupplyChainAgent:
             'financial_stability': 0.15,
             'data_handling': 0.1,
         }
-    
+
     # ============================================
     # Package Management
     # ============================================
-    
+
     def add_package(
         self,
         name: str,
@@ -199,10 +199,10 @@ class SupplyChainAgent:
             direct_dependency=direct_dependency,
             parent_package=parent_package,
         )
-        
+
         self.packages[package.package_id] = package
         return package
-    
+
     def get_packages(
         self,
         package_type: Optional[PackageType] = None,
@@ -210,28 +210,28 @@ class SupplyChainAgent:
     ) -> List[Package]:
         """Get packages with filtering."""
         packages = list(self.packages.values())
-        
+
         if package_type:
             packages = [p for p in packages if p.package_type == package_type]
-        
+
         if direct_only:
             packages = [p for p in packages if p.direct_dependency]
-        
+
         return packages
-    
+
     def get_dependency_tree(self, package_id: str) -> Dict[str, Any]:
         """Get dependency tree for a package."""
         if package_id not in self.packages:
             return {'error': 'Package not found'}
-        
+
         package = self.packages[package_id]
-        
+
         # Find children
         children = [
             p for p in self.packages.values()
             if p.parent_package == package_id
         ]
-        
+
         return {
             'package_id': package_id,
             'name': package.name,
@@ -243,11 +243,11 @@ class SupplyChainAgent:
                 for c in children
             ],
         }
-    
+
     # ============================================
     # SBOM Management
     # ============================================
-    
+
     def create_sbom(
         self,
         name: str,
@@ -265,28 +265,28 @@ class SupplyChainAgent:
             project=project,
             packages=packages or [],
         )
-        
+
         sbom.packages_count = len(sbom.packages)
-        
+
         self.sboms[sbom.sbom_id] = sbom
         return sbom
-    
+
     def analyze_sbom(self, sbom_id: str) -> Dict[str, Any]:
         """Analyze SBOM for vulnerabilities."""
         if sbom_id not in self.sboms:
             return {'error': 'SBOM not found'}
-        
+
         sbom = self.sboms[sbom_id]
-        
+
         # Count vulnerabilities
         vulns = [
             v for v in self.vulnerabilities.values()
             if v.package_id in sbom.packages
         ]
-        
+
         sbom.vulnerabilities_count = len(vulns)
         sbom.critical_vulns = len([v for v in vulns if v.severity == VulnerabilitySeverity.CRITICAL])
-        
+
         return {
             'sbom_id': sbom_id,
             'packages_count': sbom.packages_count,
@@ -298,20 +298,20 @@ class SupplyChainAgent:
                 'low': len([v for v in vulns if v.severity == VulnerabilitySeverity.LOW]),
             },
         }
-    
+
     def get_sboms(self, format: Optional[SBOMFormat] = None) -> List[SBOM]:
         """Get SBOMs with filtering."""
         sboms = list(self.sboms.values())
-        
+
         if format:
             sboms = [s for s in sboms if s.format == format]
-        
+
         return sboms
-    
+
     # ============================================
     # Vulnerability Management
     # ============================================
-    
+
     def add_vulnerability(
         self,
         cve_id: str,
@@ -325,7 +325,7 @@ class SupplyChainAgent:
         """Add vulnerability for a package."""
         if package_id not in self.packages:
             raise ValueError(f"Package {package_id} not found")
-        
+
         # Determine severity from CVSS
         if cvss_score >= 9.0:
             severity = VulnerabilitySeverity.CRITICAL
@@ -335,7 +335,7 @@ class SupplyChainAgent:
             severity = VulnerabilitySeverity.MEDIUM
         else:
             severity = VulnerabilitySeverity.LOW
-        
+
         vuln = Vulnerability(
             vuln_id=self._generate_id("vuln"),
             cve_id=cve_id,
@@ -348,15 +348,15 @@ class SupplyChainAgent:
             description=description,
             references=references or [],
         )
-        
+
         self.vulnerabilities[vuln.vuln_id] = vuln
-        
+
         # Update package
         if vuln.vuln_id not in self.packages[package_id].vulnerabilities:
             self.packages[package_id].vulnerabilities.append(vuln.vuln_id)
-        
+
         return vuln
-    
+
     def update_vulnerability_status(
         self,
         vuln_id: str,
@@ -365,14 +365,14 @@ class SupplyChainAgent:
         """Update vulnerability status."""
         if vuln_id not in self.vulnerabilities:
             return False
-        
+
         self.vulnerabilities[vuln_id].status = status
-        
+
         if status == "patched":
             self.vulnerabilities[vuln_id].resolved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_vulnerabilities(
         self,
         severity: Optional[VulnerabilitySeverity] = None,
@@ -381,22 +381,22 @@ class SupplyChainAgent:
     ) -> List[Vulnerability]:
         """Get vulnerabilities with filtering."""
         vulns = list(self.vulnerabilities.values())
-        
+
         if severity:
             vulns = [v for v in vulns if v.severity == severity]
-        
+
         if status:
             vulns = [v for v in vulns if v.status == status]
-        
+
         if package_id:
             vulns = [v for v in vulns if v.package_id == package_id]
-        
+
         return vulns
-    
+
     # ============================================
     # Vendor Management
     # ============================================
-    
+
     def add_vendor(
         self,
         name: str,
@@ -416,17 +416,17 @@ class SupplyChainAgent:
             security_contact=security_contact,
             certifications=certifications or [],
         )
-        
+
         self.vendors[vendor.vendor_id] = vendor
         return vendor
-    
+
     def calculate_vendor_risk(self, vendor_id: str) -> float:
         """Calculate vendor risk score."""
         if vendor_id not in self.vendors:
             return 0.0
-        
+
         vendor = self.vendors[vendor_id]
-        
+
         # Base score from criticality
         criticality_scores = {
             'critical': 1.0,
@@ -434,20 +434,20 @@ class SupplyChainAgent:
             'medium': 0.5,
             'low': 0.25,
         }
-        
+
         base_score = criticality_scores.get(vendor.criticality, 0.5)
-        
+
         # Adjust for certifications
         cert_bonus = min(0.2, len(vendor.certifications) * 0.05)
-        
+
         # Adjust for incidents
         incident_penalty = min(0.3, len(vendor.incidents) * 0.1)
-        
+
         risk_score = base_score - cert_bonus + incident_penalty
-        
+
         vendor.risk_score = risk_score
         return risk_score
-    
+
     def get_vendors(
         self,
         type: Optional[str] = None,
@@ -455,19 +455,19 @@ class SupplyChainAgent:
     ) -> List[Vendor]:
         """Get vendors with filtering."""
         vendors = list(self.vendors.values())
-        
+
         if type:
             vendors = [v for v in vendors if v.type == type]
-        
+
         if criticality:
             vendors = [v for v in vendors if v.criticality == criticality]
-        
+
         return vendors
-    
+
     # ============================================
     # Vendor Assessment
     # ============================================
-    
+
     def create_assessment(
         self,
         vendor_id: str,
@@ -477,7 +477,7 @@ class SupplyChainAgent:
         """Create vendor assessment."""
         if vendor_id not in self.vendors:
             raise ValueError(f"Vendor {vendor_id} not found")
-        
+
         assessment = VendorAssessment(
             assessment_id=self._generate_id("assess"),
             vendor_id=vendor_id,
@@ -485,10 +485,10 @@ class SupplyChainAgent:
             status="planned",
             assessor=assessor,
         )
-        
+
         self.assessments[assessment.assessment_id] = assessment
         return assessment
-    
+
     def complete_assessment(
         self,
         assessment_id: str,
@@ -501,31 +501,31 @@ class SupplyChainAgent:
         """Complete vendor assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         assessment = self.assessments[assessment_id]
         assessment.status = "completed"
         assessment.completed_at = datetime.utcnow()
         assessment.security_score = security_score
         assessment.privacy_score = privacy_score
         assessment.compliance_score = compliance_score
-        
+
         # Calculate overall score
         assessment.overall_score = (
             security_score * 0.4 +
             privacy_score * 0.3 +
             compliance_score * 0.3
         )
-        
+
         assessment.findings = findings or []
         assessment.recommendations = recommendations or []
-        
+
         # Update vendor
         vendor = self.vendors[assessment.vendor_id]
         vendor.last_assessment = datetime.utcnow()
         vendor.risk_score = 1.0 - (assessment.overall_score / 100)
-        
+
         return True
-    
+
     def get_assessments(
         self,
         vendor_id: Optional[str] = None,
@@ -533,19 +533,19 @@ class SupplyChainAgent:
     ) -> List[VendorAssessment]:
         """Get assessments with filtering."""
         assessments = list(self.assessments.values())
-        
+
         if vendor_id:
             assessments = [a for a in assessments if a.vendor_id == vendor_id]
-        
+
         if status:
             assessments = [a for a in assessments if a.status == status]
-        
+
         return assessments
-    
+
     # ============================================
     # Incident Management
     # ============================================
-    
+
     def report_incident(
         self,
         title: str,
@@ -563,16 +563,16 @@ class SupplyChainAgent:
             affected_packages=affected_packages or [],
             affected_vendors=affected_vendors or [],
         )
-        
+
         self.incidents[incident.incident_id] = incident
-        
+
         # Update vendor incidents
         for vendor_id in incident.affected_vendors:
             if vendor_id in self.vendors:
                 self.vendors[vendor_id].incidents.append(incident.incident_id)
-        
+
         return incident
-    
+
     def resolve_incident(
         self,
         incident_id: str,
@@ -582,15 +582,15 @@ class SupplyChainAgent:
         """Resolve security incident."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
         incident.status = "resolved"
         incident.root_cause = root_cause
         incident.remediation = remediation
         incident.resolved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_incidents(
         self,
         severity: Optional[str] = None,
@@ -598,41 +598,41 @@ class SupplyChainAgent:
     ) -> List[SecurityIncident]:
         """Get incidents with filtering."""
         incidents = list(self.incidents.values())
-        
+
         if severity:
             incidents = [i for i in incidents if i.severity == severity]
-        
+
         if status:
             incidents = [i for i in incidents if i.status == status]
-        
+
         return incidents
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_supply_chain_report(self) -> Dict[str, Any]:
         """Generate supply chain security report."""
         packages = list(self.packages.values())
         vulns = list(self.vulnerabilities.values())
         vendors = list(self.vendors.values())
         incidents = list(self.incidents.values())
-        
+
         # Package stats
         by_type = {}
         for ptype in PackageType:
             by_type[ptype.value] = len([p for p in packages if p.package_type == ptype])
-        
+
         # Vulnerability stats
         by_severity = {}
         for sev in VulnerabilitySeverity:
             by_severity[sev.value] = len([v for v in vulns if v.severity == sev])
-        
+
         # Vendor stats
         by_criticality = {}
         for crit in ['critical', 'high', 'medium', 'low']:
             by_criticality[crit] = len([v for v in vendors if v.criticality == crit])
-        
+
         return {
             'packages': {
                 'total': len(packages),
@@ -658,16 +658,16 @@ class SupplyChainAgent:
                 'open': len([i for i in incidents if i.status != 'resolved']),
             },
         }
-    
+
     def get_vendor_risk_report(self, vendor_id: str) -> Dict[str, Any]:
         """Get vendor risk report."""
         if vendor_id not in self.vendors:
             return {'error': 'Vendor not found'}
-        
+
         vendor = self.vendors[vendor_id]
         assessments = self.get_assessments(vendor_id=vendor_id)
         incidents = [i for i in self.incidents.values() if vendor_id in i.affected_vendors]
-        
+
         return {
             'vendor': {
                 'vendor_id': vendor_id,
@@ -687,17 +687,17 @@ class SupplyChainAgent:
             },
             'certifications': vendor.certifications,
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -749,7 +749,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = SupplyChainAgent()
-    
+
     # Add packages
     pkg1 = agent.add_package(
         name="lodash",
@@ -757,14 +757,14 @@ if __name__ == "__main__":
         package_type=PackageType.NPM,
         license="MIT",
     )
-    
+
     pkg2 = agent.add_package(
         name="express",
         version="4.18.2",
         package_type=PackageType.NPM,
         license="MIT",
     )
-    
+
     # Add transitive dependency
     pkg3 = agent.add_package(
         name="body-parser",
@@ -774,9 +774,9 @@ if __name__ == "__main__":
         direct_dependency=False,
         parent_package=pkg2.package_id,
     )
-    
+
     print(f"Added {len(agent.packages)} packages")
-    
+
     # Create SBOM
     sbom = agent.create_sbom(
         name="Web App SBOM",
@@ -785,7 +785,7 @@ if __name__ == "__main__":
         project="web-app",
         packages=[pkg1.package_id, pkg2.package_id, pkg3.package_id],
     )
-    
+
     # Add vulnerability
     vuln = agent.add_vulnerability(
         cve_id="CVE-2021-23337",
@@ -796,13 +796,13 @@ if __name__ == "__main__":
         description="Command injection in lodash",
         references=["https://nvd.nist.gov/vuln/detail/CVE-2021-23337"],
     )
-    
+
     print(f"Added vulnerability: {vuln.cve_id}")
-    
+
     # Analyze SBOM
     analysis = agent.analyze_sbom(sbom.sbom_id)
     print(f"SBOM Analysis: {analysis['vulnerabilities']}")
-    
+
     # Add vendor
     vendor = agent.add_vendor(
         name="npm Inc",
@@ -811,14 +811,14 @@ if __name__ == "__main__":
         contact_email="security@npmjs.com",
         certifications=['SOC2'],
     )
-    
+
     # Create assessment
     assessment = agent.create_assessment(
         vendor.vendor_id,
         assessment_type="annual",
         assessor="security-team@example.com",
     )
-    
+
     # Complete assessment
     agent.complete_assessment(
         assessment.assessment_id,
@@ -828,14 +828,14 @@ if __name__ == "__main__":
         findings=[{'category': 'security', 'finding': 'Strong practices'}],
         recommendations=["Continue current practices"],
     )
-    
+
     print(f"Vendor risk score: {vendor.risk_score}")
-    
+
     # Get report
     report = agent.get_supply_chain_report()
     print(f"\nSupply Chain Report:")
     print(f"  Packages: {report['packages']['total']}")
     print(f"  Vulnerabilities: {report['vulnerabilities']['total']}")
     print(f"  Vendors: {report['vendors']['total']}")
-    
+
     print(f"\nState: {agent.get_state()}")

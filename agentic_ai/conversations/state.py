@@ -22,7 +22,7 @@ class ConversationStatus(str, Enum):
 @dataclass
 class ConversationState:
     """State of a conversation thread."""
-    
+
     thread_id: str
     title: str
     status: ConversationStatus = ConversationStatus.ACTIVE
@@ -32,37 +32,37 @@ class ConversationState:
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     updated_at: Optional[str] = None
     completed_at: Optional[str] = None
-    
+
     def add_message(self, message: Dict[str, Any]):
         """Add a message to the conversation."""
         self.messages.append(message)
         self.updated_at = datetime.utcnow().isoformat()
-    
+
     def get_message_count(self) -> int:
         """Get total message count."""
         return len(self.messages)
-    
+
     def get_participants(self) -> List[str]:
         """Get unique participants."""
         return list(set(self.participants))
-    
+
     def add_participant(self, agent_id: str):
         """Add a participant to the conversation."""
         if agent_id not in self.participants:
             self.participants.append(agent_id)
             self.updated_at = datetime.utcnow().isoformat()
-    
+
     def complete(self):
         """Mark conversation as completed."""
         self.status = ConversationStatus.COMPLETED
         self.completed_at = datetime.utcnow().isoformat()
         self.updated_at = datetime.utcnow().isoformat()
-    
+
     def archive(self):
         """Archive the conversation."""
         self.status = ConversationStatus.ARCHIVED
         self.updated_at = datetime.utcnow().isoformat()
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {

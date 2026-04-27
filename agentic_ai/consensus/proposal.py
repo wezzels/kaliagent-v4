@@ -43,7 +43,7 @@ class ConsensusType(str, Enum):
 @dataclass
 class Vote:
     """A vote cast by an agent."""
-    
+
     vote_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     proposal_id: str = ""
     voter_id: str = ""
@@ -52,7 +52,7 @@ class Vote:
     rationale: str = ""
     amendments: Optional[Dict[str, Any]] = None  # If AMEND, proposed changes
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -65,7 +65,7 @@ class Vote:
             "amendments": self.amendments,
             "created_at": self.created_at,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Vote":
         """Create from dictionary."""
@@ -84,7 +84,7 @@ class Vote:
 @dataclass
 class Proposal:
     """A proposal to be voted on."""
-    
+
     proposal_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     title: str = ""
     description: str = ""
@@ -100,25 +100,25 @@ class Proposal:
     voting_ends_at: Optional[str] = None
     completed_at: Optional[str] = None
     result: Optional[Dict[str, Any]] = None
-    
+
     def add_vote(self, vote: Vote):
         """Add a vote to the proposal."""
         self.votes.append(vote)
-    
+
     def get_vote_count(self, option: VoteOption) -> int:
         """Get count of votes for a specific option."""
         return sum(1 for v in self.votes if v.option == option)
-    
+
     def get_weighted_vote_count(self, option: VoteOption) -> float:
         """Get weighted vote count for an option."""
         return sum(v.weight for v in self.votes if v.option == option)
-    
+
     def get_participation_rate(self) -> float:
         """Get participation rate (votes / eligible voters)."""
         if not self.eligible_voters:
             return 0.0
         return len(self.votes) / len(self.eligible_voters)
-    
+
     def get_approval_rate(self) -> float:
         """Get approval rate (approve / total votes)."""
         if not self.votes:
@@ -126,7 +126,7 @@ class Proposal:
         approve_count = self.get_vote_count(VoteOption.APPROVE)
         non_abstain = sum(1 for v in self.votes if v.option != VoteOption.ABSTAIN)
         return approve_count / non_abstain if non_abstain > 0 else 0.0
-    
+
     def get_weighted_approval_rate(self) -> float:
         """Get weighted approval rate."""
         total_weight = sum(v.weight for v in self.votes if v.option != VoteOption.ABSTAIN)
@@ -134,7 +134,7 @@ class Proposal:
             return 0.0
         approve_weight = self.get_weighted_vote_count(VoteOption.APPROVE)
         return approve_weight / total_weight
-    
+
     def start_voting(self, duration_minutes: int = 60):
         """Start the voting period."""
         self.status = ProposalStatus.VOTING
@@ -142,12 +142,12 @@ class Proposal:
         from datetime import timedelta
         end_time = datetime.utcnow() + timedelta(minutes=duration_minutes)
         self.voting_ends_at = end_time.isoformat()
-    
+
     def withdraw(self):
         """Withdraw the proposal."""
         self.status = ProposalStatus.WITHDRAWN
         self.completed_at = datetime.utcnow().isoformat()
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -172,7 +172,7 @@ class Proposal:
 @dataclass
 class ConsensusResult:
     """Result of a consensus vote."""
-    
+
     proposal_id: str
     status: ProposalStatus
     passed: bool
@@ -182,7 +182,7 @@ class ConsensusResult:
     weighted_approval_rate: Optional[float] = None
     rationale: str = ""
     completed_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {

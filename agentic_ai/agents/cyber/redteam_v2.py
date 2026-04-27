@@ -61,7 +61,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "MFA, network segmentation, logging",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Execution (TA0002)
     "T1059": {
         "id": "T1059",
@@ -91,7 +91,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Process monitoring, scheduled task auditing",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Persistence (TA0003)
     "T1547": {
         "id": "T1547",
@@ -114,7 +114,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Scheduled task monitoring",
         "platforms": ["Windows"],
     },
-    
+
     # Privilege Escalation (TA0004)
     "T1068": {
         "id": "T1068",
@@ -137,7 +137,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "UAC monitoring, sudo logging",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Defense Evasion (TA0005)
     "T1070": {
         "id": "T1070",
@@ -163,7 +163,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Static analysis, behavioral detection",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Credential Access (TA0006)
     "T1003": {
         "id": "T1003",
@@ -192,7 +192,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Account lockout, failed login monitoring",
         "platforms": ["Windows", "Linux", "macOS", "Cloud"],
     },
-    
+
     # Discovery (TA0007)
     "T1082": {
         "id": "T1082",
@@ -221,7 +221,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Network traffic analysis",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Lateral Movement (TA0008)
     "T1021": {
         "id": "T1021",
@@ -246,7 +246,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "File transfer monitoring",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Collection (TA0009)
     "T1005": {
         "id": "T1005",
@@ -266,7 +266,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Network share monitoring",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Command and Control (TA0011)
     "T1071": {
         "id": "T1071",
@@ -292,7 +292,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "SSL/TLS inspection, certificate analysis",
         "platforms": ["Windows", "Linux", "macOS"],
     },
-    
+
     # Exfiltration (TA0010)
     "T1048": {
         "id": "T1048",
@@ -318,7 +318,7 @@ MITRE_ATTACK_TECHNIQUES = {
         "detection": "Cloud access security broker",
         "platforms": ["Windows", "Linux", "macOS", "Cloud"],
     },
-    
+
     # Impact (TA0040)
     "T1486": {
         "id": "T1486",
@@ -460,7 +460,7 @@ class RedTeamAgentV2:
     attack path visualization, purple team integration,
     and risk scoring.
     """
-    
+
     def __init__(self, agent_id: str = "redteam-agent-v2"):
         self.agent_id = agent_id
         self.engagements: Dict[str, Any] = {}
@@ -471,31 +471,31 @@ class RedTeamAgentV2:
         self.network_topologies: Dict[str, NetworkTopology] = {}
         self.detection_tests: Dict[str, DetectionTest] = {}
         self.pivot_points: Dict[str, PivotPoint] = {}
-        
+
         # MITRE ATT&CK library
         self.mitre_techniques = MITRE_ATTACK_TECHNIQUES
-        
+
         logger.info(f"RedTeam Agent v2 initialized with {len(self.mitre_techniques)} MITRE techniques")
-    
+
     # ============================================
     # MITRE ATT&CK Functions
     # ============================================
-    
+
     def get_technique(self, technique_id: str) -> Optional[Dict[str, Any]]:
         """Get MITRE technique details."""
         return self.mitre_techniques.get(technique_id)
-    
+
     def get_techniques_by_tactic(self, tactic: str) -> List[Dict[str, Any]]:
         """Get all techniques for a tactic."""
         return [
             tech for tech in self.mitre_techniques.values()
             if tech.get("tactic") == tactic
         ]
-    
+
     def map_finding_to_mitre(self, finding: Dict[str, Any]) -> List[str]:
         """Map a finding to MITRE ATT&CK techniques."""
         mapped = []
-        
+
         # Simple keyword matching (can be enhanced with ML)
         keyword_mapping = {
             "sql": ["T1190"],
@@ -508,15 +508,15 @@ class RedTeamAgentV2:
             "exfil": ["T1048", "T1567"],
             "ransomware": ["T1486"],
         }
-        
+
         finding_text = f"{finding.get('title', '')} {finding.get('description', '')}".lower()
-        
+
         for keyword, techniques in keyword_mapping.items():
             if keyword in finding_text:
                 mapped.extend(techniques)
-        
+
         return list(set(mapped))
-    
+
     def get_mitre_coverage(self, engagement_id: str) -> Dict[str, Any]:
         """Calculate MITRE coverage for an engagement."""
         coverage = {
@@ -525,13 +525,13 @@ class RedTeamAgentV2:
             "total_techniques": len(self.mitre_techniques),
             "coverage_percentage": 0,
         }
-        
+
         # Get findings for engagement
         engagement_findings = [
             f for f in self.findings.values()
             if f.get("engagement_id") == engagement_id
         ]
-        
+
         for finding in engagement_findings:
             techniques = finding.get("mitre_attack", [])
             for tech_id in techniques:
@@ -539,18 +539,18 @@ class RedTeamAgentV2:
                 if tech:
                     coverage["techniques_mapped"].append(tech_id)
                     coverage["tactics_mapped"][tech["tactic"]] += 1
-        
+
         coverage["techniques_mapped"] = list(set(coverage["techniques_mapped"]))
         coverage["coverage_percentage"] = round(
             len(coverage["techniques_mapped"]) / coverage["total_techniques"] * 100, 2
         )
-        
+
         return coverage
-    
+
     # ============================================
     # Attack Path Functions
     # ============================================
-    
+
     def create_attack_path(
         self,
         name: str,
@@ -562,11 +562,11 @@ class RedTeamAgentV2:
     ) -> Dict[str, Any]:
         """Create an attack path with visualization data."""
         path_id = f"path_{secrets.token_hex(4)}"
-        
+
         # Build nodes
         nodes = []
         edges = []
-        
+
         # Start node
         nodes.append({
             "id": f"node_start",
@@ -574,7 +574,7 @@ class RedTeamAgentV2:
             "type": "start",
             "mitre": [],
         })
-        
+
         # Step nodes
         for i, step in enumerate(steps):
             nodes.append({
@@ -585,7 +585,7 @@ class RedTeamAgentV2:
                 "time_minutes": step.get("time_minutes", 0),
                 "mitre": step.get("mitre", []),
             })
-            
+
             # Edge from previous node
             edges.append({
                 "id": f"edge_{i}",
@@ -593,7 +593,7 @@ class RedTeamAgentV2:
                 "target": f"node_{i}",
                 "technique": step.get("mitre", [""])[0] if step.get("mitre") else "",
             })
-        
+
         # End node
         nodes.append({
             "id": "node_end",
@@ -601,16 +601,16 @@ class RedTeamAgentV2:
             "type": "objective",
             "mitre": mitre_attack or [],
         })
-        
+
         # Final edge
         edges.append({
             "id": "edge_final",
             "source": f"node_{len(steps)-1}",
             "target": "node_end",
         })
-        
+
         total_time = sum(step.get("time_minutes", 0) for step in steps)
-        
+
         path = {
             "path_id": path_id,
             "name": name,
@@ -626,23 +626,23 @@ class RedTeamAgentV2:
                 "layout": "hierarchical",
             },
         }
-        
+
         self.attack_paths[path_id] = path
         return path
-    
+
     def generate_attack_path_from_findings(
         self,
         engagement_id: str,
     ) -> List[Dict[str, Any]]:
         """Automatically generate attack paths from findings."""
         paths = []
-        
+
         # Get findings for engagement
         engagement_findings = [
             f for f in self.findings.values()
             if f.get("engagement_id") == engagement_id
         ]
-        
+
         # Group by tactic
         tactics_order = [
             "initial_access", "execution", "persistence",
@@ -650,21 +650,21 @@ class RedTeamAgentV2:
             "discovery", "lateral_movement", "collection",
             "command_and_control", "exfiltration", "impact"
         ]
-        
+
         findings_by_tactic = defaultdict(list)
-        
+
         for finding in engagement_findings:
             for tech_id in finding.get("mitre_attack", []):
                 tech = self.get_technique(tech_id)
                 if tech:
                     tactic = tech.get("tactic")
                     findings_by_tactic[tactic].append(finding)
-        
+
         # Build path
         if findings_by_tactic:
             steps = []
             mitre_techniques = []
-            
+
             for tactic in tactics_order:
                 if tactic in findings_by_tactic:
                     for finding in findings_by_tactic[tactic][:2]:  # Top 2 per tactic
@@ -675,7 +675,7 @@ class RedTeamAgentV2:
                             "mitre": finding.get("mitre_attack", []),
                         })
                         mitre_techniques.extend(finding.get("mitre_attack", []))
-            
+
             if steps:
                 path = self.create_attack_path(
                     name=f"Auto-generated path for {engagement_id}",
@@ -686,13 +686,13 @@ class RedTeamAgentV2:
                     mitre_attack=list(set(mitre_techniques)),
                 )
                 paths.append(path)
-        
+
         return paths
-    
+
     # ============================================
     # Network Topology Functions
     # ============================================
-    
+
     def build_network_topology(
         self,
         engagement_id: str,
@@ -700,20 +700,20 @@ class RedTeamAgentV2:
     ) -> NetworkTopology:
         """Build network topology from scan results."""
         topology_id = f"topo_{secrets.token_hex(4)}"
-        
+
         nodes = []
         edges = []
         subnets = set()
         critical_assets = []
-        
+
         # Process hosts from scan
         hosts = scan_results.get("hosts", [])
-        
+
         for host in hosts:
             ip = host.get("ip", "unknown")
             subnet = ".".join(ip.split(".")[:3]) + ".0/24"
             subnets.add(subnet)
-            
+
             node = {
                 "id": ip,
                 "name": host.get("hostname", ip),
@@ -724,13 +724,13 @@ class RedTeamAgentV2:
                 "compromised": host.get("compromised", False),
             }
             nodes.append(node)
-            
+
             # Mark critical assets
             if host.get("os", "").lower().find("server") >= 0:
                 critical_assets.append(ip)
             if any(p.get("port") in [445, 389, 88] for p in host.get("ports", [])):
                 critical_assets.append(ip)  # DC indicators
-        
+
         # Build edges based on network proximity
         for i, node1 in enumerate(nodes):
             for node2 in nodes[i+1:]:
@@ -741,7 +741,7 @@ class RedTeamAgentV2:
                         "target": node2["id"],
                         "type": "network",
                     })
-        
+
         topology = NetworkTopology(
             topology_id=topology_id,
             engagement_id=engagement_id,
@@ -750,62 +750,62 @@ class RedTeamAgentV2:
             subnets=list(subnets),
             critical_assets=list(set(critical_assets)),
         )
-        
+
         self.network_topologies[topology_id] = topology
         return topology
-    
+
     # ============================================
     # Pivot Point Identification
     # ============================================
-    
+
     def identify_pivot_points(
         self,
         engagement_id: str,
     ) -> List[PivotPoint]:
         """Identify lateral movement pivot points."""
         pivots = []
-        
+
         # Get compromised hosts
         compromised = [
             t for t in self.targets.values()
             if t.get("engagement_id") == engagement_id and t.get("accessed")
         ]
-        
+
         # Get all hosts
         all_hosts = [
             t for t in self.targets.values()
             if t.get("engagement_id") == engagement_id
         ]
-        
+
         for source in compromised:
             source_ip = source.get("ip_address")
             source_services = source.get("services", [])
-            
+
             # Check for pivot methods
             pivot_methods = []
-            
+
             # SMB/PsExec
             if any(s.get("port") == 445 for s in source_services):
                 pivot_methods.append("psexec")
-            
+
             # WMI
             if any(s.get("port") == 135 for s in source_services):
                 pivot_methods.append("wmi")
-            
+
             # SSH
             if any(s.get("port") == 22 for s in source_services):
                 pivot_methods.append("ssh")
-            
+
             # RDP
             if any(s.get("port") == 3389 for s in source_services):
                 pivot_methods.append("rdp")
-            
+
             # Find potential targets
             reachable = [
                 h for h in all_hosts
                 if h.get("target_id") != source.get("target_id")
             ]
-            
+
             if pivot_methods and reachable:
                 for method in pivot_methods:
                     pivot = PivotPoint(
@@ -821,13 +821,13 @@ class RedTeamAgentV2:
                     )
                     pivots.append(pivot)
                     self.pivot_points[pivot.pivot_id] = pivot
-        
+
         return pivots
-    
+
     # ============================================
     # Purple Team / Detection Testing
     # ============================================
-    
+
     def create_detection_test(
         self,
         technique_id: str,
@@ -836,9 +836,9 @@ class RedTeamAgentV2:
     ) -> DetectionTest:
         """Create a purple team detection test."""
         test_id = f"test_{secrets.token_hex(4)}"
-        
+
         technique = self.get_technique(technique_id)
-        
+
         test = DetectionTest(
             test_id=test_id,
             technique_id=technique_id,
@@ -847,10 +847,10 @@ class RedTeamAgentV2:
             test_type=test_type,
             status="planned",
         )
-        
+
         self.detection_tests[test_id] = test
         return test
-    
+
     def execute_detection_test(
         self,
         test_id: str,
@@ -861,26 +861,26 @@ class RedTeamAgentV2:
         """Record detection test execution."""
         if test_id not in self.detection_tests:
             return False
-        
+
         test = self.detection_tests[test_id]
         test.status = "executed" if detected else "failed"
         test.executed_at = datetime.utcnow()
         test.detected = detected
         test.detection_time_seconds = detection_time_seconds
         test.detection_source = detection_source
-        
+
         return True
-    
+
     def get_detection_coverage(self, engagement_id: str) -> Dict[str, Any]:
         """Get detection coverage for an engagement."""
         tests = [
             t for t in self.detection_tests.values()
             if t.engagement_id == engagement_id
         ]
-        
+
         total = len(tests)
         detected = len([t for t in tests if t.detected])
-        
+
         return {
             "total_tests": total,
             "detected": detected,
@@ -888,11 +888,11 @@ class RedTeamAgentV2:
             "detection_rate": round(detected / total * 100, 2) if total > 0 else 0,
             "avg_detection_time_seconds": sum(t.detection_time_seconds or 0 for t in tests) / total if total > 0 else 0,
         }
-    
+
     # ============================================
     # Risk Scoring
     # ============================================
-    
+
     def calculate_engagement_risk(
         self,
         engagement_id: str,
@@ -903,32 +903,32 @@ class RedTeamAgentV2:
             f for f in self.findings.values()
             if f.get("engagement_id") == engagement_id
         ]
-        
+
         # Severity scoring
         severity_scores = {sev: 0 for sev in SEVERITY_WEIGHTS}
         for finding in findings:
             severity = finding.get("severity", "low").lower()
             if severity in severity_scores:
                 severity_scores[severity] += 1
-        
+
         # Calculate weighted score
         total_severity_score = sum(
             severity_scores[sev] * SEVERITY_WEIGHTS[sev]
             for sev in severity_scores
         )
-        
+
         # MITRE coverage scoring
         mitre_coverage = self.get_mitre_coverage(engagement_id)
         mitre_score = min(mitre_coverage["coverage_percentage"] / 10, 10)  # Max 10 points
-        
+
         # Attack path scoring
         paths = [p for p in self.attack_paths.values() if p.get("engagement_id") == engagement_id]
         path_score = min(len(paths) * 2, 10)  # Max 10 points
-        
+
         # Detection evasion scoring
         detection_coverage = self.get_detection_coverage(engagement_id)
         evasion_score = 10 - (detection_coverage["detection_rate"] / 10)  # Lower detection = higher risk
-        
+
         # Overall score (0-100)
         overall_score = (
             min(total_severity_score, 50) +  # Max 50 from severity
@@ -936,7 +936,7 @@ class RedTeamAgentV2:
             path_score +  # Max 10
             evasion_score  # Max 10
         ) * 1.25  # Scale to 100
-        
+
         # Determine risk level
         if overall_score >= 80:
             risk_level = "critical"
@@ -946,7 +946,7 @@ class RedTeamAgentV2:
             risk_level = "medium"
         else:
             risk_level = "low"
-        
+
         risk = EngagementRisk(
             engagement_id=engagement_id,
             overall_risk_score=round(overall_score, 2),
@@ -960,22 +960,22 @@ class RedTeamAgentV2:
             findings_by_severity=severity_scores,
             mitre_coverage=mitre_coverage,
         )
-        
+
         return risk
-    
+
     # ============================================
     # Enhanced Reporting
     # ============================================
-    
+
     def generate_executive_summary(self, engagement_id: str) -> Dict[str, Any]:
         """Generate executive summary for an engagement."""
         risk = self.calculate_engagement_risk(engagement_id)
         mitre_coverage = self.get_mitre_coverage(engagement_id)
         detection_coverage = self.get_detection_coverage(engagement_id)
-        
+
         # Get engagement
         engagement = self.engagements.get(engagement_id, {})
-        
+
         summary = {
             "engagement_name": engagement.get("name", "Unknown"),
             "engagement_type": engagement.get("engagement_type", "Unknown"),
@@ -1003,30 +1003,30 @@ class RedTeamAgentV2:
             },
             "recommendations": self._generate_executive_recommendations(risk),
         }
-        
+
         return summary
-    
+
     def _generate_executive_recommendations(self, risk: EngagementRisk) -> List[str]:
         """Generate executive-level recommendations."""
         recommendations = []
-        
+
         if risk.risk_factors["severity"] >= 40:
             recommendations.append("Prioritize remediation of critical and high severity findings immediately")
-        
+
         if risk.risk_factors["mitre_coverage"] >= 7:
             recommendations.append("Attackers have multiple paths to achieve objectives - implement defense in depth")
-        
+
         if risk.risk_factors["detection_evasion"] >= 7:
             recommendations.append("Improve detection capabilities - current monitoring missed significant attack activity")
-        
+
         if risk.findings_by_severity.get("critical", 0) > 0:
             recommendations.append("Critical vulnerabilities require immediate attention within 24-48 hours")
-        
+
         if not recommendations:
             recommendations.append("Continue monitoring and regular security assessments")
-        
+
         return recommendations
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state."""
         return {
@@ -1074,28 +1074,28 @@ def demo_redteam_v2():
     print("REDTEAM AGENT V2 - ENHANCED FEATURES DEMONSTRATION")
     print("=" * 80)
     print()
-    
+
     # Initialize agent
     agent = RedTeamAgentV2()
-    
+
     # Show state
     print("📦 Agent State:")
     state = agent.get_state()
     print(f"  Version: {state['version']}")
     print(f"  MITRE Techniques: {state['mitre_techniques_loaded']}")
     print()
-    
+
     print("🆕 New Features:")
     for feature in state['new_features']:
         print(f"  ✅ {feature}")
     print()
-    
+
     # Demo MITRE technique lookup
     print("🎯 MITRE ATT&CK Technique Lookup:")
     print()
-    
+
     test_techniques = ["T1566", "T1059", "T1003", "T1021", "T1486"]
-    
+
     for tech_id in test_techniques:
         tech = agent.get_technique(tech_id)
         if tech:
@@ -1105,11 +1105,11 @@ def demo_redteam_v2():
             if tech.get("subtechniques"):
                 print(f"    Sub-techniques: {len(tech['subtechniques'])}")
             print()
-    
+
     # Demo risk scoring
     print("📊 Risk Scoring Demo:")
     print()
-    
+
     # Create mock findings
     agent.findings = {
         "f1": {
@@ -1128,7 +1128,7 @@ def demo_redteam_v2():
             "mitre_attack": ["T1003"],
         },
     }
-    
+
     risk = agent.calculate_engagement_risk("eng_test")
     print(f"  Overall Risk Score: {risk.overall_risk_score}/100")
     print(f"  Risk Level: {risk.risk_level.upper()}")
@@ -1136,18 +1136,18 @@ def demo_redteam_v2():
     for factor, score in risk.risk_factors.items():
         print(f"    - {factor}: {score}")
     print()
-    
+
     # Demo executive summary
     print("📋 Executive Summary Demo:")
     print()
-    
+
     agent.engagements["eng_test"] = {
         "name": "Q2 Red Team Exercise",
         "engagement_type": "red_team",
         "start_date": "2026-04-01",
         "end_date": "2026-04-19",
     }
-    
+
     summary = agent.generate_executive_summary("eng_test")
     print(f"  Engagement: {summary['engagement_name']}")
     print(f"  Overall Risk: {summary['overall_risk']['level']} ({summary['overall_risk']['score']}/100)")
@@ -1159,7 +1159,7 @@ def demo_redteam_v2():
     for rec in summary['recommendations'][:3]:
         print(f"    • {rec}")
     print()
-    
+
     print("=" * 80)
     print("DEMONSTRATION COMPLETE")
     print("=" * 80)

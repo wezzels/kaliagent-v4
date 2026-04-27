@@ -144,14 +144,14 @@ class SecurityOperationsAgent:
     Security Operations Agent for SIEM integration,
     incident response, and threat hunting.
     """
-    
+
     def __init__(self, agent_id: str = "soc-agent"):
         self.agent_id = agent_id
         self.alerts: Dict[str, SecurityAlert] = {}
         self.incidents: Dict[str, Incident] = {}
         self.threat_intel: Dict[str, ThreatIntel] = {}
         self.hunts: Dict[str, HuntQuery] = {}
-        
+
         # MITRE ATT&CK mapping
         self.attack_tactics = {
             'TA0001': 'Initial Access',
@@ -167,10 +167,10 @@ class SecurityOperationsAgent:
             'TA0011': 'Command and Control',
             'TA0040': 'Impact',
         }
-        
+
         # Alert rules library
         self.alert_rules = self._init_alert_rules()
-    
+
     def _init_alert_rules(self) -> Dict[str, Dict[str, Any]]:
         """Initialize detection rule library."""
         return {
@@ -217,11 +217,11 @@ class SecurityOperationsAgent:
                 'description': 'User behavior deviates from baseline',
             },
         }
-    
+
     # ============================================
     # Alert Management
     # ============================================
-    
+
     def create_alert(
         self,
         title: str,
@@ -248,11 +248,11 @@ class SecurityOperationsAgent:
             dest_ip=dest_ip,
             user=user,
         )
-        
+
         self.alerts[alert.alert_id] = alert
         logger.info(f"Created alert: {alert.title} ({alert.severity.value})")
         return alert
-    
+
     def triage_alert(
         self,
         alert_id: str,
@@ -263,32 +263,32 @@ class SecurityOperationsAgent:
         """Triage a security alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         alert = self.alerts[alert_id]
         alert.status = status
-        
+
         if assigned_to:
             alert.assigned_to = assigned_to
-        
+
         if notes:
             alert.investigation_notes.append(f"[{datetime.utcnow().isoformat()}] {notes}")
-        
+
         return True
-    
+
     def escalate_alert(self, alert_id: str, incident_id: str) -> bool:
         """Escalate alert to incident."""
         if alert_id not in self.alerts:
             return False
-        
+
         alert = self.alerts[alert_id]
         alert.status = AlertStatus.ESCALATED
-        
+
         if incident_id in self.incidents:
             self.incidents[incident_id].related_alerts.append(alert_id)
             alert.related_alerts.append(incident_id)
-        
+
         return True
-    
+
     def get_alerts(
         self,
         severity: Optional[AlertSeverity] = None,
@@ -297,22 +297,22 @@ class SecurityOperationsAgent:
     ) -> List[SecurityAlert]:
         """Get alerts with filtering."""
         alerts = list(self.alerts.values())
-        
+
         if severity:
             alerts = [a for a in alerts if a.severity == severity]
-        
+
         if status:
             alerts = [a for a in alerts if a.status == status]
-        
+
         if assigned_to:
             alerts = [a for a in alerts if a.assigned_to == assigned_to]
-        
+
         return alerts
-    
+
     # ============================================
     # Incident Management
     # ============================================
-    
+
     def create_incident(
         self,
         title: str,
@@ -333,11 +333,11 @@ class SecurityOperationsAgent:
             affected_systems=affected_systems or [],
             affected_users=affected_users or [],
         )
-        
+
         self.incidents[incident.incident_id] = incident
         logger.info(f"Created incident: {incident.title} ({incident.severity.value})")
         return incident
-    
+
     def update_incident_status(
         self,
         incident_id: str,
@@ -347,11 +347,11 @@ class SecurityOperationsAgent:
         """Update incident status."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
         old_status = incident.status
         incident.status = status
-        
+
         # Track timeline
         incident.timeline.append({
             'timestamp': datetime.utcnow().isoformat(),
@@ -360,15 +360,15 @@ class SecurityOperationsAgent:
             'to': status.value,
             'notes': notes,
         })
-        
+
         # Set timestamps for key milestones
         if status == IncidentStatus.CONTAINMENT and old_status != IncidentStatus.CONTAINMENT:
             incident.contained_at = datetime.utcnow()
         elif status == IncidentStatus.CLOSED:
             incident.resolved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def add_ioc(
         self,
         incident_id: str,
@@ -379,20 +379,20 @@ class SecurityOperationsAgent:
         """Add indicator of compromise to incident."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
-        
+
         if ioc_type not in incident.ioc:
             incident.ioc[ioc_type] = []
-        
+
         incident.ioc[ioc_type].append({
             'value': ioc_value,
             'context': context,
             'added_at': datetime.utcnow().isoformat(),
         })
-        
+
         return True
-    
+
     def add_timeline_entry(
         self,
         incident_id: str,
@@ -403,7 +403,7 @@ class SecurityOperationsAgent:
         """Add entry to incident timeline."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
         incident.timeline.append({
             'timestamp': datetime.utcnow().isoformat(),
@@ -411,9 +411,9 @@ class SecurityOperationsAgent:
             'details': details,
             'actor': actor,
         })
-        
+
         return True
-    
+
     def close_incident(
         self,
         incident_id: str,
@@ -424,16 +424,16 @@ class SecurityOperationsAgent:
         """Close an incident with full documentation."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
         incident.status = IncidentStatus.CLOSED
         incident.resolved_at = datetime.utcnow()
         incident.root_cause = root_cause
         incident.remediation_steps = remediation_steps
         incident.lessons_learned = lessons_learned
-        
+
         return True
-    
+
     def get_incidents(
         self,
         severity: Optional[IncidentSeverity] = None,
@@ -442,22 +442,22 @@ class SecurityOperationsAgent:
     ) -> List[Incident]:
         """Get incidents with filtering."""
         incidents = list(self.incidents.values())
-        
+
         if severity:
             incidents = [i for i in incidents if i.severity == severity]
-        
+
         if status:
             incidents = [i for i in incidents if i.status == status]
-        
+
         if category:
             incidents = [i for i in incidents if i.category == category]
-        
+
         return incidents
-    
+
     # ============================================
     # Threat Intelligence
     # ============================================
-    
+
     def add_threat_intel(
         self,
         indicator_type: str,
@@ -469,7 +469,7 @@ class SecurityOperationsAgent:
     ) -> ThreatIntel:
         """Add threat intelligence indicator."""
         now = datetime.utcnow()
-        
+
         intel = ThreatIntel(
             indicator_id=self._generate_id("intel"),
             indicator_type=indicator_type,
@@ -481,17 +481,17 @@ class SecurityOperationsAgent:
             last_seen=now,
             tags=tags or [],
         )
-        
+
         self.threat_intel[intel.indicator_id] = intel
         return intel
-    
+
     def search_threat_intel(self, value: str) -> List[ThreatIntel]:
         """Search threat intel by value."""
         return [
             intel for intel in self.threat_intel.values()
             if intel.value == value or value in intel.value
         ]
-    
+
     def get_threat_intel(
         self,
         indicator_type: Optional[str] = None,
@@ -499,19 +499,19 @@ class SecurityOperationsAgent:
     ) -> List[ThreatIntel]:
         """Get threat intel with filtering."""
         intel = list(self.threat_intel.values())
-        
+
         if indicator_type:
             intel = [i for i in intel if i.indicator_type == indicator_type]
-        
+
         if confidence:
             intel = [i for i in intel if i.confidence == confidence]
-        
+
         return intel
-    
+
     # ============================================
     # Threat Hunting
     # ============================================
-    
+
     def create_hunt(
         self,
         name: str,
@@ -530,56 +530,56 @@ class SecurityOperationsAgent:
             status="planned",
             created_by=created_by,
         )
-        
+
         self.hunts[hunt.hunt_id] = hunt
         return hunt
-    
+
     def execute_hunt(self, hunt_id: str, findings: List[Dict[str, Any]]) -> bool:
         """Execute a threat hunt and record findings."""
         if hunt_id not in self.hunts:
             return False
-        
+
         hunt = self.hunts[hunt_id]
         hunt.status = "completed"
         hunt.findings = findings
         hunt.completed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_hunts(self, status: Optional[str] = None) -> List[HuntQuery]:
         """Get hunts with filtering."""
         hunts = list(self.hunts.values())
-        
+
         if status:
             hunts = [h for h in hunts if h.status == status]
-        
+
         return hunts
-    
+
     # ============================================
     # SOC Metrics & Reporting
     # ============================================
-    
+
     def get_soc_metrics(self, period_hours: int = 24) -> Dict[str, Any]:
         """Get SOC operational metrics."""
         cutoff = datetime.utcnow() - timedelta(hours=period_hours)
-        
+
         recent_alerts = [a for a in self.alerts.values() if a.timestamp >= cutoff]
         recent_incidents = [i for i in self.incidents.values() if i.detected_at >= cutoff]
-        
+
         # Alert metrics
         alerts_by_severity = {}
         for severity in AlertSeverity:
             alerts_by_severity[severity.value] = len([
                 a for a in recent_alerts if a.severity == severity
             ])
-        
+
         # Incident metrics
         incidents_by_severity = {}
         for severity in IncidentSeverity:
             incidents_by_severity[severity.value] = len([
                 i for i in recent_incidents if i.severity == severity
             ])
-        
+
         # MTTR (Mean Time to Resolve)
         resolved = [i for i in recent_incidents if i.resolved_at]
         mttr_hours = 0
@@ -589,7 +589,7 @@ class SecurityOperationsAgent:
                 for i in resolved if i.resolved_at > i.detected_at
             )
             mttr_hours = total_time / len(resolved)
-        
+
         return {
             'period_hours': period_hours,
             'alerts': {
@@ -612,14 +612,14 @@ class SecurityOperationsAgent:
                 'high_confidence': len([i for i in self.threat_intel.values() if i.confidence == 'high']),
             },
         }
-    
+
     def get_attack_mapping(self, incident_id: str) -> Dict[str, Any]:
         """Map incident to MITRE ATT&CK framework."""
         if incident_id not in self.incidents:
             return {'error': 'Incident not found'}
-        
+
         incident = self.incidents[incident_id]
-        
+
         # Simple mapping based on category
         category_mapping = {
             'malware': ['TA0002', 'TA0003', 'TA0011'],
@@ -628,9 +628,9 @@ class SecurityOperationsAgent:
             'unauthorized_access': ['TA0001', 'TA0004', 'TA0006'],
             'lateral_movement': ['TA0008'],
         }
-        
+
         tactics = category_mapping.get(incident.category, [])
-        
+
         return {
             'incident_id': incident_id,
             'category': incident.category,
@@ -639,17 +639,17 @@ class SecurityOperationsAgent:
                 for t in tactics
             ],
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -699,7 +699,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = SecurityOperationsAgent()
-    
+
     # Create alert
     alert = agent.create_alert(
         title="Brute Force Attack Detected",
@@ -711,12 +711,12 @@ if __name__ == "__main__":
         source_ip="192.168.1.100",
         user="admin",
     )
-    
+
     print(f"Created alert: {alert.title}")
-    
+
     # Triage alert
     agent.triage_alert(alert.alert_id, AlertStatus.INVESTIGATING, assigned_to="analyst@soc.com")
-    
+
     # Create incident
     incident = agent.create_incident(
         title="Ransomware Infection",
@@ -725,17 +725,17 @@ if __name__ == "__main__":
         threat_actor=ThreatActor.CYBERCRIMINAL,
         affected_systems=["workstation-42", "file-server-01"],
     )
-    
+
     print(f"Created incident: {incident.title}")
-    
+
     # Add IOC
     agent.add_ioc(incident.incident_id, "hash", "abc123def456", "Ransomware payload hash")
     agent.add_ioc(incident.incident_id, "ip", "10.0.0.99", "C2 server")
-    
+
     # Add timeline
     agent.add_timeline_entry(incident.incident_id, "detection", "EDR detected suspicious process", actor="EDR")
     agent.add_timeline_entry(incident.incident_id, "containment", "Isolated affected systems", actor="SOC")
-    
+
     # Add threat intel
     intel = agent.add_threat_intel(
         indicator_type="ip",
@@ -745,9 +745,9 @@ if __name__ == "__main__":
         source="internal",
         tags=['ransomware', 'apt'],
     )
-    
+
     print(f"Added threat intel: {intel.value}")
-    
+
     # Create hunt
     hunt = agent.create_hunt(
         name="Hunt for Lateral Movement",
@@ -756,11 +756,11 @@ if __name__ == "__main__":
         data_source="windows_events",
         created_by="hunter@soc.com",
     )
-    
+
     # Get metrics
     metrics = agent.get_soc_metrics()
     print(f"\nAlerts (24h): {metrics['alerts']['total']}")
     print(f"Incidents (24h): {metrics['incidents']['total']}")
     print(f"MTTR: {metrics['response']['mttr_hours']}h")
-    
+
     print(f"\nState: {agent.get_state()}")

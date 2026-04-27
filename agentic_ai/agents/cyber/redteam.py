@@ -153,7 +153,7 @@ class RedTeamAgent:
     Red Team Agent for offensive security operations,
     penetration testing, and adversary emulation.
     """
-    
+
     def __init__(self, agent_id: str = "redteam-agent"):
         self.agent_id = agent_id
         self.engagements: Dict[str, Engagement] = {}
@@ -161,7 +161,7 @@ class RedTeamAgent:
         self.findings: Dict[str, Finding] = {}
         self.credentials: Dict[str, Credential] = {}
         self.attack_paths: Dict[str, AttackPath] = {}
-        
+
         # MITRE ATT&CK techniques library
         self.attack_techniques = {
             'T1566': 'Phishing',
@@ -175,10 +175,10 @@ class RedTeamAgent:
             'T1048': 'Exfiltration Over Alternative Protocol',
             'T1486': 'Data Encrypted for Impact',
         }
-        
+
         # Exploit database
         self.exploit_db = self._init_exploit_db()
-    
+
     def _init_exploit_db(self) -> Dict[str, Dict[str, Any]]:
         """Initialize exploit database."""
         return {
@@ -211,11 +211,11 @@ class RedTeamAgent:
                 'reliability': 'high',
             },
         }
-    
+
     # ============================================
     # Engagement Management
     # ============================================
-    
+
     def create_engagement(
         self,
         name: str,
@@ -238,11 +238,11 @@ class RedTeamAgent:
             objectives=objectives,
             team_members=team_members or [],
         )
-        
+
         self.engagements[engagement.engagement_id] = engagement
         logger.info(f"Created engagement: {engagement.name}")
         return engagement
-    
+
     def update_engagement_status(
         self,
         engagement_id: str,
@@ -251,10 +251,10 @@ class RedTeamAgent:
         """Update engagement status."""
         if engagement_id not in self.engagements:
             return False
-        
+
         self.engagements[engagement_id].status = status
         return True
-    
+
     def add_target_to_engagement(
         self,
         engagement_id: str,
@@ -263,12 +263,12 @@ class RedTeamAgent:
         """Add target to engagement."""
         if engagement_id not in self.engagements:
             return False
-        
+
         if target not in self.engagements[engagement_id].targets:
             self.engagements[engagement_id].targets.append(target)
-        
+
         return True
-    
+
     def get_engagements(
         self,
         engagement_type: Optional[EngagementType] = None,
@@ -276,19 +276,19 @@ class RedTeamAgent:
     ) -> List[Engagement]:
         """Get engagements with filtering."""
         engagements = list(self.engagements.values())
-        
+
         if engagement_type:
             engagements = [e for e in engagements if e.engagement_type == engagement_type]
-        
+
         if status:
             engagements = [e for e in engagements if e.status == status]
-        
+
         return engagements
-    
+
     # ============================================
     # Target Management
     # ============================================
-    
+
     def add_target(
         self,
         name: str,
@@ -310,25 +310,25 @@ class RedTeamAgent:
             services=services or [],
             engagement_id=engagement_id,
         )
-        
+
         self.targets[target.target_id] = target
-        
+
         if engagement_id:
             self.add_target_to_engagement(engagement_id, target.target_id)
-        
+
         return target
-    
+
     def mark_target_compromised(self, target_id: str) -> bool:
         """Mark target as compromised."""
         if target_id not in self.targets:
             return False
-        
+
         target = self.targets[target_id]
         target.accessed = True
         target.compromised_at = datetime.utcnow()
-        
+
         return True
-    
+
     def add_service_to_target(
         self,
         target_id: str,
@@ -340,7 +340,7 @@ class RedTeamAgent:
         """Add service to target."""
         if target_id not in self.targets:
             return False
-        
+
         self.targets[target_id].services.append({
             'name': service_name,
             'port': port,
@@ -348,9 +348,9 @@ class RedTeamAgent:
             'vulnerable': vulnerable,
             'added_at': datetime.utcnow().isoformat(),
         })
-        
+
         return True
-    
+
     def get_targets(
         self,
         target_type: Optional[TargetType] = None,
@@ -359,22 +359,22 @@ class RedTeamAgent:
     ) -> List[Target]:
         """Get targets with filtering."""
         targets = list(self.targets.values())
-        
+
         if target_type:
             targets = [t for t in targets if t.target_type == target_type]
-        
+
         if engagement_id:
             targets = [t for t in targets if t.engagement_id == engagement_id]
-        
+
         if compromised_only:
             targets = [t for t in targets if t.accessed]
-        
+
         return targets
-    
+
     # ============================================
     # Finding Management
     # ============================================
-    
+
     def add_finding(
         self,
         title: str,
@@ -400,17 +400,17 @@ class RedTeamAgent:
             evidence=evidence or [],
             remediation=remediation,
         )
-        
+
         self.findings[finding.finding_id] = finding
-        
+
         # Update engagement findings count
         if engagement_id in self.engagements:
             self.engagements[engagement_id].findings_count += 1
             if severity == FindingSeverity.CRITICAL:
                 self.engagements[engagement_id].critical_findings += 1
-        
+
         return finding
-    
+
     def get_findings(
         self,
         engagement_id: Optional[str] = None,
@@ -419,30 +419,30 @@ class RedTeamAgent:
     ) -> List[Finding]:
         """Get findings with filtering."""
         findings = list(self.findings.values())
-        
+
         if engagement_id:
             findings = [f for f in findings if f.engagement_id == engagement_id]
-        
+
         if severity:
             findings = [f for f in findings if f.severity == severity]
-        
+
         if reported is not None:
             findings = [f for f in findings if f.reported == reported]
-        
+
         return findings
-    
+
     def mark_finding_reported(self, finding_id: str) -> bool:
         """Mark finding as reported."""
         if finding_id not in self.findings:
             return False
-        
+
         self.findings[finding_id].reported = True
         return True
-    
+
     # ============================================
     # Credential Management
     # ============================================
-    
+
     def add_credential(
         self,
         username: str,
@@ -464,29 +464,29 @@ class RedTeamAgent:
             engagement_id=engagement_id,
             privileges=privileges or [],
         )
-        
+
         self.credentials[cred.credential_id] = cred
-        
+
         if target_id and target_id in self.targets:
             self.targets[target_id].credentials_found.append({
                 'credential_id': cred.credential_id,
                 'username': username,
                 'added_at': datetime.utcnow().isoformat(),
             })
-        
+
         return cred
-    
+
     def test_credential(self, credential_id: str, valid: bool) -> bool:
         """Test if credential is valid."""
         if credential_id not in self.credentials:
             return False
-        
+
         cred = self.credentials[credential_id]
         cred.valid = valid
         cred.tested_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_credentials(
         self,
         engagement_id: Optional[str] = None,
@@ -494,19 +494,19 @@ class RedTeamAgent:
     ) -> List[Credential]:
         """Get credentials with filtering."""
         creds = list(self.credentials.values())
-        
+
         if engagement_id:
             creds = [c for c in creds if c.engagement_id == engagement_id]
-        
+
         if valid_only:
             creds = [c for c in creds if c.valid]
-        
+
         return creds
-    
+
     # ============================================
     # Attack Path Discovery
     # ============================================
-    
+
     def create_attack_path(
         self,
         name: str,
@@ -527,48 +527,48 @@ class RedTeamAgent:
             mitre_attack=mitre_attack or [],
             time_to_exploit=sum(s.get('time_minutes', 0) for s in steps),
         )
-        
+
         # Determine severity based on end point
         if 'domain_admin' in end_point.lower() or 'critical' in end_point.lower():
             path.severity = FindingSeverity.CRITICAL
         elif 'admin' in end_point.lower() or 'sensitive' in end_point.lower():
             path.severity = FindingSeverity.HIGH
-        
+
         self.attack_paths[path.path_id] = path
         return path
-    
+
     def get_attack_paths(self, engagement_id: Optional[str] = None) -> List[AttackPath]:
         """Get attack paths with filtering."""
         paths = list(self.attack_paths.values())
-        
+
         if engagement_id:
             paths = [p for p in paths if p.engagement_id == engagement_id]
-        
+
         return paths
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def generate_engagement_report(self, engagement_id: str) -> Dict[str, Any]:
         """Generate engagement report."""
         if engagement_id not in self.engagements:
             return {'error': 'Engagement not found'}
-        
+
         engagement = self.engagements[engagement_id]
         findings = self.get_findings(engagement_id=engagement_id)
         paths = self.get_attack_paths(engagement_id=engagement_id)
         creds = self.get_credentials(engagement_id=engagement_id)
         targets = self.get_targets(engagement_id=engagement_id)
-        
+
         # Findings by severity
         by_severity = {}
         for sev in FindingSeverity:
             by_severity[sev.value] = len([f for f in findings if f.severity == sev])
-        
+
         # Compromised targets
         compromised = len([t for t in targets if t.accessed])
-        
+
         return {
             'engagement': {
                 'id': engagement_id,
@@ -590,57 +590,57 @@ class RedTeamAgent:
             'mitre_coverage': self._get_mitre_coverage(findings, paths),
             'recommendations': self._generate_recommendations(findings),
         }
-    
+
     def _get_mitre_coverage(self, findings: List[Finding], paths: List[AttackPath]) -> Dict[str, Any]:
         """Get MITRE ATT&CK coverage."""
         techniques = set()
-        
+
         for f in findings:
             techniques.update(f.mitre_attack)
-        
+
         for p in paths:
             techniques.update(p.mitre_attack)
-        
+
         return {
             'techniques_used': list(techniques),
             'technique_names': [self.attack_techniques.get(t, t) for t in techniques],
             'total_techniques': len(techniques),
         }
-    
+
     def _generate_recommendations(self, findings: List[Finding]) -> List[Dict[str, Any]]:
         """Generate prioritized recommendations."""
         recommendations = []
-        
+
         # Group by severity
         critical = [f for f in findings if f.severity == FindingSeverity.CRITICAL]
         high = [f for f in findings if f.severity == FindingSeverity.HIGH]
-        
+
         for f in critical[:5]:
             recommendations.append({
                 'priority': 'critical',
                 'finding': f.title,
                 'remediation': f.remediation,
             })
-        
+
         for f in high[:5]:
             recommendations.append({
                 'priority': 'high',
                 'finding': f.title,
                 'remediation': f.remediation,
             })
-        
+
         return recommendations
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -654,11 +654,11 @@ class RedTeamAgent:
             'credentials_count': len(self.credentials),
             'attack_paths_count': len(self.attack_paths),
         }
-    
+
     # ============================================
     # KaliAgent Integration
     # ============================================
-    
+
     def execute_kali_recon(
         self,
         engagement_id: str,
@@ -666,27 +666,27 @@ class RedTeamAgent:
         domain: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Execute reconnaissance using KaliAgent.
-        
+
         Integrates with KaliAgent to run automated recon playbook
         and stores results in engagement.
         """
         try:
             from agentic_ai.agents.cyber.kali import KaliAgent, AuthorizationLevel
-            
+
             # Initialize KaliAgent
             kali = KaliAgent()
             kali.set_authorization(AuthorizationLevel.BASIC)
-            
+
             # Run recon playbook
             results = kali.run_recon_playbook(
                 target=target,
                 domain=domain,
             )
-            
+
             # Process results and add to engagement
             findings_added = 0
             services_added = 0
-            
+
             if "nmap" in results and results["nmap"].exit_code == 0:
                 # Parse nmap output for services
                 for line in results["nmap"].stdout.split("\n"):
@@ -703,13 +703,13 @@ class RedTeamAgent:
                                 service=service,
                             )
                             services_added += 1
-            
+
             # Generate report
             report = kali.generate_playbook_report(
                 playbook_name="recon",
                 results=results,
             )
-            
+
             return {
                 "success": True,
                 "engagement_id": engagement_id,
@@ -719,13 +719,13 @@ class RedTeamAgent:
                 "tools_executed": list(results.keys()),
                 "report": report,
             }
-            
+
         except ImportError:
             return {"success": False, "error": "KaliAgent not available"}
         except Exception as e:
             logger.error(f"Kali recon failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def execute_kali_web_audit(
         self,
         engagement_id: str,
@@ -735,15 +735,15 @@ class RedTeamAgent:
         """Execute web application audit using KaliAgent."""
         try:
             from agentic_ai.agents.cyber.kali import KaliAgent, AuthorizationLevel
-            
+
             kali = KaliAgent()
             kali.set_authorization(AuthorizationLevel.ADVANCED)
-            
+
             results = kali.run_web_audit_playbook(
                 url=url,
                 target=target,
             )
-            
+
             # Add findings from results
             findings_added = 0
             for tool_name, result in results.items():
@@ -759,12 +759,12 @@ class RedTeamAgent:
                             category="web_application",
                         )
                         findings_added += 1
-            
+
             report = kali.generate_playbook_report(
                 playbook_name="web_audit",
                 results=results,
             )
-            
+
             return {
                 "success": True,
                 "engagement_id": engagement_id,
@@ -773,13 +773,13 @@ class RedTeamAgent:
                 "tools_executed": list(results.keys()),
                 "report": report,
             }
-            
+
         except ImportError:
             return {"success": False, "error": "KaliAgent not available"}
         except Exception as e:
             logger.error(f"Kali web audit failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def execute_kali_password_audit(
         self,
         engagement_id: str,
@@ -789,15 +789,15 @@ class RedTeamAgent:
         """Execute password cracking audit using KaliAgent."""
         try:
             from agentic_ai.agents.cyber.kali import KaliAgent, AuthorizationLevel
-            
+
             kali = KaliAgent()
             kali.set_authorization(AuthorizationLevel.ADVANCED)
-            
+
             results = kali.run_password_audit_playbook(
                 hash_file=hash_file,
                 wordlist=wordlist,
             )
-            
+
             # Extract cracked credentials
             creds_added = 0
             for tool_name, result in results.items():
@@ -814,12 +814,12 @@ class RedTeamAgent:
                                     source=tool_name,
                                 )
                                 creds_added += 1
-            
+
             report = kali.generate_playbook_report(
                 playbook_name="password_audit",
                 results=results,
             )
-            
+
             return {
                 "success": True,
                 "engagement_id": engagement_id,
@@ -827,13 +827,13 @@ class RedTeamAgent:
                 "tools_executed": list(results.keys()),
                 "report": report,
             }
-            
+
         except ImportError:
             return {"success": False, "error": "KaliAgent not available"}
         except Exception as e:
             logger.error(f"Kali password audit failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def execute_kali_full_engagement(
         self,
         engagement_id: str,
@@ -841,7 +841,7 @@ class RedTeamAgent:
         domains: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Execute full engagement using KaliAgent playbooks.
-        
+
         Runs complete engagement: recon → web audit → password audit → report
         """
         results = {
@@ -851,7 +851,7 @@ class RedTeamAgent:
             "total_credentials": 0,
             "total_services": 0,
         }
-        
+
         # Phase 1: Reconnaissance
         for target in targets:
             domain = domains.get(target) if domains else None
@@ -863,14 +863,14 @@ class RedTeamAgent:
             results["phase_results"].append({"phase": "recon", "target": target, **recon_result})
             if recon_result.get("success"):
                 results["total_services"] += recon_result.get("services_discovered", 0)
-        
+
         # Phase 2: Web audits (if web targets)
         # Phase 3: Password audits (if hashes found)
         # Phase 4: Generate final report
-        
+
         final_report = self.generate_engagement_report(engagement_id)
         results["final_report"] = final_report
-        
+
         return results
 
 
@@ -908,7 +908,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = RedTeamAgent()
-    
+
     # Create engagement
     engagement = agent.create_engagement(
         name="Q2 Red Team Exercise",
@@ -919,9 +919,9 @@ if __name__ == "__main__":
         rules_of_engagement=["No production impact", "Business hours only"],
         team_members=["red1", "red2"],
     )
-    
+
     print(f"Created engagement: {engagement.name}")
-    
+
     # Add targets
     target1 = agent.add_target(
         name="Web Server",
@@ -931,12 +931,12 @@ if __name__ == "__main__":
         os="Ubuntu 22.04",
         engagement_id=engagement.engagement_id,
     )
-    
+
     agent.add_service_to_target(target1.target_id, "nginx", 80, "1.18.0", vulnerable=True)
     agent.add_service_to_target(target1.target_id, "ssh", 22, "OpenSSH 8.2")
-    
+
     print(f"Added target: {target1.name}")
-    
+
     # Add findings
     finding1 = agent.add_finding(
         title="SQL Injection in Login Form",
@@ -948,9 +948,9 @@ if __name__ == "__main__":
         mitre_attack=['T1190', 'T1059'],
         remediation="Use parameterized queries",
     )
-    
+
     print(f"Added finding: {finding1.title}")
-    
+
     # Add credentials
     cred = agent.add_credential(
         username="admin",
@@ -959,9 +959,9 @@ if __name__ == "__main__":
         engagement_id=engagement.engagement_id,
         privileges=['local_admin'],
     )
-    
+
     agent.test_credential(cred.credential_id, valid=True)
-    
+
     # Create attack path
     path = agent.create_attack_path(
         name="Web to Domain Admin",
@@ -976,9 +976,9 @@ if __name__ == "__main__":
         ],
         mitre_attack=['T1190', 'T1003', 'T1021', 'T1078'],
     )
-    
+
     print(f"Created attack path: {path.name} ({path.time_to_exploit} min)")
-    
+
     # Generate report
     report = agent.generate_engagement_report(engagement.engagement_id)
     print(f"\nEngagement Report:")
@@ -986,5 +986,5 @@ if __name__ == "__main__":
     print(f"  Compromised: {report['summary']['compromised_targets']}")
     print(f"  Findings: {report['summary']['total_findings']}")
     print(f"  MITRE Techniques: {report['mitre_coverage']['total_techniques']}")
-    
+
     print(f"\nState: {agent.get_state()}")

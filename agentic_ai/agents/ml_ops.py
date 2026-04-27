@@ -165,7 +165,7 @@ class MLOpsAgent:
     MLOps Agent for ML lifecycle management,
     experiment tracking, deployment, and monitoring.
     """
-    
+
     def __init__(self, agent_id: str = "mlops-agent"):
         self.agent_id = agent_id
         self.datasets: Dict[str, Dataset] = {}
@@ -174,14 +174,14 @@ class MLOpsAgent:
         self.deployments: Dict[str, Deployment] = {}
         self.monitors: Dict[str, ModelMonitor] = {}
         self.alerts: Dict[str, Alert] = {}
-        
+
         # Supported frameworks
         self.frameworks = ['tensorflow', 'pytorch', 'sklearn', 'xgboost', 'lightgbm', 'keras']
-    
+
     # ============================================
     # Dataset Management
     # ============================================
-    
+
     def register_dataset(
         self,
         name: str,
@@ -205,23 +205,23 @@ class MLOpsAgent:
             owner=owner,
             tags=tags or [],
         )
-        
+
         self.datasets[dataset.dataset_id] = dataset
         return dataset
-    
+
     def get_datasets(self, tag: Optional[str] = None) -> List[Dataset]:
         """Get datasets with filtering."""
         datasets = list(self.datasets.values())
-        
+
         if tag:
             datasets = [d for d in datasets if tag in d.tags]
-        
+
         return datasets
-    
+
     # ============================================
     # Experiment Tracking
     # ============================================
-    
+
     def create_experiment(
         self,
         name: str,
@@ -242,19 +242,19 @@ class MLOpsAgent:
             hyperparameters=hyperparameters or {},
             created_by=created_by,
         )
-        
+
         self.experiments[experiment.experiment_id] = experiment
         return experiment
-    
+
     def start_experiment(self, experiment_id: str) -> bool:
         """Start experiment."""
         if experiment_id not in self.experiments:
             return False
-        
+
         self.experiments[experiment_id].status = ExperimentStatus.RUNNING
         self.experiments[experiment_id].started_at = datetime.utcnow()
         return True
-    
+
     def complete_experiment(
         self,
         experiment_id: str,
@@ -264,15 +264,15 @@ class MLOpsAgent:
         """Complete experiment with results."""
         if experiment_id not in self.experiments:
             return False
-        
+
         experiment = self.experiments[experiment_id]
         experiment.status = ExperimentStatus.COMPLETED
         experiment.completed_at = datetime.utcnow()
         experiment.metrics = metrics
         experiment.artifacts = artifacts or []
-        
+
         return True
-    
+
     def get_experiments(
         self,
         status: Optional[ExperimentStatus] = None,
@@ -280,19 +280,19 @@ class MLOpsAgent:
     ) -> List[Experiment]:
         """Get experiments with filtering."""
         experiments = list(self.experiments.values())
-        
+
         if status:
             experiments = [e for e in experiments if e.status == status]
-        
+
         if model_type:
             experiments = [e for e in experiments if e.model_type == model_type]
-        
+
         return experiments
-    
+
     # ============================================
     # Model Registry
     # ============================================
-    
+
     def register_model(
         self,
         name: str,
@@ -318,28 +318,28 @@ class MLOpsAgent:
             input_schema=input_schema or {},
             output_schema=output_schema or {},
         )
-        
+
         self.models[model.model_id] = model
-        
+
         # Copy metrics from experiment
         if experiment_id and experiment_id in self.experiments:
             model.metrics = self.experiments[experiment_id].metrics
-        
+
         return model
-    
+
     def update_model_stage(self, model_id: str, stage: ModelStage) -> bool:
         """Update model stage."""
         if model_id not in self.models:
             return False
-        
+
         self.models[model_id].stage = stage
-        
+
         if stage == ModelStage.PRODUCTION:
             self.models[model_id].deployed_at = datetime.utcnow()
             self.models[model_id].status = ModelStatus.DEPLOYED
-        
+
         return True
-    
+
     def get_models(
         self,
         stage: Optional[ModelStage] = None,
@@ -347,19 +347,19 @@ class MLOpsAgent:
     ) -> List[Model]:
         """Get models with filtering."""
         models = list(self.models.values())
-        
+
         if stage:
             models = [m for m in models if m.stage == stage]
-        
+
         if framework:
             models = [m for m in models if m.framework == framework]
-        
+
         return models
-    
+
     # ============================================
     # Deployment
     # ============================================
-    
+
     def deploy_model(
         self,
         model_id: str,
@@ -372,7 +372,7 @@ class MLOpsAgent:
         """Deploy model to environment."""
         if model_id not in self.models:
             raise ValueError(f"Model {model_id} not found")
-        
+
         deployment = Deployment(
             deployment_id=self._generate_id("deploy"),
             model_id=model_id,
@@ -383,15 +383,15 @@ class MLOpsAgent:
             instances=instances,
             config=config or {},
         )
-        
+
         self.deployments[deployment.deployment_id] = deployment
-        
+
         # Update model
         self.models[model_id].stage = ModelStage.PRODUCTION
         self.models[model_id].status = ModelStatus.DEPLOYED
-        
+
         return deployment
-    
+
     def update_deployment_status(
         self,
         deployment_id: str,
@@ -401,18 +401,18 @@ class MLOpsAgent:
         """Update deployment status."""
         if deployment_id not in self.deployments:
             return False
-        
+
         deployment = self.deployments[deployment_id]
         deployment.status = status
-        
+
         if health_status:
             deployment.health_status = health_status
-        
+
         if status == "running":
             deployment.deployed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_deployments(
         self,
         environment: Optional[str] = None,
@@ -420,19 +420,19 @@ class MLOpsAgent:
     ) -> List[Deployment]:
         """Get deployments with filtering."""
         deployments = list(self.deployments.values())
-        
+
         if environment:
             deployments = [d for d in deployments if d.environment == environment]
-        
+
         if status:
             deployments = [d for d in deployments if d.status == status]
-        
+
         return deployments
-    
+
     # ============================================
     # Model Monitoring
     # ============================================
-    
+
     def create_monitor(
         self,
         model_id: str,
@@ -452,10 +452,10 @@ class MLOpsAgent:
             check_frequency=check_frequency,
             alert_channels=alert_channels or [],
         )
-        
+
         self.monitors[monitor.monitor_id] = monitor
         return monitor
-    
+
     def check_model_metrics(
         self,
         model_id: str,
@@ -464,20 +464,20 @@ class MLOpsAgent:
         """Check metrics against thresholds and create alerts."""
         monitors = [m for m in self.monitors.values() if m.model_id == model_id and m.enabled]
         alerts = []
-        
+
         for monitor in monitors:
             for metric in monitor.metrics_to_track:
                 if metric not in current_metrics:
                     continue
-                
+
                 threshold = monitor.thresholds.get(metric)
                 baseline = monitor.baseline_metrics.get(metric, 0)
                 current = current_metrics[metric]
-                
+
                 # Check for drift/degradation
                 if threshold and abs(current - baseline) > threshold:
                     alert_type = AlertType.DATA_DRIFT if 'accuracy' in metric.lower() else AlertType.PERFORMANCE_DEGRADATION
-                    
+
                     alert = self.create_alert(
                         model_id=model_id,
                         alert_type=alert_type,
@@ -488,9 +488,9 @@ class MLOpsAgent:
                         threshold=threshold,
                     )
                     alerts.append(alert)
-        
+
         return alerts
-    
+
     def create_alert(
         self,
         model_id: Optional[str],
@@ -515,19 +515,19 @@ class MLOpsAgent:
             threshold=threshold,
             status="open",
         )
-        
+
         self.alerts[alert.alert_id] = alert
         return alert
-    
+
     def resolve_alert(self, alert_id: str) -> bool:
         """Resolve alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         self.alerts[alert_id].status = "resolved"
         self.alerts[alert_id].resolved_at = datetime.utcnow()
         return True
-    
+
     def get_alerts(
         self,
         alert_type: Optional[AlertType] = None,
@@ -536,43 +536,43 @@ class MLOpsAgent:
     ) -> List[Alert]:
         """Get alerts with filtering."""
         alerts = list(self.alerts.values())
-        
+
         if alert_type:
             alerts = [a for a in alerts if a.alert_type == alert_type]
-        
+
         if severity:
             alerts = [a for a in alerts if a.severity == severity]
-        
+
         if status:
             alerts = [a for a in alerts if a.status == status]
-        
+
         return alerts
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_mlops_dashboard(self) -> Dict[str, Any]:
         """Generate MLOps dashboard."""
         models = list(self.models.values())
         experiments = list(self.experiments.values())
         deployments = list(self.deployments.values())
         alerts = list(self.alerts.values())
-        
+
         # Models by stage
         by_stage = {}
         for stage in ModelStage:
             by_stage[stage.value] = len([m for m in models if m.stage == stage])
-        
+
         # Experiments by status
         by_exp_status = {}
         for status in ExperimentStatus:
             by_exp_status[status.value] = len([e for e in experiments if e.status == status])
-        
+
         # Active alerts
         open_alerts = len([a for a in alerts if a.status == "open"])
         critical_alerts = len([a for a in alerts if a.severity == "critical" and a.status == "open"])
-        
+
         return {
             'models': {
                 'total': len(models),
@@ -598,16 +598,16 @@ class MLOpsAgent:
                 },
             },
         }
-    
+
     def get_model_performance(self, model_id: str) -> Dict[str, Any]:
         """Get model performance report."""
         if model_id not in self.models:
             return {'error': 'Model not found'}
-        
+
         model = self.models[model_id]
         deployments = [d for d in self.deployments.values() if d.model_id == model_id]
         alerts = [a for a in self.alerts.values() if a.model_id == model_id]
-        
+
         return {
             'model': {
                 'model_id': model_id,
@@ -635,17 +635,17 @@ class MLOpsAgent:
                 },
             },
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -698,7 +698,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = MLOpsAgent()
-    
+
     # Register dataset
     dataset = agent.register_dataset(
         name="Customer Churn Dataset",
@@ -709,9 +709,9 @@ if __name__ == "__main__":
         owner="data-team@example.com",
         tags=['churn', 'customers', 'production'],
     )
-    
+
     print(f"Registered dataset: {dataset.name}")
-    
+
     # Create experiment
     experiment = agent.create_experiment(
         name="Churn Prediction v1",
@@ -721,18 +721,18 @@ if __name__ == "__main__":
         hyperparameters={'max_depth': 6, 'learning_rate': 0.1, 'n_estimators': 100},
         created_by="ml-engineer@example.com",
     )
-    
+
     agent.start_experiment(experiment.experiment_id)
-    
+
     # Complete experiment
     agent.complete_experiment(
         experiment.experiment_id,
         metrics={'accuracy': 0.92, 'precision': 0.89, 'recall': 0.87, 'f1': 0.88},
         artifacts=['model.pkl', 'scaler.pkl', 'feature_importance.png'],
     )
-    
+
     print(f"Experiment completed: {experiment.metrics}")
-    
+
     # Register model
     model = agent.register_model(
         name="Churn Predictor",
@@ -742,12 +742,12 @@ if __name__ == "__main__":
         version="1.0",
         owner="ml-team@example.com",
     )
-    
+
     print(f"Registered model: {model.name}")
-    
+
     # Promote to production
     agent.update_model_stage(model.model_id, ModelStage.PRODUCTION)
-    
+
     # Deploy model
     deployment = agent.deploy_model(
         model_id=model.model_id,
@@ -757,11 +757,11 @@ if __name__ == "__main__":
         instances=3,
         config={'min_instances': 2, 'max_instances': 10},
     )
-    
+
     agent.update_deployment_status(deployment.deployment_id, "running", "healthy")
-    
+
     print(f"Deployed to: {deployment.endpoint}")
-    
+
     # Create monitor
     monitor = agent.create_monitor(
         model_id=model.model_id,
@@ -771,20 +771,20 @@ if __name__ == "__main__":
         check_frequency="hourly",
         alert_channels=['slack', 'pagerduty'],
     )
-    
+
     # Simulate drift detection
     alerts = agent.check_model_metrics(
         model.model_id,
         current_metrics={'accuracy': 0.85, 'latency_p99': 120, 'error_rate': 0.015},
     )
-    
+
     print(f"Generated {len(alerts)} alerts")
-    
+
     # Get dashboard
     dashboard = agent.get_mlops_dashboard()
     print(f"\nMLOps Dashboard:")
     print(f"  Models: {dashboard['models']['total']}")
     print(f"  Production: {dashboard['models']['production']}")
     print(f"  Open Alerts: {dashboard['monitoring']['alerts']['open']}")
-    
+
     print(f"\nState: {agent.get_state()}")

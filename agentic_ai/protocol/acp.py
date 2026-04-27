@@ -32,23 +32,23 @@ class Priority(str, Enum):
 @dataclass
 class ACPMessage:
     """Agent Communication Protocol message."""
-    
+
     message_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     message_type: MessageType = MessageType.REQUEST
     priority: Priority = Priority.NORMAL
-    
+
     sender: str = ""
     recipient: str = ""
     subject: str = ""
     body: Dict[str, Any] = field(default_factory=dict)
-    
+
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     expires_at: Optional[str] = None
     correlation_id: Optional[str] = None
-    
+
     delivered: bool = False
     delivered_at: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -65,7 +65,7 @@ class ACPMessage:
             "delivered": self.delivered,
             "delivered_at": self.delivered_at,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'ACPMessage':
         """Create from dictionary."""
@@ -87,15 +87,15 @@ class ACPMessage:
 
 class ACPBus:
     """Simple in-memory message bus for agent communication."""
-    
+
     def __init__(self):
         self._messages: List[ACPMessage] = []
         self._subscribers: Dict[str, List] = {}
-    
+
     def publish(self, message: ACPMessage):
         """Publish a message to the bus."""
         self._messages.append(message)
-        
+
         topic = message.subject
         if topic in self._subscribers:
             for callback in self._subscribers[topic]:
@@ -103,28 +103,28 @@ class ACPBus:
                     callback(message)
                 except Exception:
                     pass
-    
+
     def subscribe(self, topic: str, callback):
         """Subscribe to a topic."""
         if topic not in self._subscribers:
             self._subscribers[topic] = []
         self._subscribers[topic].append(callback)
-    
-    def get_messages(self, sender: Optional[str] = None, 
+
+    def get_messages(self, sender: Optional[str] = None,
                      recipient: Optional[str] = None,
                      message_type: Optional[MessageType] = None) -> List[ACPMessage]:
         """Get messages with optional filters."""
         messages = self._messages
-        
+
         if sender:
             messages = [m for m in messages if m.sender == sender]
         if recipient:
             messages = [m for m in messages if m.recipient == recipient]
         if message_type:
             messages = [m for m in messages if m.message_type == message_type]
-        
+
         return messages
-    
+
     def clear(self):
         """Clear all messages."""
         self._messages.clear()

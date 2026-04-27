@@ -118,17 +118,17 @@ class IntegrationAgent:
     Integration Agent for API connections, webhooks,
     data synchronization, and cross-platform automation.
     """
-    
+
     def __init__(self, agent_id: str = "integration-agent"):
         self.agent_id = agent_id
         self.connections: Dict[str, APIConnection] = {}
         self.webhooks: Dict[str, Webhook] = {}
         self.sync_jobs: Dict[str, SyncJob] = {}
         self.logs: List[IntegrationLog] = []
-        
+
         # Pre-built service templates
         self.service_templates = self._init_service_templates()
-    
+
     def _init_service_templates(self) -> Dict[str, Dict[str, Any]]:
         """Initialize service connection templates."""
         return {
@@ -181,11 +181,11 @@ class IntegrationAgent:
                 'endpoints': {'sheets': '/sheets/v4/spreadsheets', 'drive': '/drive/v3/files'},
             },
         }
-    
+
     # ============================================
     # API Connection Management
     # ============================================
-    
+
     def create_connection(
         self,
         name: str,
@@ -199,7 +199,7 @@ class IntegrationAgent:
         """Create a new API connection."""
         # Use template if available
         template = self.service_templates.get(service.lower(), {})
-        
+
         connection = APIConnection(
             connection_id=self._generate_id("conn"),
             name=name,
@@ -211,20 +211,20 @@ class IntegrationAgent:
             access_token=access_token,
             config=config or {},
         )
-        
+
         self.connections[connection.connection_id] = connection
         self._log('connection', connection.connection_id, 'created', 'success')
-        
+
         logger.info(f"Created connection: {connection.name} ({connection.service})")
         return connection
-    
+
     def test_connection(self, connection_id: str) -> Dict[str, Any]:
         """Test API connection."""
         if connection_id not in self.connections:
             return {'success': False, 'error': 'Connection not found'}
-        
+
         conn = self.connections[connection_id]
-        
+
         # Simulate connection test
         result = {
             'success': True,
@@ -234,12 +234,12 @@ class IntegrationAgent:
             'authenticated': conn.access_token or conn.api_key is not None,
             'rate_limit': conn.rate_limit,
         }
-        
+
         conn.last_used = datetime.utcnow()
         self._log('connection', connection_id, 'test', 'success', result)
-        
+
         return result
-    
+
     def update_connection_status(
         self,
         connection_id: str,
@@ -249,38 +249,38 @@ class IntegrationAgent:
         """Update connection status."""
         if connection_id not in self.connections:
             return False
-        
+
         conn = self.connections[connection_id]
         conn.status = status
-        
+
         if error:
             self._log('connection', connection_id, 'error', 'error', {'error': error})
-        
+
         return True
-    
+
     def get_connections(self, status: Optional[ConnectionStatus] = None) -> List[APIConnection]:
         """Get connections with filtering."""
         connections = list(self.connections.values())
-        
+
         if status:
             connections = [c for c in connections if c.status == status]
-        
+
         return connections
-    
+
     def remove_connection(self, connection_id: str) -> bool:
         """Remove a connection."""
         if connection_id not in self.connections:
             return False
-        
+
         del self.connections[connection_id]
         self._log('connection', connection_id, 'removed', 'success')
-        
+
         return True
-    
+
     # ============================================
     # Webhook Management
     # ============================================
-    
+
     def create_webhook(
         self,
         name: str,
@@ -299,13 +299,13 @@ class IntegrationAgent:
             secret=secret or self._generate_secret(),
             connection_id=connection_id,
         )
-        
+
         self.webhooks[webhook.webhook_id] = webhook
         self._log('webhook', webhook.webhook_id, 'created', 'success')
-        
+
         logger.info(f"Created webhook: {webhook.name} -> {webhook.url}")
         return webhook
-    
+
     def trigger_webhook(
         self,
         webhook_id: str,
@@ -315,51 +315,51 @@ class IntegrationAgent:
         """Trigger a webhook."""
         if webhook_id not in self.webhooks:
             return {'success': False, 'error': 'Webhook not found'}
-        
+
         webhook = self.webhooks[webhook_id]
-        
+
         if webhook.status != 'active':
             return {'success': False, 'error': f'Webhook is {webhook.status}'}
-        
+
         if event not in webhook.events and WebhookEvent.CUSTOM not in webhook.events:
             return {'success': False, 'error': f'Event {event} not subscribed'}
-        
+
         # Simulate webhook delivery
         webhook.last_triggered = datetime.utcnow()
         webhook.success_count += 1
-        
+
         result = {
             'success': True,
             'webhook_id': webhook_id,
             'delivered_at': webhook.last_triggered.isoformat(),
             'payload_size': len(json.dumps(payload)),
         }
-        
+
         self._log('webhook', webhook_id, 'triggered', 'success', {'event': event.value})
-        
+
         return result
-    
+
     def pause_webhook(self, webhook_id: str) -> bool:
         """Pause a webhook."""
         if webhook_id not in self.webhooks:
             return False
-        
+
         self.webhooks[webhook_id].status = 'paused'
         return True
-    
+
     def get_webhooks(self, status: Optional[str] = None) -> List[Webhook]:
         """Get webhooks with filtering."""
         webhooks = list(self.webhooks.values())
-        
+
         if status:
             webhooks = [w for w in webhooks if w.status == status]
-        
+
         return webhooks
-    
+
     # ============================================
     # Sync Job Management
     # ============================================
-    
+
     def create_sync_job(
         self,
         name: str,
@@ -378,51 +378,51 @@ class IntegrationAgent:
             schedule=schedule,
             status="pending",
         )
-        
+
         self.sync_jobs[job.job_id] = job
         self._log('sync', job.job_id, 'created', 'success')
-        
+
         logger.info(f"Created sync job: {job.name}")
         return job
-    
+
     def run_sync_job(self, job_id: str, records: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """Execute a sync job."""
         if job_id not in self.sync_jobs:
             return {'success': False, 'error': 'Job not found'}
-        
+
         job = self.sync_jobs[job_id]
         job.status = 'running'
         job.last_run = datetime.utcnow()
-        
+
         # Simulate sync
         record_count = len(records) if records else 100
         job.records_synced += record_count
         job.status = 'completed'
-        
+
         result = {
             'success': True,
             'job_id': job_id,
             'records_synced': record_count,
             'duration_ms': 1250,  # Simulated
         }
-        
+
         self._log('sync', job_id, 'executed', 'success', {'records': record_count})
-        
+
         return result
-    
+
     def get_sync_jobs(self, status: Optional[str] = None) -> List[SyncJob]:
         """Get sync jobs with filtering."""
         jobs = list(self.sync_jobs.values())
-        
+
         if status:
             jobs = [j for j in jobs if j.status == status]
-        
+
         return jobs
-    
+
     # ============================================
     # Integration Logs
     # ============================================
-    
+
     def _log(
         self,
         integration_type: str,
@@ -442,13 +442,13 @@ class IntegrationAgent:
             details=details or {},
             error=error,
         )
-        
+
         self.logs.append(log)
-        
+
         # Keep last 10000 logs
         if len(self.logs) > 10000:
             self.logs = self.logs[-10000:]
-    
+
     def get_logs(
         self,
         integration_type: Optional[str] = None,
@@ -457,31 +457,31 @@ class IntegrationAgent:
     ) -> List[IntegrationLog]:
         """Get integration logs."""
         logs = self.logs
-        
+
         if integration_type:
             logs = [l for l in logs if l.integration_type == integration_type]
-        
+
         if status:
             logs = [l for l in logs if l.status == status]
-        
+
         return logs[-limit:]
-    
+
     # ============================================
     # Integration Health
     # ============================================
-    
+
     def get_integration_health(self) -> Dict[str, Any]:
         """Get overall integration health summary."""
         connections = list(self.connections.values())
         webhooks = list(self.webhooks.values())
         sync_jobs = list(self.sync_jobs.values())
-        
+
         active_connections = len([c for c in connections if c.status == ConnectionStatus.ACTIVE])
         active_webhooks = len([w for w in webhooks if w.status == 'active'])
         completed_syncs = len([j for j in sync_jobs if j.status == 'completed'])
-        
+
         recent_errors = len([l for l in self.logs[-100:] if l.status == 'error'])
-        
+
         return {
             'connections': {
                 'total': len(connections),
@@ -501,31 +501,31 @@ class IntegrationAgent:
             'recent_errors': recent_errors,
             'health_score': self._calculate_health_score(active_connections, len(connections), recent_errors),
         }
-    
+
     def _calculate_health_score(self, active: int, total: int, errors: int) -> float:
         """Calculate integration health score (0-100)."""
         if total == 0:
             return 100.0
-        
+
         connection_score = (active / total) * 100
         error_penalty = min(errors * 5, 50)  # Max 50 point penalty
-        
+
         return max(0, connection_score - error_penalty)
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def _generate_secret(self) -> str:
         """Generate a webhook secret."""
         return secrets.token_urlsafe(32)
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -568,7 +568,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = IntegrationAgent()
-    
+
     # Create connection
     conn = agent.create_connection(
         name="Slack Bot",
@@ -576,23 +576,23 @@ if __name__ == "__main__":
         auth_type="bearer",
         access_token="xoxb-xxx",
     )
-    
+
     print(f"Created connection: {conn.name}")
     print(f"Service: {conn.service}")
-    
+
     # Test connection
     result = agent.test_connection(conn.connection_id)
     print(f"Test result: {result['success']}")
-    
+
     # Create webhook
     webhook = agent.create_webhook(
         name="GitHub Issues",
         url="https://api.example.com/webhooks/github",
         events=[WebhookEvent.CREATE, WebhookEvent.UPDATE],
     )
-    
+
     print(f"\nCreated webhook: {webhook.name}")
-    
+
     # Trigger webhook
     trigger = agent.trigger_webhook(
         webhook.webhook_id,
@@ -600,7 +600,7 @@ if __name__ == "__main__":
         {'issue': 'test'},
     )
     print(f"Triggered: {trigger['success']}")
-    
+
     # Create sync job
     sync = agent.create_sync_job(
         name="HubSpot to Salesforce",
@@ -609,11 +609,11 @@ if __name__ == "__main__":
         direction=SyncDirection.UNIDIRECTIONAL,
         schedule="0 */6 * * *",
     )
-    
+
     print(f"\nCreated sync job: {sync.name}")
-    
+
     # Health check
     health = agent.get_integration_health()
     print(f"\nHealth Score: {health['health_score']}")
-    
+
     print(f"\nState: {agent.get_state()}")

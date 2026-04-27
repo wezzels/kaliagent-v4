@@ -117,7 +117,7 @@ class DevOpsAgent:
     DevOps Agent for infrastructure automation, CI/CD,
     deployment orchestration, and monitoring.
     """
-    
+
     def __init__(self, agent_id: str = "devops-agent"):
         self.agent_id = agent_id
         self.deployments: Dict[str, Deployment] = {}
@@ -125,10 +125,10 @@ class DevOpsAgent:
         self.infrastructure: Dict[str, InfrastructureResource] = {}
         self.alerts: Dict[str, Alert] = {}
         self.metrics: Dict[str, List[Dict[str, Any]]] = {}
-        
+
         # Initialize default infrastructure
         self._init_defaults()
-    
+
     def _init_defaults(self):
         """Initialize default infrastructure resources."""
         # Example infrastructure
@@ -152,11 +152,11 @@ class DevOpsAgent:
                 tags={'env': 'prod', 'team': 'data'},
             ),
         }
-    
+
     # ============================================
     # Deployment Management
     # ============================================
-    
+
     def create_deployment(
         self,
         application: str,
@@ -175,11 +175,11 @@ class DevOpsAgent:
             deployed_by=deployed_by,
             health_check_url=health_check_url,
         )
-        
+
         self.deployments[deployment.deployment_id] = deployment
         logger.info(f"Created deployment: {deployment.deployment_id} - {application}:{version}")
         return deployment
-    
+
     def update_deployment_status(
         self,
         deployment_id: str,
@@ -189,19 +189,19 @@ class DevOpsAgent:
         """Update deployment status."""
         if deployment_id not in self.deployments:
             return None
-        
+
         deployment = self.deployments[deployment_id]
         deployment.status = status
-        
+
         if logs:
             deployment.logs.extend(logs)
-        
+
         if status == DeploymentStatus.DEPLOYED:
             deployment.deployed_at = datetime.utcnow()
-        
+
         logger.info(f"Deployment {deployment_id} status: {status.value}")
         return deployment
-    
+
     def rollback_deployment(
         self,
         deployment_id: str,
@@ -211,15 +211,15 @@ class DevOpsAgent:
         """Rollback deployment to previous version."""
         if deployment_id not in self.deployments:
             return None
-        
+
         deployment = self.deployments[deployment_id]
         deployment.status = DeploymentStatus.ROLLED_BACK
         deployment.rollback_to = rollback_to
         deployment.logs.append(f"Rolled back to {rollback_to} by {rolled_back_by}")
-        
+
         logger.warning(f"Deployment {deployment_id} rolled back to {rollback_to}")
         return deployment
-    
+
     def get_deployments(
         self,
         environment: Optional[str] = None,
@@ -228,22 +228,22 @@ class DevOpsAgent:
     ) -> List[Deployment]:
         """Get deployments with filtering."""
         deployments = list(self.deployments.values())
-        
+
         if environment:
             deployments = [d for d in deployments if d.environment == environment]
-        
+
         if status:
             deployments = [d for d in deployments if d.status == status]
-        
+
         # Sort by creation time (newest first)
         deployments.sort(key=lambda x: x.created_at, reverse=True)
-        
+
         return deployments[:limit]
-    
+
     # ============================================
     # CI/CD Pipeline Management
     # ============================================
-    
+
     def create_pipeline(
         self,
         name: str,
@@ -260,23 +260,23 @@ class DevOpsAgent:
             status=PipelineStatus.QUEUED,
             stages=stages,
         )
-        
+
         self.pipelines[pipeline.pipeline_id] = pipeline
         logger.info(f"Created pipeline: {pipeline.pipeline_id} - {name}")
         return pipeline
-    
+
     def start_pipeline(self, pipeline_id: str) -> Optional[Pipeline]:
         """Start a queued pipeline."""
         if pipeline_id not in self.pipelines:
             return None
-        
+
         pipeline = self.pipelines[pipeline_id]
         pipeline.status = PipelineStatus.RUNNING
         pipeline.started_at = datetime.utcnow()
         pipeline.current_stage = pipeline.stages[0] if pipeline.stages else None
-        
+
         return pipeline
-    
+
     def update_pipeline_stage(
         self,
         pipeline_id: str,
@@ -286,9 +286,9 @@ class DevOpsAgent:
         """Update pipeline stage status."""
         if pipeline_id not in self.pipelines:
             return None
-        
+
         pipeline = self.pipelines[pipeline_id]
-        
+
         if status == "failed":
             pipeline.status = PipelineStatus.FAILED
             pipeline.completed_at = datetime.utcnow()
@@ -300,9 +300,9 @@ class DevOpsAgent:
             else:
                 pipeline.status = PipelineStatus.PASSED
                 pipeline.completed_at = datetime.utcnow()
-        
+
         return pipeline
-    
+
     def get_pipelines(
         self,
         status: Optional[PipelineStatus] = None,
@@ -310,22 +310,22 @@ class DevOpsAgent:
     ) -> List[Pipeline]:
         """Get pipelines with filtering."""
         pipelines = list(self.pipelines.values())
-        
+
         if status:
             pipelines = [p for p in pipelines if p.status == status]
-        
+
         pipelines.sort(key=lambda x: x.started_at or datetime.min, reverse=True)
         return pipelines[:limit]
-    
+
     # ============================================
     # Infrastructure Management
     # ============================================
-    
+
     def register_resource(self, resource: InfrastructureResource):
         """Register an infrastructure resource."""
         self.infrastructure[resource.resource_id] = resource
         logger.info(f"Registered resource: {resource.resource_id} ({resource.resource_type.value})")
-    
+
     def update_resource_status(
         self,
         resource_id: str,
@@ -334,44 +334,44 @@ class DevOpsAgent:
         """Update resource status."""
         if resource_id not in self.infrastructure:
             return None
-        
+
         resource = self.infrastructure[resource_id]
         resource.status = status
-        
+
         return resource
-    
+
     def get_resource_costs(self, hours: int = 24) -> Dict[str, float]:
         """Calculate resource costs for time period."""
         costs = {}
         total = 0.0
-        
+
         for resource in self.infrastructure.values():
             if resource.status == 'running':
                 cost = resource.cost_per_hour * hours
                 costs[resource.resource_id] = cost
                 total += cost
-        
+
         costs['total'] = total
         return costs
-    
+
     def get_infrastructure_summary(self) -> Dict[str, Any]:
         """Get infrastructure summary."""
         by_type = {}
         by_status = {}
         total_cost = 0.0
-        
+
         for resource in self.infrastructure.values():
             # By type
             rtype = resource.resource_type.value
             by_type[rtype] = by_type.get(rtype, 0) + 1
-            
+
             # By status
             by_status[resource.status] = by_status.get(resource.status, 0) + 1
-            
+
             # Cost
             if resource.status == 'running':
                 total_cost += resource.cost_per_hour
-        
+
         return {
             'total_resources': len(self.infrastructure),
             'by_type': by_type,
@@ -380,26 +380,26 @@ class DevOpsAgent:
             'daily_cost': total_cost * 24,
             'monthly_cost': total_cost * 24 * 30,
         }
-    
+
     # ============================================
     # Monitoring & Alerting
     # ============================================
-    
+
     def record_metric(self, metric_name: str, value: float, tags: Optional[Dict[str, str]] = None):
         """Record a metric data point."""
         if metric_name not in self.metrics:
             self.metrics[metric_name] = []
-        
+
         self.metrics[metric_name].append({
             'timestamp': datetime.utcnow().isoformat(),
             'value': value,
             'tags': tags or {},
         })
-        
+
         # Keep last 1000 data points
         if len(self.metrics[metric_name]) > 1000:
             self.metrics[metric_name] = self.metrics[metric_name][-1000:]
-    
+
     def create_alert(
         self,
         name: str,
@@ -417,43 +417,43 @@ class DevOpsAgent:
             threshold=threshold,
             current_value=current_value,
         )
-        
+
         self.alerts[alert.alert_id] = alert
         logger.warning(f"Alert created: {alert.name} - {metric} = {current_value} (threshold: {threshold})")
         return alert
-    
+
     def acknowledge_alert(self, alert_id: str, acknowledged_by: str) -> bool:
         """Acknowledge an alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         self.alerts[alert_id].acknowledged = True
         self.alerts[alert_id].acknowledged_by = acknowledged_by
-        
+
         return True
-    
+
     def resolve_alert(self, alert_id: str) -> bool:
         """Resolve an alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         self.alerts[alert_id].resolved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_active_alerts(self, severity: Optional[str] = None) -> List[Alert]:
         """Get active (unresolved) alerts."""
         alerts = [a for a in self.alerts.values() if not a.resolved_at]
-        
+
         if severity:
             alerts = [a for a in alerts if a.severity == severity]
-        
+
         return alerts
-    
+
     def check_thresholds(self) -> List[Alert]:
         """Check metrics against thresholds and create alerts."""
         new_alerts = []
-        
+
         # Example thresholds
         thresholds = {
             'cpu_usage': {'warning': 70.0, 'critical': 90.0},
@@ -462,11 +462,11 @@ class DevOpsAgent:
             'error_rate': {'warning': 1.0, 'critical': 5.0},
             'latency_p99': {'warning': 500.0, 'critical': 1000.0},
         }
-        
+
         for metric_name, limits in thresholds.items():
             if metric_name in self.metrics and self.metrics[metric_name]:
                 latest = self.metrics[metric_name][-1]['value']
-                
+
                 if latest >= limits['critical']:
                     alert = self.create_alert(
                         name=f"Critical: {metric_name}",
@@ -485,20 +485,20 @@ class DevOpsAgent:
                         current_value=latest,
                     )
                     new_alerts.append(alert)
-        
+
         return new_alerts
-    
+
     # ============================================
     # Cost Optimization
     # ============================================
-    
+
     def get_cost_report(self, days: int = 30) -> Dict[str, Any]:
         """Generate cost optimization report."""
         summary = self.get_infrastructure_summary()
-        
+
         # Identify optimization opportunities
         opportunities = []
-        
+
         # Check for stopped resources still incurring costs
         for resource in self.infrastructure.values():
             if resource.status == 'stopped' and resource.cost_per_hour > 0:
@@ -508,7 +508,7 @@ class DevOpsAgent:
                     'recommendation': f"Terminate or snapshot {resource.name}",
                     'savings_per_month': resource.cost_per_hour * 24 * 30,
                 })
-        
+
         # Check for underutilized resources (simulated)
         for resource in self.infrastructure.values():
             if resource.resource_type == InfrastructureType.VM and resource.status == 'running':
@@ -519,24 +519,24 @@ class DevOpsAgent:
                     'recommendation': f"Review sizing for {resource.name}",
                     'potential_savings': resource.cost_per_hour * 0.3 * 24 * 30,  # Estimate 30% savings
                 })
-        
+
         return {
             'period_days': days,
             'current_costs': summary,
             'optimization_opportunities': opportunities,
             'potential_monthly_savings': sum(o['potential_savings'] for o in opportunities),
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -584,7 +584,7 @@ def get_capabilities() -> Dict[str, Any]:
 if __name__ == "__main__":
     # Quick test
     agent = DevOpsAgent()
-    
+
     # Create deployment
     deployment = agent.create_deployment(
         application="my-app",
@@ -592,6 +592,6 @@ if __name__ == "__main__":
         environment="production",
         deployed_by="ci-bot",
     )
-    
+
     print(f"Created deployment: {deployment.deployment_id}")
     print(f"State: {agent.get_state()}")

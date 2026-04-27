@@ -174,7 +174,7 @@ class AuditAgent:
     Audit Agent for internal audit planning, control testing,
     evidence collection, and audit reporting.
     """
-    
+
     def __init__(self, agent_id: str = "audit-agent"):
         self.agent_id = agent_id
         self.audits: Dict[str, Audit] = {}
@@ -182,18 +182,18 @@ class AuditAgent:
         self.findings: Dict[str, Finding] = {}
         self.evidence: Dict[str, Evidence] = {}
         self.workpapers: Dict[str, AuditWorkpaper] = {}
-        
+
         # Audit templates
         self.templates = {
             'it_general': self._itgc_template(),
             'access_review': self._access_review_template(),
             'change_management': self._change_mgmt_template(),
         }
-    
+
     # ============================================
     # Audit Planning
     # ============================================
-    
+
     def create_audit(
         self,
         title: str,
@@ -218,19 +218,19 @@ class AuditAgent:
             objectives=objectives or [],
             planned_hours=planned_hours,
         )
-        
+
         self.audits[audit.audit_id] = audit
         return audit
-    
+
     def start_audit(self, audit_id: str) -> bool:
         """Start audit fieldwork."""
         if audit_id not in self.audits:
             return False
-        
+
         self.audits[audit_id].status = AuditStatus.IN_PROGRESS
         self.audits[audit_id].start_date = datetime.utcnow()
         return True
-    
+
     def update_audit_status(
         self,
         audit_id: str,
@@ -239,26 +239,26 @@ class AuditAgent:
         """Update audit status."""
         if audit_id not in self.audits:
             return False
-        
+
         self.audits[audit_id].status = status
-        
+
         if status == AuditStatus.COMPLETE:
             self.audits[audit_id].end_date = datetime.utcnow()
-        
+
         return True
-    
+
     def complete_audit(self, audit_id: str, actual_hours: float) -> bool:
         """Complete audit."""
         if audit_id not in self.audits:
             return False
-        
+
         audit = self.audits[audit_id]
         audit.status = AuditStatus.COMPLETE
         audit.end_date = datetime.utcnow()
         audit.actual_hours = actual_hours
-        
+
         return True
-    
+
     def get_audits(
         self,
         audit_type: Optional[AuditType] = None,
@@ -266,19 +266,19 @@ class AuditAgent:
     ) -> List[Audit]:
         """Get audits with filtering."""
         audits = list(self.audits.values())
-        
+
         if audit_type:
             audits = [a for a in audits if a.audit_type == audit_type]
-        
+
         if status:
             audits = [a for a in audits if a.status == status]
-        
+
         return audits
-    
+
     # ============================================
     # Control Testing
     # ============================================
-    
+
     def add_control(
         self,
         audit_id: str,
@@ -292,7 +292,7 @@ class AuditAgent:
         """Add control for testing."""
         if audit_id not in self.audits:
             raise ValueError(f"Audit {audit_id} not found")
-        
+
         control = Control(
             control_id=self._generate_id("ctrl"),
             audit_id=audit_id,
@@ -303,10 +303,10 @@ class AuditAgent:
             frequency=frequency,
             test_procedures=test_procedures or [],
         )
-        
+
         self.controls[control.control_id] = control
         return control
-    
+
     def test_control(
         self,
         control_id: str,
@@ -317,26 +317,26 @@ class AuditAgent:
         """Test control and record results."""
         if control_id not in self.controls:
             return False
-        
+
         control = self.controls[control_id]
         control.tested_by = tested_by
         control.tested_at = datetime.utcnow()
         control.test_results = test_results
         control.evidence = evidence or []
-        
+
         # Determine effectiveness
         passed = sum(1 for r in test_results if r.get('passed', False))
         total = len(test_results)
-        
+
         if passed == total:
             control.status = ControlStatus.EFFECTIVE
         elif passed == 0:
             control.status = ControlStatus.INEFFECTIVE
         else:
             control.status = ControlStatus.PARTIALLY_EFFECTIVE
-        
+
         return True
-    
+
     def get_controls(
         self,
         audit_id: Optional[str] = None,
@@ -345,22 +345,22 @@ class AuditAgent:
     ) -> List[Control]:
         """Get controls with filtering."""
         controls = list(self.controls.values())
-        
+
         if audit_id:
             controls = [c for c in controls if c.audit_id == audit_id]
-        
+
         if control_type:
             controls = [c for c in controls if c.control_type == control_type]
-        
+
         if status:
             controls = [c for c in controls if c.status == status]
-        
+
         return controls
-    
+
     # ============================================
     # Finding Management
     # ============================================
-    
+
     def create_finding(
         self,
         audit_id: str,
@@ -376,7 +376,7 @@ class AuditAgent:
         """Create audit finding."""
         if audit_id not in self.audits:
             raise ValueError(f"Audit {audit_id} not found")
-        
+
         finding = Finding(
             finding_id=self._generate_id("find"),
             audit_id=audit_id,
@@ -390,12 +390,12 @@ class AuditAgent:
             cause=cause,
             effect=effect,
         )
-        
+
         self.findings[finding.finding_id] = finding
         self.audits[audit_id].findings_count += 1
-        
+
         return finding
-    
+
     def update_finding(
         self,
         finding_id: str,
@@ -408,9 +408,9 @@ class AuditAgent:
         """Update finding details."""
         if finding_id not in self.findings:
             return False
-        
+
         finding = self.findings[finding_id]
-        
+
         if recommendation:
             finding.recommendation = recommendation
         if management_response:
@@ -421,9 +421,9 @@ class AuditAgent:
             finding.responsible_party = responsible_party
         if due_date:
             finding.due_date = due_date
-        
+
         return True
-    
+
     def update_finding_status(
         self,
         finding_id: str,
@@ -432,15 +432,15 @@ class AuditAgent:
         """Update finding status."""
         if finding_id not in self.findings:
             return False
-        
+
         finding = self.findings[finding_id]
         finding.status = status
-        
+
         if status == FindingStatus.CLOSED:
             finding.closed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_findings(
         self,
         audit_id: Optional[str] = None,
@@ -449,22 +449,22 @@ class AuditAgent:
     ) -> List[Finding]:
         """Get findings with filtering."""
         findings = list(self.findings.values())
-        
+
         if audit_id:
             findings = [f for f in findings if f.audit_id == audit_id]
-        
+
         if severity:
             findings = [f for f in findings if f.severity == severity]
-        
+
         if status:
             findings = [f for f in findings if f.status == status]
-        
+
         return findings
-    
+
     # ============================================
     # Evidence Collection
     # ============================================
-    
+
     def collect_evidence(
         self,
         audit_id: str,
@@ -479,7 +479,7 @@ class AuditAgent:
         """Collect audit evidence."""
         if audit_id not in self.audits:
             raise ValueError(f"Audit {audit_id} not found")
-        
+
         evidence = Evidence(
             evidence_id=self._generate_id("evid"),
             audit_id=audit_id,
@@ -491,10 +491,10 @@ class AuditAgent:
             location=location,
             collected_by=collected_by,
         )
-        
+
         self.evidence[evidence.evidence_id] = evidence
         return evidence
-    
+
     def review_evidence(
         self,
         evidence_id: str,
@@ -503,12 +503,12 @@ class AuditAgent:
         """Mark evidence as reviewed."""
         if evidence_id not in self.evidence:
             return False
-        
+
         self.evidence[evidence_id].reviewed = True
         self.evidence[evidence_id].reviewed_by = reviewed_by
-        
+
         return True
-    
+
     def get_evidence(
         self,
         audit_id: Optional[str] = None,
@@ -517,22 +517,22 @@ class AuditAgent:
     ) -> List[Evidence]:
         """Get evidence with filtering."""
         evidence = list(self.evidence.values())
-        
+
         if audit_id:
             evidence = [e for e in evidence if e.audit_id == audit_id]
-        
+
         if evidence_type:
             evidence = [e for e in evidence if e.evidence_type == evidence_type]
-        
+
         if reviewed is not None:
             evidence = [e for e in evidence if e.reviewed == reviewed]
-        
+
         return evidence
-    
+
     # ============================================
     # Workpapers
     # ============================================
-    
+
     def create_workpaper(
         self,
         audit_id: str,
@@ -544,7 +544,7 @@ class AuditAgent:
         """Create audit workpaper."""
         if audit_id not in self.audits:
             raise ValueError(f"Audit {audit_id} not found")
-        
+
         workpaper = AuditWorkpaper(
             workpaper_id=self._generate_id("wp"),
             audit_id=audit_id,
@@ -553,10 +553,10 @@ class AuditAgent:
             content=content,
             created_by=created_by,
         )
-        
+
         self.workpapers[workpaper.workpaper_id] = workpaper
         return workpaper
-    
+
     def review_workpaper(
         self,
         workpaper_id: str,
@@ -565,39 +565,39 @@ class AuditAgent:
         """Review workpaper."""
         if workpaper_id not in self.workpapers:
             return False
-        
+
         self.workpapers[workpaper_id].reviewed = True
         self.workpapers[workpaper_id].reviewer = reviewer
-        
+
         return True
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def generate_audit_report(self, audit_id: str) -> Dict[str, Any]:
         """Generate audit report."""
         if audit_id not in self.audits:
             return {'error': 'Audit not found'}
-        
+
         audit = self.audits[audit_id]
         controls = self.get_controls(audit_id=audit_id)
         findings = self.get_findings(audit_id=audit_id)
         evidence = self.get_evidence(audit_id=audit_id)
-        
+
         # Control effectiveness
         effective = len([c for c in controls if c.status == ControlStatus.EFFECTIVE])
         ineffective = len([c for c in controls if c.status == ControlStatus.INEFFECTIVE])
         partial = len([c for c in controls if c.status == ControlStatus.PARTIALLY_EFFECTIVE])
-        
+
         # Findings by severity
         by_severity = {}
         for sev in FindingSeverity:
             by_severity[sev.value] = len([f for f in findings if f.severity == sev])
-        
+
         # Open findings
         open_findings = len([f for f in findings if f.status != FindingStatus.CLOSED])
-        
+
         return {
             'audit': {
                 'audit_id': audit_id,
@@ -634,29 +634,29 @@ class AuditAgent:
                 'reviewed': len([e for e in evidence if e.reviewed]),
             },
         }
-    
+
     def get_audit_dashboard(self) -> Dict[str, Any]:
         """Generate audit dashboard."""
         audits = list(self.audits.values())
         findings = list(self.findings.values())
-        
+
         # Audits by status
         by_status = {}
         for status in AuditStatus:
             by_status[status.value] = len([a for a in audits if a.status == status])
-        
+
         # Findings by severity
         by_severity = {}
         for sev in FindingSeverity:
             by_severity[sev.value] = len([f for f in findings if f.severity == sev])
-        
+
         # Overdue findings
         now = datetime.utcnow()
         overdue = len([
             f for f in findings
             if f.due_date and f.due_date < now and f.status != FindingStatus.CLOSED
         ])
-        
+
         return {
             'audits': {
                 'total': len(audits),
@@ -675,11 +675,11 @@ class AuditAgent:
                 'tested': len([c for c in self.controls.values() if c.status != ControlStatus.NOT_TESTED]),
             },
         }
-    
+
     # ============================================
     # Templates
     # ============================================
-    
+
     def _itgc_template(self) -> Dict[str, Any]:
         """IT General Controls template."""
         return {
@@ -691,7 +691,7 @@ class AuditAgent:
                 'Backup & Recovery',
             ],
         }
-    
+
     def _access_review_template(self) -> Dict[str, Any]:
         """Access Review template."""
         return {
@@ -703,7 +703,7 @@ class AuditAgent:
                 'Segregation of duties',
             ],
         }
-    
+
     def _change_mgmt_template(self) -> Dict[str, Any]:
         """Change Management template."""
         return {
@@ -715,17 +715,17 @@ class AuditAgent:
                 'Rollback procedures',
             ],
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -778,7 +778,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = AuditAgent()
-    
+
     # Create audit
     audit = agent.create_audit(
         title="IT General Controls Audit 2026",
@@ -794,12 +794,12 @@ if __name__ == "__main__":
         ],
         planned_hours=120.0,
     )
-    
+
     print(f"Created audit: {audit.title}")
-    
+
     # Start audit
     agent.start_audit(audit.audit_id)
-    
+
     # Add controls
     ctrl1 = agent.add_control(
         audit.audit_id,
@@ -814,7 +814,7 @@ if __name__ == "__main__":
             "Check for terminated users with active access",
         ],
     )
-    
+
     ctrl2 = agent.add_control(
         audit.audit_id,
         "Change Approval",
@@ -828,7 +828,7 @@ if __name__ == "__main__":
             "Check emergency change process",
         ],
     )
-    
+
     # Test controls
     agent.test_control(
         ctrl1.control_id,
@@ -839,7 +839,7 @@ if __name__ == "__main__":
             {'procedure': 'Termination check', 'passed': False, 'note': '2 users found'},
         ],
     )
-    
+
     agent.test_control(
         ctrl2.control_id,
         tested_by="auditor@example.com",
@@ -849,7 +849,7 @@ if __name__ == "__main__":
             {'procedure': 'Emergency changes', 'passed': True},
         ],
     )
-    
+
     # Create finding
     finding = agent.create_finding(
         audit.audit_id,
@@ -862,7 +862,7 @@ if __name__ == "__main__":
         cause="HR termination process not integrated with IT systems",
         effect="Unauthorized access risk",
     )
-    
+
     # Update finding
     agent.update_finding(
         finding.finding_id,
@@ -872,7 +872,7 @@ if __name__ == "__main__":
         responsible_party="it-director@example.com",
         due_date=datetime.utcnow() + timedelta(days=90),
     )
-    
+
     # Collect evidence
     agent.collect_evidence(
         audit.audit_id,
@@ -883,19 +883,19 @@ if __name__ == "__main__":
         collected_by="auditor@example.com",
         control_id=ctrl1.control_id,
     )
-    
+
     # Generate report
     report = agent.generate_audit_report(audit.audit_id)
     print(f"\nAudit Report:")
     print(f"  Controls: {report['controls']['total']}")
     print(f"  Effectiveness: {report['controls']['effectiveness_rate']:.1f}%")
     print(f"  Findings: {report['findings']['total']}")
-    
+
     # Get dashboard
     dashboard = agent.get_audit_dashboard()
     print(f"\nAudit Dashboard:")
     print(f"  Total Audits: {dashboard['audits']['total']}")
     print(f"  In Progress: {dashboard['audits']['in_progress']}")
     print(f"  Open Findings: {dashboard['findings']['open']}")
-    
+
     print(f"\nState: {agent.get_state()}")

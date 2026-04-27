@@ -204,7 +204,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["aws", "cloud", "privesc", "enumeration"],
         timeout_seconds=900,
     ),
-    
+
     "prowler": ToolDefinition(
         name="prowler",
         category=ToolCategory.CLOUD_SECURITY,
@@ -221,7 +221,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["aws", "compliance", "cis", "audit"],
         timeout_seconds=1800,
     ),
-    
+
     "scoutsuite": ToolDefinition(
         name="scoutsuite",
         category=ToolCategory.CLOUD_SECURITY,
@@ -237,7 +237,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["aws", "azure", "gcp", "cloud", "audit"],
         timeout_seconds=3600,
     ),
-    
+
     "stormspotter": ToolDefinition(
         name="stormspotter",
         category=ToolCategory.CLOUD_SECURITY,
@@ -253,7 +253,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["azure", "cloud", "graph", "visualization"],
         timeout_seconds=1800,
     ),
-    
+
     "gcp_bucket_finder": ToolDefinition(
         name="gcp_bucket_finder",
         category=ToolCategory.CLOUD_SECURITY,
@@ -267,7 +267,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["gcp", "cloud", "enumeration", "storage"],
         timeout_seconds=600,
     ),
-    
+
     # ========== NEW: Active Directory Tools ==========
     "crackmapexec": ToolDefinition(
         name="crackmapexec",
@@ -286,7 +286,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "lateral_movement", "enumeration", "exploitation"],
         timeout_seconds=600,
     ),
-    
+
     "impacket-psexec": ToolDefinition(
         name="impacket-psexec",
         category=ToolCategory.ACTIVE_DIRECTORY,
@@ -303,7 +303,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "lateral_movement", "execution"],
         timeout_seconds=300,
     ),
-    
+
     "impacket-secretsdump": ToolDefinition(
         name="impacket-secretsdump",
         category=ToolCategory.ACTIVE_DIRECTORY,
@@ -320,7 +320,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "credentials", "dumping"],
         timeout_seconds=600,
     ),
-    
+
     "certipy": ToolDefinition(
         name="certipy",
         category=ToolCategory.ACTIVE_DIRECTORY,
@@ -338,7 +338,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "adcs", "pki", "privesc"],
         timeout_seconds=900,
     ),
-    
+
     "petitpotam": ToolDefinition(
         name="petitpotam",
         category=ToolCategory.ACTIVE_DIRECTORY,
@@ -355,7 +355,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "coerce", "ntlm_relay"],
         timeout_seconds=300,
     ),
-    
+
     "adconnectdump": ToolDefinition(
         name="adconnectdump",
         category=ToolCategory.ACTIVE_DIRECTORY,
@@ -371,7 +371,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["ad", "azure", "credentials"],
         timeout_seconds=300,
     ),
-    
+
     # ========== NEW: C2 Frameworks ==========
     "sliver": ToolDefinition(
         name="sliver",
@@ -386,7 +386,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["c2", "beacon", "implant", "redteam"],
         timeout_seconds=3600,
     ),
-    
+
     "havoc": ToolDefinition(
         name="havoc",
         category=ToolCategory.EXPLOITATION,
@@ -399,7 +399,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["c2", "post_exploitation", "redteam"],
         timeout_seconds=3600,
     ),
-    
+
     # ========== NEW: Container Security ==========
     "trivy": ToolDefinition(
         name="trivy",
@@ -416,7 +416,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["container", "docker", "kubernetes", "vulnerability"],
         timeout_seconds=900,
     ),
-    
+
     "docker-bench": ToolDefinition(
         name="docker-bench",
         category=ToolCategory.CONTAINER_SECURITY,
@@ -429,7 +429,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["docker", "compliance", "cis", "audit"],
         timeout_seconds=600,
     ),
-    
+
     "kube-bench": ToolDefinition(
         name="kube-bench",
         category=ToolCategory.CONTAINER_SECURITY,
@@ -443,7 +443,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["kubernetes", "compliance", "cis", "audit"],
         timeout_seconds=900,
     ),
-    
+
     "kube-hunter": ToolDefinition(
         name="kube-hunter",
         category=ToolCategory.CONTAINER_SECURITY,
@@ -459,7 +459,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["kubernetes", "pentest", "exploitation"],
         timeout_seconds=1200,
     ),
-    
+
     # ========== NEW: Modern Web Tools ==========
     "nuclei": ToolDefinition(
         name="nuclei",
@@ -478,7 +478,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["web", "vulnerability", "templates", "automation"],
         timeout_seconds=1800,
     ),
-    
+
     "dalfox": ToolDefinition(
         name="dalfox",
         category=ToolCategory.WEB_APPLICATION,
@@ -494,7 +494,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["web", "xss", "injection"],
         timeout_seconds=600,
     ),
-    
+
     "httpx": ToolDefinition(
         name="httpx",
         category=ToolCategory.RECONNAISSANCE,
@@ -511,7 +511,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["web", "recon", "enumeration"],
         timeout_seconds=600,
     ),
-    
+
     "subfinder": ToolDefinition(
         name="subfinder",
         category=ToolCategory.RECONNAISSANCE,
@@ -527,7 +527,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["recon", "subdomain", "enumeration"],
         timeout_seconds=900,
     ),
-    
+
     # ========== Enhanced: Existing Tools ==========
     "nmap": ToolDefinition(
         name="nmap",
@@ -551,7 +551,7 @@ ENHANCED_KALI_TOOLS_DB = {
         cve_matching=True,
         timeout_seconds=600,
     ),
-    
+
     "sqlmap": ToolDefinition(
         name="sqlmap",
         category=ToolCategory.WEB_APPLICATION,
@@ -573,7 +573,7 @@ ENHANCED_KALI_TOOLS_DB = {
         tags=["web", "sqli", "injection", "database"],
         timeout_seconds=900,
     ),
-    
+
     "metasploit": ToolDefinition(
         name="metasploit",
         category=ToolCategory.EXPLOITATION,
@@ -589,7 +589,7 @@ ENHANCED_KALI_TOOLS_DB = {
         cve_matching=True,
         timeout_seconds=3600,
     ),
-    
+
     # Add more existing tools here...
 }
 
@@ -600,7 +600,7 @@ ENHANCED_KALI_TOOLS_DB = {
 
 class OutputParsers:
     """Enhanced output parsers for tool results."""
-    
+
     @staticmethod
     def parse_nmap_xml(xml_file: str) -> Dict[str, Any]:
         """Parse Nmap XML output."""
@@ -612,11 +612,11 @@ class OutputParsers:
             "os_detected": None,
             "vulnerabilities": [],
         }
-        
+
         try:
             tree = ET.parse(xml_file)
             root = tree.getroot()
-            
+
             for host in root.findall(".//host"):
                 host_info = {
                     "ip": host.findtext("address[@addrtype='ipv4']"),
@@ -626,7 +626,7 @@ class OutputParsers:
                     "ports": [],
                     "os": None,
                 }
-                
+
                 # Parse ports
                 for port in host.findall(".//port"):
                     port_info = {
@@ -638,14 +638,14 @@ class OutputParsers:
                         "version": port.findtext("service[@version]"),
                     }
                     host_info["ports"].append(port_info)
-                    
+
                     if port_info["state"] == "open":
                         result["open_ports"].append({
                             "host": host_info["ip"],
                             "port": port_info["port"],
                             "service": port_info["service"],
                         })
-                
+
                 # Parse OS detection
                 os_match = host.find(".//osmatch")
                 if os_match is not None:
@@ -654,7 +654,7 @@ class OutputParsers:
                         "accuracy": os_match.get("accuracy"),
                     }
                     result["os_detected"] = host_info["os"]
-                
+
                 # Parse script results (vulnerabilities)
                 for script in host.findall(".//script"):
                     script_id = script.get("id")
@@ -664,16 +664,16 @@ class OutputParsers:
                             "output": script.get("output"),
                         }
                         result["vulnerabilities"].append(vuln)
-                
+
                 result["hosts"].append(host_info)
-            
+
             result["total_hosts"] = len(result["hosts"])
-            
+
         except Exception as e:
             logger.error(f"Error parsing Nmap XML: {e}")
-        
+
         return result
-    
+
     @staticmethod
     def parse_sqlmap_output(output: str) -> Dict[str, Any]:
         """Parse SQLMap output."""
@@ -685,25 +685,25 @@ class OutputParsers:
             "columns": [],
             "dumped_data": [],
         }
-        
+
         # Check for vulnerability confirmation
         if "is vulnerable" in output.lower():
             result["vulnerable"] = True
-        
+
         # Extract injection type
         if "sqlmap identified the following injection point" in output.lower():
             match = re.search(r"injection point.*?:\s*(.+)", output, re.IGNORECASE)
             if match:
                 result["injection_type"] = match.group(1).strip()
-        
+
         # Extract database name
         if "current database:" in output.lower():
             match = re.search(r"current database:\s*(\w+)", output, re.IGNORECASE)
             if match:
                 result["database"] = match.group(1)
-        
+
         return result
-    
+
     @staticmethod
     def parse_nuclei_output(output: str) -> Dict[str, Any]:
         """Parse Nuclei JSON output."""
@@ -712,7 +712,7 @@ class OutputParsers:
             "by_severity": {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0},
             "total_findings": 0,
         }
-        
+
         try:
             for line in output.strip().split("\n"):
                 if line.strip():
@@ -727,19 +727,19 @@ class OutputParsers:
                             "description": finding.get("info", {}).get("description"),
                             "tags": finding.get("info", {}).get("tags", []),
                         })
-                        
+
                         severity = finding.get("info", {}).get("severity", "info").lower()
                         if severity in result["by_severity"]:
                             result["by_severity"][severity] += 1
-                        
+
                         result["total_findings"] += 1
                     except json.JSONDecodeError:
                         continue
         except Exception as e:
             logger.error(f"Error parsing Nuclei output: {e}")
-        
+
         return result
-    
+
     @staticmethod
     def parse_crackmapexec_output(output: str) -> Dict[str, Any]:
         """Parse CrackMapExec output."""
@@ -749,7 +749,7 @@ class OutputParsers:
             "shares": [],
             "sessions": [],
         }
-        
+
         # Extract successful authentications
         for line in output.split("\n"):
             if "Authenticated" in line:
@@ -760,7 +760,7 @@ class OutputParsers:
                         "username": match.group(2),
                         "password": match.group(3),
                     })
-            
+
             if "Pwn3d!" in line:
                 match = re.search(r"(\S+) (\S+)", line)
                 if match:
@@ -768,7 +768,7 @@ class OutputParsers:
                         "host": match.group(1),
                         "status": "pwned",
                     })
-        
+
         return result
 
 
@@ -778,21 +778,21 @@ class OutputParsers:
 
 class CVEMatchingEngine:
     """Match CVEs to exploits automatically."""
-    
+
     def __init__(self):
         self.exploit_db = CVE_EXPLOIT_DB
-    
+
     def match_cve(self, cve_id: str) -> Optional[CVEExploitMatch]:
         """Find exploit for a CVE."""
         return self.exploit_db.get(cve_id.upper())
-    
+
     def match_from_nmap(self, nmap_result: Dict[str, Any]) -> List[CVEExploitMatch]:
         """Match CVEs from Nmap scan results."""
         matches = []
-        
+
         for vuln in nmap_result.get("vulnerabilities", []):
             vuln_id = vuln.get("id", "")
-            
+
             # Try to extract CVE from script ID or output
             cve_match = re.search(r"CVE-\d{4}-\d+", vuln.get("output", ""))
             if cve_match:
@@ -800,13 +800,13 @@ class CVEMatchingEngine:
                 exploit = self.match_cve(cve_id)
                 if exploit:
                     matches.append(exploit)
-        
+
         return matches
-    
+
     def match_from_services(self, services: List[Dict[str, Any]]) -> List[CVEExploitMatch]:
         """Match exploits based on service versions."""
         matches = []
-        
+
         # Known vulnerable version patterns
         vulnerable_patterns = {
             "smb": {"port": 445, "cves": ["CVE-2017-0144", "CVE-2020-0796"]},
@@ -814,20 +814,20 @@ class CVEMatchingEngine:
             "http": {"port": 80, "cves": ["CVE-2021-44228", "CVE-2021-34473"]},
             "https": {"port": 443, "cves": ["CVE-2021-44228", "CVE-2021-34473"]},
         }
-        
+
         for service in services:
             port = service.get("port")
             service_name = service.get("service", "").lower()
-            
+
             for svc_name, vuln_info in vulnerable_patterns.items():
                 if service_name == svc_name or (port and port == vuln_info["port"]):
                     for cve_id in vuln_info["cves"]:
                         exploit = self.match_cve(cve_id)
                         if exploit:
                             matches.append(exploit)
-        
+
         return matches
-    
+
     def generate_exploit_recommendations(self, scan_results: Dict[str, Any]) -> Dict[str, Any]:
         """Generate exploit recommendations from scan results."""
         recommendations = {
@@ -836,11 +836,11 @@ class CVEMatchingEngine:
             "medium_exploits": [],
             "total_matches": 0,
         }
-        
+
         # Match from services
         services = scan_results.get("services", [])
         cve_matches = self.match_from_services(services)
-        
+
         for match in cve_matches:
             exploit_info = {
                 "cve": match.cve_id,
@@ -849,16 +849,16 @@ class CVEMatchingEngine:
                 "reliability": match.reliability,
                 "rank": match.rank,
             }
-            
+
             if match.rank >= 5:
                 recommendations["critical_exploits"].append(exploit_info)
             elif match.rank >= 4:
                 recommendations["high_exploits"].append(exploit_info)
             else:
                 recommendations["medium_exploits"].append(exploit_info)
-            
+
             recommendations["total_matches"] += 1
-        
+
         return recommendations
 
 
@@ -868,10 +868,10 @@ class CVEMatchingEngine:
 
 class ToolRecommendationEngine:
     """AI-powered tool recommendations based on target analysis."""
-    
+
     def __init__(self):
         self.tool_database = ENHANCED_KALI_TOOLS_DB
-        
+
         # Target type → recommended tools mapping
         self.recommendations = {
             "web_server": ["nuclei", "sqlmap", "dalfox", "gobuster", "nikto", "burpsuite", "nmap", "httpx"],
@@ -883,44 +883,44 @@ class ToolRecommendationEngine:
             "network": ["nmap", "masscan", "responder", "crackmapexec"],
             "wireless": ["aircrack-ng", "reaver", "kismet"],
         }
-    
+
     def recommend_tools(self, target_info: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Recommend tools based on target information."""
         recommendations = []
-        
+
         target_type = target_info.get("type", "").lower()
         services = target_info.get("services", [])
         os_type = target_info.get("os", "").lower()
-        
+
         # Get base recommendations for target type
         base_tools = []
         for ttype, tools in self.recommendations.items():
             if ttype in target_type:
                 base_tools.extend(tools)
-        
+
         # Add service-specific tools
         for service in services:
             service_name = service.get("name", "").lower()
             port = service.get("port")
-            
+
             if "http" in service_name or port in [80, 443, 8080, 8443]:
                 base_tools.extend(["nuclei", "dalfox", "gobuster"])
-            
+
             if "smb" in service_name or port == 445:
                 base_tools.extend(["crackmapexec", "impacket-psexec", "responder"])
-            
+
             if "rdp" in service_name or port == 3389:
                 base_tools.extend(["crackmapexec", "hydra"])
-            
+
             if "ssh" in service_name or port == 22:
                 base_tools.extend(["hydra", "medusa"])
-            
+
             if "ldap" in service_name or port == 389:
                 base_tools.extend(["crackmapexec", "ldapsearch"])
-        
+
         # Remove duplicates and get tool info
         unique_tools = list(set(base_tools))
-        
+
         for tool_name in unique_tools[:10]:  # Top 10 recommendations
             if tool_name in self.tool_database:
                 tool = self.tool_database[tool_name]
@@ -932,9 +932,9 @@ class ToolRecommendationEngine:
                     "tags": tool.tags,
                     "reason": self._get_recommendation_reason(tool_name, target_info),
                 })
-        
+
         return recommendations
-    
+
     def _get_recommendation_reason(self, tool_name: str, target_info: Dict[str, Any]) -> str:
         """Generate reason for tool recommendation."""
         reasons = {
@@ -946,7 +946,7 @@ class ToolRecommendationEngine:
             "certipy": "AD CS enumeration and certificate abuse",
             "trivy": "Container and Kubernetes vulnerability scanning",
         }
-        
+
         return reasons.get(tool_name, "Recommended based on target characteristics")
 
 
@@ -956,7 +956,7 @@ class ToolRecommendationEngine:
 
 class RemediationEngine:
     """Generate automatic remediation recommendations."""
-    
+
     def __init__(self):
         self.remediations = {
             "CVE-2017-0144": {
@@ -1017,11 +1017,11 @@ class RemediationEngine:
                 "effort": "low",
             },
         }
-    
+
     def get_remediation(self, finding_id: str) -> Optional[Dict[str, Any]]:
         """Get remediation for a finding."""
         return self.remediations.get(finding_id)
-    
+
     def generate_remediation_plan(self, findings: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate comprehensive remediation plan."""
         plan = {
@@ -1032,16 +1032,16 @@ class RemediationEngine:
             "estimated_effort": "unknown",
             "total_findings": len(findings),
         }
-        
+
         effort_scores = {"low": 1, "medium": 2, "high": 3}
         total_effort = 0
-        
+
         for finding in findings:
             severity = finding.get("severity", "low").lower()
             finding_id = finding.get("cve_id") or finding.get("category", "unknown")
-            
+
             remediation = self.get_remediation(finding_id)
-            
+
             if remediation:
                 item = {
                     "finding": finding.get("title", "Unknown"),
@@ -1062,7 +1062,7 @@ class RemediationEngine:
                 }
                 plan[severity].append(item)
                 total_effort += 2
-        
+
         # Calculate overall effort
         if total_effort <= 5:
             plan["estimated_effort"] = "low (1-2 days)"
@@ -1070,7 +1070,7 @@ class RemediationEngine:
             plan["estimated_effort"] = "medium (3-5 days)"
         else:
             plan["estimated_effort"] = "high (1-2 weeks)"
-        
+
         return plan
 
 
@@ -1082,59 +1082,59 @@ class KaliAgentV2:
     """
     Enhanced KaliAgent with modern tools and intelligent features.
     """
-    
+
     def __init__(self, workspace: str = "/tmp/kali-workspace", log_dir: Optional[str] = None):
         self.workspace = Path(workspace)
         self.log_dir = Path(log_dir) if log_dir else self.workspace / "logs"
         self.workspace.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Initialize components
         self.tools = ENHANCED_KALI_TOOLS_DB
         self.cve_engine = CVEMatchingEngine()
         self.recommendation_engine = ToolRecommendationEngine()
         self.remediation_engine = RemediationEngine()
         self.output_parsers = OutputParsers()
-        
+
         # State
         self.authorization_level = AuthorizationLevel.NONE
         self.dry_run = False
         self.executions: List[ToolExecution] = []
         self.engagement_id: Optional[str] = None
-        
+
         logger.info(f"KaliAgent v2 initialized at {self.workspace}")
-    
+
     def set_authorization(self, level: AuthorizationLevel):
         """Set authorization level."""
         self.authorization_level = level
         logger.info(f"Authorization level set to: {level.name}")
-    
+
     def enable_dry_run(self):
         """Enable dry-run mode."""
         self.dry_run = True
         logger.info("Dry-run mode enabled")
-    
+
     def disable_dry_run(self):
         """Disable dry-run mode."""
         self.dry_run = False
         logger.info("Dry-run mode disabled")
-    
+
     def check_authorization(self, tool_name: str) -> Tuple[bool, str]:
         """Check if tool can be executed."""
         if tool_name not in self.tools:
             return False, f"Tool '{tool_name}' not found"
-        
+
         tool = self.tools[tool_name]
-        
+
         if self.authorization_level.value < tool.authorization.value:
             return False, f"Authorization level {self.authorization_level.name} insufficient (requires {tool.authorization.name})"
-        
+
         return True, "Authorized"
-    
+
     def recommend_tools_for_target(self, target_info: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Get tool recommendations for a target."""
         return self.recommendation_engine.recommend_tools(target_info)
-    
+
     def match_exploits_for_cve(self, cve_id: str) -> Optional[Dict[str, Any]]:
         """Find exploits for a CVE."""
         match = self.cve_engine.match_cve(cve_id)
@@ -1151,18 +1151,18 @@ class KaliAgentV2:
                 "description": match.description,
             }
         return None
-    
+
     def generate_remediation_plan(self, findings: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate remediation plan for findings."""
         return self.remediation_engine.generate_remediation_plan(findings)
-    
+
     def list_tools(self, category: Optional[ToolCategory] = None) -> List[Dict[str, Any]]:
         """List available tools."""
         tools = list(self.tools.values())
-        
+
         if category:
             tools = [t for t in tools if t.category == category]
-        
+
         return [
             {
                 "name": t.name,
@@ -1173,7 +1173,7 @@ class KaliAgentV2:
             }
             for t in tools
         ]
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state."""
         return {
@@ -1214,10 +1214,10 @@ def demo_kali_agent_v2():
     print("KALIAGENT V2 - ENHANCED FEATURES DEMONSTRATION")
     print("=" * 80)
     print()
-    
+
     # Initialize agent
     agent = KaliAgentV2(workspace="/tmp/kali-v2-demo")
-    
+
     # Show state
     print("📦 Agent State:")
     state = agent.get_state()
@@ -1225,18 +1225,18 @@ def demo_kali_agent_v2():
     print(f"  Total Tools: {state['total_tools']}")
     print(f"  Capabilities: {', '.join(state['capabilities'])}")
     print()
-    
+
     print("🆕 New Features:")
     for feature in state['new_features']:
         print(f"  ✅ {feature}")
     print()
-    
+
     # Demo CVE matching
     print("🎯 CVE → Exploit Matching Demo:")
     print()
-    
+
     test_cves = ["CVE-2017-0144", "CVE-2021-44228", "CVE-2019-0708"]
-    
+
     for cve in test_cves:
         match = agent.match_exploits_for_cve(cve)
         if match:
@@ -1245,11 +1245,11 @@ def demo_kali_agent_v2():
             print(f"    Metasploit: {match['metasploit_module']}")
             print(f"    Reliability: {match['reliability']} (Rank: {match['rank']}/5)")
             print()
-    
+
     # Demo tool recommendations
     print("🤖 AI-Powered Tool Recommendations:")
     print()
-    
+
     target_info = {
         "type": "web_server",
         "os": "linux",
@@ -1258,7 +1258,7 @@ def demo_kali_agent_v2():
             {"name": "ssh", "port": 22, "version": "OpenSSH 8.2"},
         ],
     }
-    
+
     recommendations = agent.recommend_tools_for_target(target_info)
     print(f"  Target: {target_info['type']} ({target_info['os']})")
     print(f"  Services: {[s['name'] for s in target_info['services']]}")
@@ -1268,18 +1268,18 @@ def demo_kali_agent_v2():
         print(f"    - {rec['name']} ({rec['category']})")
         print(f"      Reason: {rec['reason']}")
     print()
-    
+
     # Demo remediation planning
     print("🔧 Automatic Remediation Planning:")
     print()
-    
+
     findings = [
         {"title": "EternalBlue Vulnerability", "cve_id": "CVE-2017-0144", "severity": "critical"},
         {"title": "Log4Shell Vulnerability", "cve_id": "CVE-2021-44228", "severity": "critical"},
         {"title": "SQL Injection in Login", "category": "sql_injection", "severity": "critical"},
         {"title": "Weak Password Policy", "category": "weak_passwords", "severity": "high"},
     ]
-    
+
     plan = agent.generate_remediation_plan(findings)
     print(f"  Total Findings: {plan['total_findings']}")
     print(f"  Estimated Effort: {plan['estimated_effort']}")
@@ -1289,17 +1289,17 @@ def demo_kali_agent_v2():
         print(f"    - {item['finding']}")
         print(f"      Remediation: {item['remediation']}")
     print()
-    
+
     # Show new tool categories
     print("🆕 New Tool Categories:")
     print()
-    
+
     new_categories = [
         ToolCategory.CLOUD_SECURITY,
         ToolCategory.ACTIVE_DIRECTORY,
         ToolCategory.CONTAINER_SECURITY,
     ]
-    
+
     for category in new_categories:
         tools = agent.list_tools(category)
         print(f"  {category.value.upper()}:")
@@ -1308,7 +1308,7 @@ def demo_kali_agent_v2():
         if len(tools) > 5:
             print(f"    ... and {len(tools) - 5} more")
         print()
-    
+
     print("=" * 80)
     print("DEMONSTRATION COMPLETE")
     print("=" * 80)

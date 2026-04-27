@@ -100,20 +100,20 @@ class LegalAgent:
     Legal Agent for contract review, document generation,
     compliance checking, and risk assessment.
     """
-    
+
     def __init__(self, agent_id: str = "legal-agent"):
         self.agent_id = agent_id
         self.documents: Dict[str, LegalDocument] = {}
         self.compliance_checks: Dict[str, ComplianceCheck] = {}
         self.regulations: Dict[Regulation, Dict[str, Any]] = {}
         self.clause_library: Dict[str, ContractClause] = {}
-        
+
         # Initialize regulation tracking
         self._init_regulations()
-        
+
         # Common contract clauses
         self._init_clause_library()
-    
+
     def _init_regulations(self):
         """Initialize regulation tracking."""
         self.regulations = {
@@ -142,7 +142,7 @@ class LegalAgent:
                 'status': ComplianceStatus.REVIEW_REQUIRED,
             },
         }
-    
+
     def _init_clause_library(self):
         """Initialize clause library."""
         self.clause_library = {
@@ -171,11 +171,11 @@ class LegalAgent:
                 risk_level=RiskLevel.LOW,
             ),
         }
-    
+
     # ============================================
     # Document Management
     # ============================================
-    
+
     def create_document(
         self,
         title: str,
@@ -196,11 +196,11 @@ class LegalAgent:
             expiration_date=expiration_date,
             value=value,
         )
-        
+
         self.documents[doc.document_id] = doc
         logger.info(f"Created document: {doc.title}")
         return doc
-    
+
     def update_document_status(
         self,
         document_id: str,
@@ -209,12 +209,12 @@ class LegalAgent:
         """Update document status."""
         if document_id not in self.documents:
             return None
-        
+
         doc = self.documents[document_id]
         doc.status = status
-        
+
         return doc
-    
+
     def get_documents(
         self,
         document_type: Optional[DocumentType] = None,
@@ -222,31 +222,31 @@ class LegalAgent:
     ) -> List[LegalDocument]:
         """Get documents with filtering."""
         docs = list(self.documents.values())
-        
+
         if document_type:
             docs = [d for d in docs if d.document_type == document_type]
-        
+
         if status:
             docs = [d for d in docs if d.status == status]
-        
+
         return docs
-    
+
     def get_expiring_documents(self, days_ahead: int = 30) -> List[LegalDocument]:
         """Get documents expiring within specified days."""
         threshold = datetime.utcnow() + timedelta(days=days_ahead)
         expiring = []
-        
+
         for doc in self.documents.values():
             if doc.expiration_date and doc.expiration_date <= threshold:
                 if doc.status not in ['expired', 'executed']:
                     expiring.append(doc)
-        
+
         return expiring
-    
+
     # ============================================
     # Contract Review
     # ============================================
-    
+
     def review_contract(
         self,
         document_id: str,
@@ -255,11 +255,11 @@ class LegalAgent:
         """Review contract for risks and issues."""
         if document_id not in self.documents:
             return {'error': 'Document not found'}
-        
+
         doc = self.documents[document_id]
         risks = []
         issues = []
-        
+
         # Check for common risk patterns
         risk_patterns = {
             'unlimited_liability': r'unlimited.*liability|liability.*unlimited',
@@ -268,7 +268,7 @@ class LegalAgent:
             'penalty': r'penalty.*fee|liquidated.*damages',
             'one_sided_termination': r'terminate.*immediately|terminate.*without.*notice',
         }
-        
+
         for risk_name, pattern in risk_patterns.items():
             if re.search(pattern, contract_text, re.IGNORECASE):
                 risks.append({
@@ -276,16 +276,16 @@ class LegalAgent:
                     'severity': 'high' if risk_name in ['unlimited_liability', 'penalty'] else 'medium',
                     'description': f"Detected {risk_name.replace('_', ' ')} clause",
                 })
-        
+
         # Check for missing standard clauses
         standard_clauses = ['termination', 'confidentiality', 'liability', 'governing_law']
         for clause in standard_clauses:
             if clause not in contract_text.lower():
                 issues.append(f"Missing standard clause: {clause}")
-        
+
         # Update document with findings
         doc.risks = risks
-        
+
         review_result = {
             'document_id': document_id,
             'risks_found': len(risks),
@@ -294,24 +294,24 @@ class LegalAgent:
             'issues': issues,
             'overall_risk': self._calculate_overall_risk(risks),
         }
-        
+
         logger.info(f"Reviewed contract {document_id}: {len(risks)} risks found")
         return review_result
-    
+
     def _calculate_overall_risk(self, risks: List[Dict[str, Any]]) -> RiskLevel:
         """Calculate overall risk level."""
         if not risks:
             return RiskLevel.LOW
-        
+
         high_risks = [r for r in risks if r.get('severity') == 'high']
-        
+
         if high_risks:
             return RiskLevel.HIGH
         elif len(risks) >= 3:
             return RiskLevel.MEDIUM
         else:
             return RiskLevel.LOW
-    
+
     def add_clause_to_document(
         self,
         document_id: str,
@@ -321,20 +321,20 @@ class LegalAgent:
         """Add clause to document."""
         if document_id not in self.documents:
             return False
-        
+
         doc = self.documents[document_id]
         doc.clauses.append({
             'type': clause_type,
             'text': clause_text,
             'added_at': datetime.utcnow().isoformat(),
         })
-        
+
         return True
-    
+
     # ============================================
     # Compliance
     # ============================================
-    
+
     def run_compliance_check(
         self,
         regulation: Regulation,
@@ -344,14 +344,14 @@ class LegalAgent:
         findings = []
         recommendations = []
         non_compliant = 0
-        
+
         for item in checklist:
             if not item.get('compliant', False):
                 non_compliant += 1
                 findings.append(item.get('finding', f"Non-compliant: {item.get('requirement')}"))
                 if item.get('recommendation'):
                     recommendations.append(item['recommendation'])
-        
+
         # Determine status
         if non_compliant == 0:
             status = ComplianceStatus.COMPLIANT
@@ -359,7 +359,7 @@ class LegalAgent:
             status = ComplianceStatus.PARTIALLY_COMPLIANT
         else:
             status = ComplianceStatus.NON_COMPLIANT
-        
+
         check = ComplianceCheck(
             check_id=self._generate_id("compliance"),
             regulation=regulation,
@@ -368,17 +368,17 @@ class LegalAgent:
             recommendations=recommendations,
             next_review=datetime.utcnow() + timedelta(days=90),
         )
-        
+
         self.compliance_checks[check.check_id] = check
-        
+
         # Update regulation status
         if regulation in self.regulations:
             self.regulations[regulation]['status'] = status
             self.regulations[regulation]['last_audit'] = datetime.utcnow()
-        
+
         logger.info(f"Compliance check {regulation.value}: {status.value}")
         return check
-    
+
     def get_compliance_status(self) -> Dict[str, Any]:
         """Get overall compliance status."""
         status = {
@@ -386,7 +386,7 @@ class LegalAgent:
             'recent_checks': [],
             'overall_status': ComplianceStatus.REVIEW_REQUIRED,
         }
-        
+
         for reg, info in self.regulations.items():
             status['regulations'][reg.value] = {
                 'name': info['name'],
@@ -394,14 +394,14 @@ class LegalAgent:
                 'status': info['status'].value,
                 'last_audit': info['last_audit'].isoformat() if info['last_audit'] else None,
             }
-        
+
         # Get recent checks
         recent = sorted(
             self.compliance_checks.values(),
             key=lambda x: x.checked_at,
             reverse=True,
         )[:5]
-        
+
         status['recent_checks'] = [
             {
                 'regulation': c.regulation.value,
@@ -411,13 +411,13 @@ class LegalAgent:
             }
             for c in recent
         ]
-        
+
         return status
-    
+
     # ============================================
     # Document Templates
     # ============================================
-    
+
     def generate_nda_template(
         self,
         disclosing_party: str,
@@ -454,7 +454,7 @@ This Agreement shall be governed by applicable law.
 IN WITNESS WHEREOF, the parties have executed this Agreement.
 """
         return template
-    
+
     def generate_terms_template(self, company_name: str, effective_date: datetime) -> str:
         """Generate Terms of Service template."""
         template = f"""
@@ -484,17 +484,17 @@ We reserve the right to terminate accounts for violations.
 These Terms are governed by applicable law.
 """
         return template
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -533,7 +533,7 @@ def get_capabilities() -> Dict[str, Any]:
 if __name__ == "__main__":
     # Quick test
     agent = LegalAgent()
-    
+
     # Create NDA
     nda = agent.create_document(
         title="Mutual NDA - Acme Corp",
@@ -542,20 +542,20 @@ if __name__ == "__main__":
         effective_date=datetime.utcnow(),
         expiration_date=datetime.utcnow() + timedelta(days=730),
     )
-    
+
     print(f"Created: {nda.title}")
     print(f"Type: {nda.document_type.value}")
     print(f"Status: {nda.status}")
-    
+
     # Review contract
     contract_text = "This agreement has unlimited liability and auto-renewal clauses."
     review = agent.review_contract(nda.document_id, contract_text)
-    
+
     print(f"\nReview Results:")
     print(f"  Risks Found: {review['risks_found']}")
     print(f"  Overall Risk: {review['overall_risk'].value}")
-    
+
     for risk in review['risks']:
         print(f"  - {risk['type']}: {risk['description']}")
-    
+
     print(f"\nState: {agent.get_state()}")

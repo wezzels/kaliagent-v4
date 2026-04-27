@@ -177,7 +177,7 @@ class PrivacyAgent:
     Privacy Agent for GDPR, CCPA, and privacy regulation compliance,
     data subject rights, consent management, and privacy assessments.
     """
-    
+
     def __init__(self, agent_id: str = "privacy-agent"):
         self.agent_id = agent_id
         self.data_subjects: Dict[str, DataSubject] = {}
@@ -186,10 +186,10 @@ class PrivacyAgent:
         self.consent_records: Dict[str, ConsentRecord] = {}
         self.pias: Dict[str, PrivacyImpactAssessment] = {}
         self.breaches: Dict[str, DataBreach] = {}
-        
+
         # Regulatory requirements
         self.regulation_requirements = self._init_regulation_requirements()
-        
+
         # Default retention policies
         self.retention_policies = {
             'customer_data': {'period': 730, 'unit': 'days'},  # 2 years
@@ -197,7 +197,7 @@ class PrivacyAgent:
             'analytics_data': {'period': 90, 'unit': 'days'},  # 90 days
             'logs': {'period': 30, 'unit': 'days'},  # 30 days
         }
-    
+
     def _init_regulation_requirements(self) -> Dict[str, Dict[str, Any]]:
         """Initialize regulatory requirements."""
         return {
@@ -246,11 +246,11 @@ class PrivacyAgent:
                 'breach_notification_days': 60,
             },
         }
-    
+
     # ============================================
     # Data Subject Management
     # ============================================
-    
+
     def register_data_subject(
         self,
         name: str,
@@ -266,22 +266,22 @@ class PrivacyAgent:
             jurisdiction=jurisdiction,
             applicable_regulations=applicable_regulations or [],
         )
-        
+
         self.data_subjects[subject.subject_id] = subject
         return subject
-    
+
     def verify_data_subject(self, subject_id: str, verification_method: str) -> bool:
         """Verify data subject identity."""
         if subject_id not in self.data_subjects:
             return False
-        
+
         self.data_subjects[subject_id].verified = True
         return True
-    
+
     def get_data_subject(self, subject_id: str) -> Optional[DataSubject]:
         """Get data subject by ID."""
         return self.data_subjects.get(subject_id)
-    
+
     def get_data_subjects(
         self,
         jurisdiction: Optional[str] = None,
@@ -289,19 +289,19 @@ class PrivacyAgent:
     ) -> List[DataSubject]:
         """Get data subjects with filtering."""
         subjects = list(self.data_subjects.values())
-        
+
         if jurisdiction:
             subjects = [s for s in subjects if s.jurisdiction == jurisdiction]
-        
+
         if regulation:
             subjects = [s for s in subjects if regulation in s.applicable_regulations]
-        
+
         return subjects
-    
+
     # ============================================
     # Data Subject Rights Requests
     # ============================================
-    
+
     def create_request(
         self,
         subject_id: str,
@@ -311,16 +311,16 @@ class PrivacyAgent:
         """Create a data subject rights request."""
         if subject_id not in self.data_subjects:
             raise ValueError(f"Data subject {subject_id} not found")
-        
+
         subject = self.data_subjects[subject_id]
-        
+
         # Determine deadline based on regulations
         deadline_days = 30  # Default
         for reg in subject.applicable_regulations:
             req = self.regulation_requirements.get(reg.value, {})
             if 'response_days' in req:
                 deadline_days = max(deadline_days, req['response_days'])
-        
+
         request = DataSubjectRequest(
             request_id=self._generate_id("req"),
             subject_id=subject_id,
@@ -330,24 +330,24 @@ class PrivacyAgent:
             deadline=datetime.utcnow() + timedelta(days=deadline_days),
             assigned_to=assigned_to,
         )
-        
+
         self.requests[request.request_id] = request
         subject.requests_count += 1
-        
+
         logger.info(f"Created {right_type.value} request for {subject.email}")
         return request
-    
+
     def verify_request(self, request_id: str) -> bool:
         """Verify a request (identity verification complete)."""
         if request_id not in self.requests:
             return False
-        
+
         request = self.requests[request_id]
         request.status = RequestStatus.VERIFIED
         request.verified_at = datetime.utcnow()
-        
+
         return True
-    
+
     def update_request_status(
         self,
         request_id: str,
@@ -358,21 +358,21 @@ class PrivacyAgent:
         """Update request status."""
         if request_id not in self.requests:
             return False
-        
+
         request = self.requests[request_id]
         request.status = status
-        
+
         if response_data:
             request.response_data = response_data
-        
+
         if denial_reason:
             request.denial_reason = denial_reason
-        
+
         if status == RequestStatus.COMPLETED:
             request.completed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_requests(
         self,
         subject_id: Optional[str] = None,
@@ -382,32 +382,32 @@ class PrivacyAgent:
     ) -> List[DataSubjectRequest]:
         """Get requests with filtering."""
         requests = list(self.requests.values())
-        
+
         if subject_id:
             requests = [r for r in requests if r.subject_id == subject_id]
-        
+
         if status:
             requests = [r for r in requests if r.status == status]
-        
+
         if right_type:
             requests = [r for r in requests if r.right_type == right_type]
-        
+
         if overdue_only:
             now = datetime.utcnow()
             requests = [r for r in requests if r.deadline < now and r.status != RequestStatus.COMPLETED]
-        
+
         return requests
-    
+
     def fulfill_access_request(self, request_id: str, data: Dict[str, Any]) -> bool:
         """Fulfill an access request with data export."""
         if request_id not in self.requests:
             return False
-        
+
         request = self.requests[request_id]
-        
+
         if request.right_type != DataSubjectRight.ACCESS:
             return False
-        
+
         return self.update_request_status(
             request_id,
             RequestStatus.COMPLETED,
@@ -418,17 +418,17 @@ class PrivacyAgent:
                 'data': data,
             },
         )
-    
+
     def fulfill_erasure_request(self, request_id: str, systems_cleared: List[str]) -> bool:
         """Fulfill an erasure (deletion) request."""
         if request_id not in self.requests:
             return False
-        
+
         request = self.requests[request_id]
-        
+
         if request.right_type != DataSubjectRight.ERASURE:
             return False
-        
+
         return self.update_request_status(
             request_id,
             RequestStatus.COMPLETED,
@@ -437,11 +437,11 @@ class PrivacyAgent:
                 'deletion_timestamp': datetime.utcnow().isoformat(),
             },
         )
-    
+
     # ============================================
     # Consent Management
     # ============================================
-    
+
     def record_consent(
         self,
         subject_id: str,
@@ -463,28 +463,28 @@ class PrivacyAgent:
             user_agent=user_agent,
             version="1.0",
         )
-        
+
         if expires_in_days:
             consent.expires_at = datetime.utcnow() + timedelta(days=expires_in_days)
-        
+
         self.consent_records[consent.consent_id] = consent
-        
+
         if subject_id in self.data_subjects:
             self.data_subjects[subject_id].consent_records.append(consent.consent_id)
-        
+
         return consent
-    
+
     def withdraw_consent(self, consent_id: str) -> bool:
         """Withdraw consent."""
         if consent_id not in self.consent_records:
             return False
-        
+
         consent = self.consent_records[consent_id]
         consent.status = ConsentStatus.WITHDRAWN
         consent.withdrawn_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_consents(
         self,
         subject_id: Optional[str] = None,
@@ -493,18 +493,18 @@ class PrivacyAgent:
     ) -> List[ConsentRecord]:
         """Get consent records with filtering."""
         consents = list(self.consent_records.values())
-        
+
         if subject_id:
             consents = [c for c in consents if c.subject_id == subject_id]
-        
+
         if purpose:
             consents = [c for c in consents if c.purpose == purpose]
-        
+
         if status:
             consents = [c for c in consents if c.status == status]
-        
+
         return consents
-    
+
     def check_valid_consent(self, subject_id: str, purpose: ProcessingPurpose) -> bool:
         """Check if valid consent exists for a purpose."""
         consents = self.get_consents(
@@ -512,21 +512,21 @@ class PrivacyAgent:
             purpose=purpose,
             status=ConsentStatus.GIVEN,
         )
-        
+
         now = datetime.utcnow()
-        
+
         for consent in consents:
             # Check if not expired
             if consent.expires_at and consent.expires_at < now:
                 continue
             return True
-        
+
         return False
-    
+
     # ============================================
     # Processing Activities (ROPA)
     # ============================================
-    
+
     def add_processing_activity(
         self,
         name: str,
@@ -552,10 +552,10 @@ class PrivacyAgent:
             cross_border_transfer=cross_border,
             risk_level=risk_level,
         )
-        
+
         self.processing_activities[activity.activity_id] = activity
         return activity
-    
+
     def get_processing_activities(
         self,
         risk_level: Optional[str] = None,
@@ -563,19 +563,19 @@ class PrivacyAgent:
     ) -> List[DataProcessingActivity]:
         """Get processing activities with filtering."""
         activities = list(self.processing_activities.values())
-        
+
         if risk_level:
             activities = [a for a in activities if a.risk_level == risk_level]
-        
+
         if purpose:
             activities = [a for a in activities if purpose in a.purposes]
-        
+
         return activities
-    
+
     # ============================================
     # Privacy Impact Assessments
     # ============================================
-    
+
     def create_pia(
         self,
         name: str,
@@ -592,10 +592,10 @@ class PrivacyAgent:
             data_categories=data_categories,
             processing_purposes=processing_purposes,
         )
-        
+
         self.pias[pia.pia_id] = pia
         return pia
-    
+
     def add_risk_to_pia(
         self,
         pia_id: str,
@@ -607,12 +607,12 @@ class PrivacyAgent:
         """Add identified risk to PIA."""
         if pia_id not in self.pias:
             return False
-        
+
         pia = self.pias[pia_id]
-        
+
         risk_score = {'low': 1, 'medium': 2, 'high': 3}
         overall_score = risk_score.get(likelihood, 1) * risk_score.get(impact, 1)
-        
+
         pia.risks_identified.append({
             'description': risk_description,
             'likelihood': likelihood,
@@ -621,7 +621,7 @@ class PrivacyAgent:
             'mitigations': mitigations or [],
             'identified_at': datetime.utcnow().isoformat(),
         })
-        
+
         # Update overall risk level
         max_score = max(r.get('risk_score', 0) for r in pia.risks_identified)
         if max_score >= 6:
@@ -630,34 +630,34 @@ class PrivacyAgent:
             pia.risk_level = "medium"
         else:
             pia.risk_level = "low"
-        
+
         return True
-    
+
     def approve_pia(self, pia_id: str, dpo_reviewed: bool = True) -> bool:
         """Approve a PIA."""
         if pia_id not in self.pias:
             return False
-        
+
         pia = self.pias[pia_id]
         pia.status = "approved"
         pia.dpo_review = dpo_reviewed
         pia.approved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_pias(self, status: Optional[str] = None) -> List[PrivacyImpactAssessment]:
         """Get PIAs with filtering."""
         pias = list(self.pias.values())
-        
+
         if status:
             pias = [p for p in pias if p.status == status]
-        
+
         return pias
-    
+
     # ============================================
     # Data Breach Management
     # ============================================
-    
+
     def report_breach(
         self,
         title: str,
@@ -677,40 +677,40 @@ class PrivacyAgent:
             affected_subjects=affected_subjects,
             data_categories=data_categories,
         )
-        
+
         self.breaches[breach.breach_id] = breach
-        
+
         # Determine if notification required
         if severity in ['high', 'critical']:
             breach.notification_required = True
-        
+
         logger.warning(f"Data breach reported: {breach.title}")
         return breach
-    
+
     def contain_breach(self, breach_id: str) -> bool:
         """Mark breach as contained."""
         if breach_id not in self.breaches:
             return False
-        
+
         breach = self.breaches[breach_id]
         breach.status = "contained"
         breach.contained_at = datetime.utcnow()
-        
+
         return True
-    
+
     def notify_authority(self, breach_id: str, authority: str) -> bool:
         """Record authority notification."""
         if breach_id not in self.breaches:
             return False
-        
+
         breach = self.breaches[breach_id]
         breach.notified_authority = datetime.utcnow()
-        
+
         if breach.status == "contained":
             breach.status = "notified"
-        
+
         return True
-    
+
     def close_breach(
         self,
         breach_id: str,
@@ -720,14 +720,14 @@ class PrivacyAgent:
         """Close a breach with full documentation."""
         if breach_id not in self.breaches:
             return False
-        
+
         breach = self.breaches[breach_id]
         breach.status = "closed"
         breach.root_cause = root_cause
         breach.remediation = remediation
-        
+
         return True
-    
+
     def get_breaches(
         self,
         severity: Optional[str] = None,
@@ -735,19 +735,19 @@ class PrivacyAgent:
     ) -> List[DataBreach]:
         """Get breaches with filtering."""
         breaches = list(self.breaches.values())
-        
+
         if severity:
             breaches = [b for b in breaches if b.severity == severity]
-        
+
         if status:
             breaches = [b for b in breaches if b.status == status]
-        
+
         return breaches
-    
+
     # ============================================
     # Compliance Reporting
     # ============================================
-    
+
     def get_compliance_report(self) -> Dict[str, Any]:
         """Generate privacy compliance report."""
         subjects = list(self.data_subjects.values())
@@ -755,24 +755,24 @@ class PrivacyAgent:
         consents = list(self.consent_records.values())
         breaches = list(self.breaches.values())
         pias = list(self.pias.values())
-        
+
         # Request metrics
         by_status = {}
         for status in RequestStatus:
             by_status[status.value] = len([r for r in requests if r.status == status])
-        
+
         overdue = len([r for r in requests if r.deadline < datetime.utcnow() and r.status != RequestStatus.COMPLETED])
-        
+
         # Consent metrics
         active_consents = len([c for c in consents if c.status == ConsentStatus.GIVEN])
         withdrawn = len([c for c in consents if c.status == ConsentStatus.WITHDRAWN])
-        
+
         # Breach metrics
         breaches_this_year = len([
             b for b in breaches
             if b.detected_at.year == datetime.utcnow().year
         ])
-        
+
         return {
             'data_subjects': {
                 'total': len(subjects),
@@ -804,7 +804,7 @@ class PrivacyAgent:
             },
             'processing_activities': len(self.processing_activities),
         }
-    
+
     def _group_by_field(self, items: List[Any], field: str) -> Dict[str, int]:
         """Group items by a field."""
         result = {}
@@ -812,16 +812,16 @@ class PrivacyAgent:
             value = getattr(item, field, 'unknown')
             result[value] = result.get(value, 0) + 1
         return result
-    
+
     def get_regulation_compliance(self, regulation: PrivacyRegulation) -> Dict[str, Any]:
         """Get compliance status for a specific regulation."""
         req = self.regulation_requirements.get(regulation.value, {})
-        
+
         subjects = [
             s for s in self.data_subjects.values()
             if regulation in s.applicable_regulations
         ]
-        
+
         requests = [
             r for r in self.requests.values()
             if any(
@@ -829,9 +829,9 @@ class PrivacyAgent:
                 for s in subjects
             )
         ]
-        
+
         overdue = len([r for r in requests if r.deadline < datetime.utcnow() and r.status != RequestStatus.COMPLETED])
-        
+
         return {
             'regulation': regulation.value,
             'jurisdiction': req.get('jurisdiction', 'Unknown'),
@@ -844,17 +844,17 @@ class PrivacyAgent:
             'response_deadline_days': req.get('response_days', 30),
             'breach_notification': req.get('breach_notification_hours', req.get('breach_notification_days', 'N/A')),
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -914,7 +914,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = PrivacyAgent()
-    
+
     # Register data subject
     subject = agent.register_data_subject(
         name="John Doe",
@@ -922,9 +922,9 @@ if __name__ == "__main__":
         jurisdiction="EU",
         applicable_regulations=[PrivacyRegulation.GDPR],
     )
-    
+
     print(f"Registered data subject: {subject.name}")
-    
+
     # Record consent
     consent = agent.record_consent(
         subject_id=subject.subject_id,
@@ -933,24 +933,24 @@ if __name__ == "__main__":
         ip_address="192.168.1.100",
         expires_in_days=365,
     )
-    
+
     print(f"Recorded consent: {consent.purpose.value}")
-    
+
     # Create access request
     request = agent.create_request(
         subject_id=subject.subject_id,
         right_type=DataSubjectRight.ACCESS,
         assigned_to="privacy@example.com",
     )
-    
+
     print(f"Created request: {request.right_type.value} (due: {request.deadline})")
-    
+
     # Fulfill request
     agent.fulfill_access_request(
         request.request_id,
         data={'profile': {...}, 'orders': [...], 'preferences': {...}},
     )
-    
+
     # Add processing activity
     activity = agent.add_processing_activity(
         name="Customer Analytics",
@@ -961,9 +961,9 @@ if __name__ == "__main__":
         retention_days=365,
         risk_level="medium",
     )
-    
+
     print(f"Added processing activity: {activity.name}")
-    
+
     # Create PIA
     pia = agent.create_pia(
         name="AI Recommendation System",
@@ -971,7 +971,7 @@ if __name__ == "__main__":
         data_categories=['purchase_history', 'browsing', 'preferences'],
         processing_purposes=[ProcessingPurpose.PERSONALIZATION],
     )
-    
+
     agent.add_risk_to_pia(
         pia.pia_id,
         "Potential profiling discrimination",
@@ -979,9 +979,9 @@ if __name__ == "__main__":
         impact="high",
         mitigations=["Bias testing", "Human review", "Opt-out available"],
     )
-    
+
     print(f"Created PIA: {pia.name} (risk: {pia.risk_level})")
-    
+
     # Report breach
     breach = agent.report_breach(
         title="Email List Exposure",
@@ -990,12 +990,12 @@ if __name__ == "__main__":
         affected_subjects=5000,
         data_categories=['email', 'names'],
     )
-    
+
     agent.contain_breach(breach.breach_id)
     agent.notify_authority(breach.breach_id, "ICO")
-    
+
     print(f"Reported breach: {breach.title}")
-    
+
     # Get compliance report
     report = agent.get_compliance_report()
     print(f"\nCompliance Report:")
@@ -1003,5 +1003,5 @@ if __name__ == "__main__":
     print(f"  Requests (overdue): {report['requests']['overdue']}")
     print(f"  Active Consents: {report['consents']['active']}")
     print(f"  Breaches (this year): {report['breaches']['this_year']}")
-    
+
     print(f"\nState: {agent.get_state()}")

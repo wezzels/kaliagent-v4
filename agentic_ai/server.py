@@ -109,7 +109,7 @@ async def get_agents():
         "security", "soc", "vulnman", "redteam", "malware", "cloud_security",
         "ml_ops", "supply_chain", "audit", "vendor_risk", "chaos_monkey",
     ]
-    
+
     agents = [
         AgentInfo(
             agent_id=f"{agent_type}-1",
@@ -118,7 +118,7 @@ async def get_agents():
         )
         for agent_type in agent_types
     ]
-    
+
     return AgentsResponse(agents=agents, total=len(agents))
 
 

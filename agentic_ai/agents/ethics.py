@@ -183,7 +183,7 @@ class EthicsAgent:
     Ethics Agent for AI ethics review, bias detection,
     fairness assessment, and explainability tracking.
     """
-    
+
     def __init__(self, agent_id: str = "ethics-agent"):
         self.agent_id = agent_id
         self.models: Dict[str, AIModel] = {}
@@ -193,10 +193,10 @@ class EthicsAgent:
         self.explainability: Dict[str, ExplainabilityRecord] = {}
         self.incidents: Dict[str, EthicalIncident] = {}
         self.oversight: Dict[str, HumanOversight] = {}
-        
+
         # Ethics guidelines
         self.ethics_guidelines = self._init_ethics_guidelines()
-        
+
         # Bias detection thresholds
         self.bias_thresholds = {
             FairnessMetric.DEMOGRAPHIC_PARITY: 0.1,
@@ -204,7 +204,7 @@ class EthicsAgent:
             FairnessMetric.EQUAL_OPPORTUNITY: 0.1,
             FairnessMetric.PREDICTIVE_PARITY: 0.1,
         }
-    
+
     def _init_ethics_guidelines(self) -> Dict[EthicsPrinciple, List[str]]:
         """Initialize ethics guidelines."""
         return {
@@ -234,11 +234,11 @@ class EthicsAgent:
                 "Regular safety testing should be conducted",
             ],
         }
-    
+
     # ============================================
     # Model Registration
     # ============================================
-    
+
     def register_model(
         self,
         name: str,
@@ -262,21 +262,21 @@ class EthicsAgent:
             training_data_description=training_data_description,
             tags=tags or [],
         )
-        
+
         self.models[model.model_id] = model
         logger.info(f"Registered model: {model.name}")
         return model
-    
+
     def update_model_risk(self, model_id: str, risk_level: RiskLevel) -> bool:
         """Update model risk level."""
         if model_id not in self.models:
             return False
-        
+
         self.models[model_id].risk_level = risk_level
         self.models[model_id].last_updated = datetime.utcnow()
-        
+
         return True
-    
+
     def get_models(
         self,
         risk_level: Optional[RiskLevel] = None,
@@ -284,19 +284,19 @@ class EthicsAgent:
     ) -> List[AIModel]:
         """Get models with filtering."""
         models = list(self.models.values())
-        
+
         if risk_level:
             models = [m for m in models if m.risk_level == risk_level]
-        
+
         if model_type:
             models = [m for m in models if m.model_type == model_type]
-        
+
         return models
-    
+
     # ============================================
     # Ethics Assessment
     # ============================================
-    
+
     def create_ethics_assessment(
         self,
         model_id: str,
@@ -306,7 +306,7 @@ class EthicsAgent:
         """Create ethics assessment for a model."""
         if model_id not in self.models:
             raise ValueError(f"Model {model_id} not found")
-        
+
         assessment = EthicsAssessment(
             assessment_id=self._generate_id("ethics"),
             model_id=model_id,
@@ -314,10 +314,10 @@ class EthicsAgent:
             status=AssessmentStatus.DRAFT,
             principles_evaluated=principles_evaluated or list(EthicsPrinciple),
         )
-        
+
         self.assessments[assessment.assessment_id] = assessment
         return assessment
-    
+
     def add_finding(
         self,
         assessment_id: str,
@@ -329,7 +329,7 @@ class EthicsAgent:
         """Add finding to ethics assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         assessment = self.assessments[assessment_id]
         assessment.findings.append({
             'principle': principle.value,
@@ -338,12 +338,12 @@ class EthicsAgent:
             'recommendation': recommendation,
             'identified_at': datetime.utcnow().isoformat(),
         })
-        
+
         # Update overall risk
         self._update_assessment_risk(assessment)
-        
+
         return True
-    
+
     def complete_assessment(
         self,
         assessment_id: str,
@@ -354,15 +354,15 @@ class EthicsAgent:
         """Complete ethics assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         assessment = self.assessments[assessment_id]
         assessment.status = status
         assessment.reviewer = reviewer
         assessment.reviewed_at = datetime.utcnow()
         assessment.mitigations = mitigations or []
-        
+
         return True
-    
+
     def _update_assessment_risk(self, assessment: EthicsAssessment):
         """Update overall risk based on findings."""
         severity_scores = {
@@ -372,16 +372,16 @@ class EthicsAgent:
             RiskLevel.HIGH: 3,
             RiskLevel.UNACCEPTABLE: 4,
         }
-        
+
         if not assessment.findings:
             assessment.overall_risk = RiskLevel.NEGLIGIBLE
             return
-        
+
         max_severity = max(
             severity_scores.get(RiskLevel(f['severity']), 0)
             for f in assessment.findings
         )
-        
+
         if max_severity >= 4:
             assessment.overall_risk = RiskLevel.UNACCEPTABLE
         elif max_severity >= 3:
@@ -390,11 +390,11 @@ class EthicsAgent:
             assessment.overall_risk = RiskLevel.MEDIUM
         else:
             assessment.overall_risk = RiskLevel.LOW
-    
+
     # ============================================
     # Bias Detection
     # ============================================
-    
+
     def detect_bias(
         self,
         model_id: str,
@@ -416,7 +416,7 @@ class EthicsAgent:
                 severity = RiskLevel.MEDIUM
             else:
                 severity = RiskLevel.LOW
-        
+
         bias = BiasAssessment(
             bias_id=self._generate_id("bias"),
             model_id=model_id,
@@ -429,11 +429,11 @@ class EthicsAgent:
             metric_value=metric_value,
             threshold=self.bias_thresholds.get(metric_used) if metric_used else None,
         )
-        
+
         self.bias_assessments[bias.bias_id] = bias
         logger.warning(f"Bias detected in {model_id}: {bias_type.value}")
         return bias
-    
+
     def create_remediation_plan(
         self,
         bias_id: str,
@@ -442,20 +442,20 @@ class EthicsAgent:
         """Create remediation plan for bias."""
         if bias_id not in self.bias_assessments:
             return False
-        
+
         self.bias_assessments[bias_id].remediation_plan = plan
         self.bias_assessments[bias_id].status = "investigating"
-        
+
         return True
-    
+
     def mark_bias_mitigated(self, bias_id: str) -> bool:
         """Mark bias as mitigated."""
         if bias_id not in self.bias_assessments:
             return False
-        
+
         self.bias_assessments[bias_id].status = "mitigated"
         return True
-    
+
     def get_bias_assessments(
         self,
         model_id: Optional[str] = None,
@@ -464,22 +464,22 @@ class EthicsAgent:
     ) -> List[BiasAssessment]:
         """Get bias assessments with filtering."""
         assessments = list(self.bias_assessments.values())
-        
+
         if model_id:
             assessments = [a for a in assessments if a.model_id == model_id]
-        
+
         if bias_type:
             assessments = [a for a in assessments if a.bias_type == bias_type]
-        
+
         if severity:
             assessments = [a for a in assessments if a.severity == severity]
-        
+
         return assessments
-    
+
     # ============================================
     # Fairness Assessment
     # ============================================
-    
+
     def generate_fairness_report(
         self,
         model_id: str,
@@ -491,12 +491,12 @@ class EthicsAgent:
         # Parse metrics
         parsed_metrics = {}
         disparities = []
-        
+
         for metric_name, data in metrics.items():
             try:
                 metric = FairnessMetric(metric_name)
                 parsed_metrics[metric] = data
-                
+
                 # Check for disparities
                 if 'disparity' in data and data['disparity'] > self.bias_thresholds.get(metric, 0.1):
                     disparities.append({
@@ -506,11 +506,11 @@ class EthicsAgent:
                     })
             except ValueError:
                 continue
-        
+
         # Calculate overall score (100 - average disparity * 100)
         avg_disparity = sum(d['disparity'] for d in disparities) / len(disparities) if disparities else 0
         overall_score = max(0, 100 - (avg_disparity * 100))
-        
+
         report = FairnessReport(
             report_id=self._generate_id("fairness"),
             model_id=model_id,
@@ -520,7 +520,7 @@ class EthicsAgent:
             overall_score=round(overall_score, 1),
             disparities=disparities,
         )
-        
+
         # Generate recommendations
         if disparities:
             report.recommendations = [
@@ -528,23 +528,23 @@ class EthicsAgent:
                 "Consider reweighting training data",
                 "Evaluate model performance across subgroups",
             ]
-        
+
         self.fairness_reports[report.report_id] = report
         return report
-    
+
     def get_fairness_reports(self, model_id: Optional[str] = None) -> List[FairnessReport]:
         """Get fairness reports with filtering."""
         reports = list(self.fairness_reports.values())
-        
+
         if model_id:
             reports = [r for r in reports if r.model_id == model_id]
-        
+
         return reports
-    
+
     # ============================================
     # Explainability
     # ============================================
-    
+
     def add_explainability_record(
         self,
         model_id: str,
@@ -562,21 +562,21 @@ class EthicsAgent:
             features=features or [],
             visualization_url=visualization_url,
         )
-        
+
         self.explainability[record.record_id] = record
         return record
-    
+
     def get_explainability(self, model_id: str) -> List[ExplainabilityRecord]:
         """Get explainability records for a model."""
         return [
             r for r in self.explainability.values()
             if r.model_id == model_id
         ]
-    
+
     # ============================================
     # Incident Management
     # ============================================
-    
+
     def report_incident(
         self,
         title: str,
@@ -596,11 +596,11 @@ class EthicsAgent:
             principles_violated=principles_violated,
             affected_parties=affected_parties or [],
         )
-        
+
         self.incidents[incident.incident_id] = incident
         logger.warning(f"Ethical incident reported: {incident.title}")
         return incident
-    
+
     def resolve_incident(
         self,
         incident_id: str,
@@ -610,15 +610,15 @@ class EthicsAgent:
         """Resolve ethical incident."""
         if incident_id not in self.incidents:
             return False
-        
+
         incident = self.incidents[incident_id]
         incident.status = "resolved"
         incident.root_cause = root_cause
         incident.remediation = remediation
         incident.resolved_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_incidents(
         self,
         severity: Optional[RiskLevel] = None,
@@ -626,19 +626,19 @@ class EthicsAgent:
     ) -> List[EthicalIncident]:
         """Get incidents with filtering."""
         incidents = list(self.incidents.values())
-        
+
         if severity:
             incidents = [i for i in incidents if i.severity == severity]
-        
+
         if status:
             incidents = [i for i in incidents if i.status == status]
-        
+
         return incidents
-    
+
     # ============================================
     # Human Oversight
     # ============================================
-    
+
     def configure_oversight(
         self,
         model_id: str,
@@ -658,46 +658,46 @@ class EthicsAgent:
             escalation_path=escalation_path or [],
             review_timeout_hours=review_timeout_hours,
         )
-        
+
         self.oversight[oversight.oversight_id] = oversight
         return oversight
-    
+
     def get_oversight_config(self, model_id: str) -> Optional[HumanOversight]:
         """Get oversight configuration for a model."""
         for oversight in self.oversight.values():
             if oversight.model_id == model_id and oversight.enabled:
                 return oversight
         return None
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_ethics_report(self) -> Dict[str, Any]:
         """Generate comprehensive ethics report."""
         models = list(self.models.values())
         assessments = list(self.assessments.values())
         incidents = list(self.incidents.values())
         bias_list = list(self.bias_assessments.values())
-        
+
         # Models by risk
         by_risk = {}
         for risk in RiskLevel:
             by_risk[risk.value] = len([m for m in models if m.risk_level == risk])
-        
+
         # Assessment status
         by_status = {}
         for status in AssessmentStatus:
             by_status[status.value] = len([a for a in assessments if a.status == status])
-        
+
         # Bias by type
         by_bias_type = {}
         for bias_type in BiasType:
             by_bias_type[bias_type.value] = len([b for b in bias_list if b.bias_type == bias_type])
-        
+
         # Open incidents
         open_incidents = len([i for i in incidents if i.status != 'resolved'])
-        
+
         return {
             'models': {
                 'total': len(models),
@@ -723,21 +723,21 @@ class EthicsAgent:
                 'configured_models': len([o for o in self.oversight.values() if o.enabled]),
             },
         }
-    
+
     def get_model_ethics_profile(self, model_id: str) -> Dict[str, Any]:
         """Get comprehensive ethics profile for a model."""
         if model_id not in self.models:
             return {'error': 'Model not found'}
-        
+
         model = self.models[model_id]
-        
+
         assessments = [a for a in self.assessments.values() if a.model_id == model_id]
         bias_list = [b for b in self.bias_assessments.values() if b.model_id == model_id]
         incidents = [i for i in self.incidents.values() if i.model_id == model_id]
         fairness = [f for f in self.fairness_reports.values() if f.model_id == model_id]
         explainability = self.get_explainability(model_id)
         oversight = self.get_oversight_config(model_id)
-        
+
         return {
             'model': {
                 'model_id': model_id,
@@ -774,17 +774,17 @@ class EthicsAgent:
                 'type': oversight.oversight_type if oversight else None,
             },
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -838,7 +838,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = EthicsAgent()
-    
+
     # Register model
     model = agent.register_model(
         name="Credit Scoring Model v2",
@@ -850,16 +850,16 @@ if __name__ == "__main__":
         training_data_description="Historical loan applications 2020-2024",
         tags=['finance', 'credit', 'high-risk'],
     )
-    
+
     print(f"Registered model: {model.name}")
-    
+
     # Create ethics assessment
     assessment = agent.create_ethics_assessment(
         model.model_id,
         assessment_type="initial",
         principles_evaluated=[EthicsPrinciple.FAIRNESS, EthicsPrinciple.NON_DISCRIMINATION],
     )
-    
+
     # Add findings
     agent.add_finding(
         assessment.assessment_id,
@@ -868,14 +868,14 @@ if __name__ == "__main__":
         RiskLevel.HIGH,
         "Investigate training data representation",
     )
-    
+
     agent.complete_assessment(
         assessment.assessment_id,
         reviewer="ethics-board@example.com",
         status=AssessmentStatus.REQUIRES_REMEDIATION,
         mitigations=["Retrain with balanced data", "Add fairness constraints"],
     )
-    
+
     # Detect bias
     bias = agent.detect_bias(
         model.model_id,
@@ -886,9 +886,9 @@ if __name__ == "__main__":
         metric_used=FairnessMetric.DEMOGRAPHIC_PARITY,
         metric_value=0.23,
     )
-    
+
     print(f"Bias detected: {bias.description}")
-    
+
     # Generate fairness report
     report = agent.generate_fairness_report(
         model.model_id,
@@ -899,9 +899,9 @@ if __name__ == "__main__":
             'equalized_odds': {'disparity': 0.12, 'by_group': {...}},
         },
     )
-    
+
     print(f"Fairness Score: {report.overall_score}/100")
-    
+
     # Add explainability
     agent.add_explainability_record(
         model.model_id,
@@ -913,7 +913,7 @@ if __name__ == "__main__":
             {'name': 'debt_ratio', 'importance': 0.18},
         ],
     )
-    
+
     # Configure human oversight
     agent.configure_oversight(
         model.model_id,
@@ -922,12 +922,12 @@ if __name__ == "__main__":
         reviewers=["senior-analyst@example.com"],
         escalation_path=["manager@example.com", "ethics-board@example.com"],
     )
-    
+
     # Get ethics report
     report = agent.get_ethics_report()
     print(f"\nEthics Report:")
     print(f"  Total Models: {report['models']['total']}")
     print(f"  High Risk: {report['models']['high_risk_count']}")
     print(f"  Bias Detected: {report['bias']['total_detected']}")
-    
+
     print(f"\nState: {agent.get_state()}")

@@ -25,7 +25,7 @@ class FeedbackType(str, Enum):
 @dataclass
 class Feedback:
     """A single feedback instance."""
-    
+
     feedback_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     agent_id: str = ""
     task_type: str = ""
@@ -38,7 +38,7 @@ class Feedback:
     source: str = "user"  # user, system, agent
     weight: float = 1.0  # Feedback importance
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -55,7 +55,7 @@ class Feedback:
             "weight": self.weight,
             "created_at": self.created_at,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Feedback":
         """Create from dictionary."""
@@ -73,7 +73,7 @@ class Feedback:
             weight=data.get("weight", 1.0),
             created_at=data.get("created_at", datetime.utcnow().isoformat()),
         )
-    
+
     def get_score(self) -> float:
         """Get numerical score from feedback (-1.0 to 1.0)."""
         if self.feedback_type == FeedbackType.EXPLICIT_POSITIVE:
@@ -93,36 +93,36 @@ class Feedback:
 
 class FeedbackCollector:
     """Collects and aggregates feedback for agents."""
-    
+
     def __init__(self):
         self.feedback: List[Feedback] = []
         self.agent_feedback: Dict[str, List[Feedback]] = {}
         self.task_type_feedback: Dict[str, List[Feedback]] = {}
         self._callbacks: List = []
-    
+
     def add_feedback(self, feedback: Feedback) -> str:
         """Add feedback to the collector."""
         self.feedback.append(feedback)
-        
+
         # Index by agent
         if feedback.agent_id not in self.agent_feedback:
             self.agent_feedback[feedback.agent_id] = []
         self.agent_feedback[feedback.agent_id].append(feedback)
-        
+
         # Index by task type
         if feedback.task_type not in self.task_type_feedback:
             self.task_type_feedback[feedback.task_type] = []
         self.task_type_feedback[feedback.task_type].append(feedback)
-        
+
         # Notify callbacks
         for callback in self._callbacks:
             try:
                 callback(feedback)
             except Exception:
                 pass
-        
+
         return feedback.feedback_id
-    
+
     def submit_rating(
         self,
         agent_id: str,
@@ -136,7 +136,7 @@ class FeedbackCollector:
             FeedbackType.EXPLICIT_POSITIVE if rating >= 3.5
             else FeedbackType.EXPLICIT_NEGATIVE
         )
-        
+
         feedback = Feedback(
             agent_id=agent_id,
             task_type=task_type,
@@ -145,10 +145,10 @@ class FeedbackCollector:
             content=content,
             context=context or {},
         )
-        
+
         self.add_feedback(feedback)
         return feedback
-    
+
     def record_success(
         self,
         agent_id: str,
@@ -162,10 +162,10 @@ class FeedbackCollector:
             feedback_type=FeedbackType.IMPLICIT_SUCCESS,
             context=context or {},
         )
-        
+
         self.add_feedback(feedback)
         return feedback
-    
+
     def record_failure(
         self,
         agent_id: str,
@@ -181,10 +181,10 @@ class FeedbackCollector:
             content=error,
             context=context or {},
         )
-        
+
         self.add_feedback(feedback)
         return feedback
-    
+
     def record_correction(
         self,
         agent_id: str,
@@ -203,18 +203,18 @@ class FeedbackCollector:
             content=f"Corrected: {original[:50]}... → {corrected[:50]}...",
             context=context or {},
         )
-        
+
         self.add_feedback(feedback)
         return feedback
-    
+
     def get_agent_feedback(self, agent_id: str) -> List[Feedback]:
         """Get all feedback for an agent."""
         return self.agent_feedback.get(agent_id, [])
-    
+
     def get_task_type_feedback(self, task_type: str) -> List[Feedback]:
         """Get all feedback for a task type."""
         return self.task_type_feedback.get(task_type, [])
-    
+
     def get_recent_feedback(
         self,
         agent_id: Optional[str] = None,
@@ -225,33 +225,33 @@ class FeedbackCollector:
             feedback_list = self.agent_feedback.get(agent_id, self.feedback)
         else:
             feedback_list = self.feedback
-        
+
         # Sort by created_at descending
         sorted_feedback = sorted(
             feedback_list,
             key=lambda f: f.created_at,
             reverse=True,
         )
-        
+
         return sorted_feedback[:limit]
-    
+
     def get_average_rating(self, agent_id: str) -> Optional[float]:
         """Get average rating for an agent."""
         feedback_list = self.get_agent_feedback(agent_id)
-        
+
         ratings = [f.rating for f in feedback_list if f.rating is not None]
         if not ratings:
             return None
-        
+
         return sum(ratings) / len(ratings)
-    
+
     def get_success_rate(self, agent_id: str) -> float:
         """Get success rate for an agent."""
         feedback_list = self.get_agent_feedback(agent_id)
-        
+
         if not feedback_list:
             return 0.0
-        
+
         successes = sum(
             1 for f in feedback_list
             if f.feedback_type in [
@@ -259,42 +259,42 @@ class FeedbackCollector:
                 FeedbackType.IMPLICIT_SUCCESS,
             ]
         )
-        
+
         return successes / len(feedback_list)
-    
+
     def get_learning_score(self, agent_id: str) -> float:
         """Get overall learning score for an agent (-1.0 to 1.0)."""
         feedback_list = self.get_agent_feedback(agent_id)
-        
+
         if not feedback_list:
             return 0.0
-        
+
         weighted_sum = sum(f.get_score() * f.weight for f in feedback_list)
         total_weight = sum(f.weight for f in feedback_list)
-        
+
         if total_weight == 0:
             return 0.0
-        
+
         return weighted_sum / total_weight
-    
+
     def get_corrections(self, agent_id: str) -> List[Feedback]:
         """Get all corrections for an agent."""
         feedback_list = self.get_agent_feedback(agent_id)
         return [f for f in feedback_list if f.feedback_type == FeedbackType.CORRECTION]
-    
+
     def register_callback(self, callback):
         """Register a callback for new feedback."""
         self._callbacks.append(callback)
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get feedback statistics."""
         total = len(self.feedback)
-        
+
         by_type = {}
         for feedback_type in FeedbackType:
             count = sum(1 for f in self.feedback if f.feedback_type == feedback_type)
             by_type[feedback_type.value] = count
-        
+
         return {
             "total_feedback": total,
             "by_type": by_type,

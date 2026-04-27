@@ -119,7 +119,7 @@ class HRAgent:
     HR Agent for employee management, onboarding,
     performance reviews, and time-off tracking.
     """
-    
+
     def __init__(self, agent_id: str = "hr-agent"):
         self.agent_id = agent_id
         self.employees: Dict[str, Employee] = {}
@@ -127,10 +127,10 @@ class HRAgent:
         self.reviews: Dict[str, PerformanceReview] = {}
         self.time_off_requests: Dict[str, TimeOffRequest] = {}
         self.departments: Dict[str, Dict[str, Any]] = {}
-        
+
         # Initialize default departments
         self._init_departments()
-    
+
     def _init_departments(self):
         """Initialize default departments."""
         self.departments = {
@@ -140,11 +140,11 @@ class HRAgent:
             'hr': {'name': 'Human Resources', 'head_count': 0, 'budget': 0},
             'finance': {'name': 'Finance', 'head_count': 0, 'budget': 0},
         }
-    
+
     # ============================================
     # Employee Management
     # ============================================
-    
+
     def hire_employee(
         self,
         name: str,
@@ -171,16 +171,16 @@ class HRAgent:
             location=location,
             skills=skills or [],
         )
-        
+
         self.employees[employee.employee_id] = employee
-        
+
         # Update department head count
         if department in self.departments:
             self.departments[department]['head_count'] += 1
-        
+
         logger.info(f"Hired employee: {employee.name} ({employee.employee_id})")
         return employee
-    
+
     def terminate_employee(
         self,
         employee_id: str,
@@ -190,21 +190,21 @@ class HRAgent:
         """Terminate an employee."""
         if employee_id not in self.employees:
             return None
-        
+
         employee = self.employees[employee_id]
         employee.status = "terminated"
-        
+
         # Update department head count
         if employee.department in self.departments:
             self.departments[employee.department]['head_count'] -= 1
-        
+
         logger.info(f"Terminated employee: {employee.name}")
         return employee
-    
+
     def get_employee(self, employee_id: str) -> Optional[Employee]:
         """Get employee by ID."""
         return self.employees.get(employee_id)
-    
+
     def get_employees(
         self,
         department: Optional[str] = None,
@@ -213,18 +213,18 @@ class HRAgent:
     ) -> List[Employee]:
         """Get employees with filtering."""
         employees = list(self.employees.values())
-        
+
         if department:
             employees = [e for e in employees if e.department == department]
-        
+
         if status:
             employees = [e for e in employees if e.status == status]
-        
+
         if employment_type:
             employees = [e for e in employees if e.employment_type == employment_type]
-        
+
         return employees
-    
+
     def update_employee(
         self,
         employee_id: str,
@@ -233,19 +233,19 @@ class HRAgent:
         """Update employee information."""
         if employee_id not in self.employees:
             return False
-        
+
         employee = self.employees[employee_id]
-        
+
         for key, value in updates.items():
             if hasattr(employee, key):
                 setattr(employee, key, value)
-        
+
         return True
-    
+
     # ============================================
     # Onboarding
     # ============================================
-    
+
     def create_onboarding(
         self,
         employee_id: str,
@@ -263,7 +263,7 @@ class HRAgent:
             {'name': 'Complete security training', 'completed': False, 'category': 'training'},
             {'name': '30-day check-in', 'completed': False, 'category': 'review'},
         ]
-        
+
         onboarding = Onboarding(
             onboarding_id=self._generate_id("onboard"),
             employee_id=employee_id,
@@ -271,11 +271,11 @@ class HRAgent:
             start_date=start_date,
             expected_end=start_date + timedelta(days=duration_days),
         )
-        
+
         self.onboardings[onboarding.onboarding_id] = onboarding
         logger.info(f"Created onboarding for employee {employee_id}")
         return onboarding
-    
+
     def complete_onboarding_task(
         self,
         onboarding_id: str,
@@ -284,25 +284,25 @@ class HRAgent:
         """Mark onboarding task as complete."""
         if onboarding_id not in self.onboardings:
             return False
-        
+
         onboarding = self.onboardings[onboarding_id]
-        
+
         for task in onboarding.tasks:
             if task['name'] == task_name:
                 task['completed'] = True
                 break
-        
+
         # Calculate progress
         completed = sum(1 for t in onboarding.tasks if t['completed'])
         onboarding.progress = (completed / len(onboarding.tasks)) * 100
-        
+
         # Check if all tasks complete
         if onboarding.progress == 100:
             onboarding.status = "completed"
             onboarding.completed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_onboarding_progress(self, employee_id: str) -> Optional[Dict[str, Any]]:
         """Get onboarding progress for employee."""
         for onboarding in self.onboardings.values():
@@ -315,11 +315,11 @@ class HRAgent:
                     'total_tasks': len(onboarding.tasks),
                 }
         return None
-    
+
     # ============================================
     # Performance Reviews
     # ============================================
-    
+
     def create_review(
         self,
         employee_id: str,
@@ -338,11 +338,11 @@ class HRAgent:
             status=ReviewStatus.NOT_STARTED,
             goals=goals or [],
         )
-        
+
         self.reviews[review.review_id] = review
         logger.info(f"Created review for employee {employee_id}")
         return review
-    
+
     def submit_review(
         self,
         review_id: str,
@@ -354,16 +354,16 @@ class HRAgent:
         """Submit completed review."""
         if review_id not in self.reviews:
             return None
-        
+
         review = self.reviews[review_id]
         review.status = ReviewStatus.COMPLETED
         review.achievements = achievements
         review.areas_for_improvement = areas_for_improvement
         review.rating = min(5, max(1, rating))  # Clamp 1-5
         review.feedback = feedback
-        
+
         return review
-    
+
     def get_reviews(
         self,
         employee_id: Optional[str] = None,
@@ -371,19 +371,19 @@ class HRAgent:
     ) -> List[PerformanceReview]:
         """Get reviews with filtering."""
         reviews = list(self.reviews.values())
-        
+
         if employee_id:
             reviews = [r for r in reviews if r.employee_id == employee_id]
-        
+
         if status:
             reviews = [r for r in reviews if r.status == status]
-        
+
         return reviews
-    
+
     # ============================================
     # Time Off Management
     # ============================================
-    
+
     def request_time_off(
         self,
         employee_id: str,
@@ -402,11 +402,11 @@ class HRAgent:
             status=TimeOffStatus.PENDING,
             reason=reason,
         )
-        
+
         self.time_off_requests[request.request_id] = request
         logger.info(f"Time off request from {employee_id}: {start_date} to {end_date}")
         return request
-    
+
     def approve_time_off(
         self,
         request_id: str,
@@ -415,21 +415,21 @@ class HRAgent:
         """Approve time off request."""
         if request_id not in self.time_off_requests:
             return None
-        
+
         request = self.time_off_requests[request_id]
         request.status = TimeOffStatus.APPROVED
         request.approved_by = approved_by
         request.approved_at = datetime.utcnow()
-        
+
         # Update employee status if long leave
         days = (request.end_date - request.start_date).days
         if days > 14:
             employee = self.employees.get(request.employee_id)
             if employee:
                 employee.status = "on_leave"
-        
+
         return request
-    
+
     def reject_time_off(
         self,
         request_id: str,
@@ -439,17 +439,17 @@ class HRAgent:
         """Reject time off request."""
         if request_id not in self.time_off_requests:
             return None
-        
+
         request = self.time_off_requests[request_id]
         request.status = TimeOffStatus.REJECTED
         request.approved_by = approved_by
         request.approved_at = datetime.utcnow()
-        
+
         if reason:
             request.reason = f"{request.reason} (Rejected: {reason})"
-        
+
         return request
-    
+
     def get_time_off_requests(
         self,
         employee_id: Optional[str] = None,
@@ -457,46 +457,46 @@ class HRAgent:
     ) -> List[TimeOffRequest]:
         """Get time off requests with filtering."""
         requests = list(self.time_off_requests.values())
-        
+
         if employee_id:
             requests = [r for r in requests if r.employee_id == employee_id]
-        
+
         if status:
             requests = [r for r in requests if r.status == status]
-        
+
         return requests
-    
+
     # ============================================
     # HR Analytics
     # ============================================
-    
+
     def get_hr_metrics(self) -> Dict[str, Any]:
         """Get HR metrics summary."""
         employees = list(self.employees.values())
         active = [e for e in employees if e.status == 'active']
-        
+
         # Department breakdown
         by_department = {}
         for emp in active:
             dept = emp.department
             by_department[dept] = by_department.get(dept, 0) + 1
-        
+
         # Employment type breakdown
         by_type = {}
         for emp in active:
             emp_type = emp.employment_type.value
             by_type[emp_type] = by_type.get(emp_type, 0) + 1
-        
+
         # Time off stats
         pending_pto = len([r for r in self.time_off_requests.values() if r.status == TimeOffStatus.PENDING])
         approved_pto = len([r for r in self.time_off_requests.values() if r.status == TimeOffStatus.APPROVED])
-        
+
         # Review stats
         completed_reviews = len([r for r in self.reviews.values() if r.status == ReviewStatus.COMPLETED])
-        
+
         # Onboarding stats
         active_onboardings = len([o for o in self.onboardings.values() if o.status == 'in_progress'])
-        
+
         return {
             'total_employees': len(employees),
             'active_employees': len(active),
@@ -510,17 +510,17 @@ class HRAgent:
             'active_onboardings': active_onboardings,
             'departments': self.departments,
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -566,7 +566,7 @@ def get_capabilities() -> Dict[str, Any]:
 if __name__ == "__main__":
     # Quick test
     agent = HRAgent()
-    
+
     # Hire employee
     emp = agent.hire_employee(
         name="John Doe",
@@ -578,17 +578,17 @@ if __name__ == "__main__":
         location="Remote",
         skills=['Python', 'JavaScript', 'AWS'],
     )
-    
+
     print(f"Hired: {emp.name} ({emp.employee_id})")
     print(f"Department: {emp.department}")
     print(f"Position: {emp.position}")
-    
+
     # Create onboarding
     onboarding = agent.create_onboarding(emp.employee_id, datetime.utcnow())
     print(f"\nOnboarding created: {onboarding.progress}% complete")
-    
+
     # Complete a task
     agent.complete_onboarding_task(onboarding.onboarding_id, "Complete HR paperwork")
     print(f"After task: {onboarding.progress:.0f}% complete")
-    
+
     print(f"\nState: {agent.get_state()}")

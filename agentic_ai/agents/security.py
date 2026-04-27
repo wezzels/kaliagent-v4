@@ -40,28 +40,28 @@ class ThreatType(Enum):
     XXE = "xml_external_entity"
     COMMAND_INJECTION = "command_injection"
     CODE_INJECTION = "code_injection"
-    
+
     # Protocol/Network
     CSRF = "csrf"
     SSRF = "ssrf"
     PATH_TRAVERSAL = "path_traversal"
     UNVALIDATED_REDIRECT = "unvalidated_redirect"
-    
+
     # Cryptography
     WEAK_CRYPTO = "weak_cryptography"
     INSECURE_RANDOM = "insecure_random"
     HARDCODED_SECRETS = "hardcoded_secrets"
-    
+
     # Authentication/Session
     BRUTE_FORCE = "brute_force"
     SESSION_HIJACK = "session_hijack"
     SESSION_FIXATION = "session_fixation"
     PRIVILEGE_ESCALATION = "privilege_escalation"
-    
+
     # Data/Deserialization
     INSECURE_DESERIALIZATION = "insecure_deserialization"
     SENSITIVE_DATA_EXPOSURE = "sensitive_data_exposure"
-    
+
     # Other
     MALWARE = "malware"
     SUSPICIOUS_ACTIVITY = "suspicious_activity"
@@ -132,16 +132,16 @@ class SecurityPolicy:
 
 class SimpleStateStore:
     """Simple in-memory state store for when full infrastructure is not available."""
-    
+
     def __init__(self):
         self._data = {}
-    
+
     def get(self, key: str, default: Any = None) -> Any:
         return self._data.get(key, default)
-    
+
     def set(self, key: str, value: Any):
         self._data[key] = value
-    
+
     def delete(self, key: str):
         if key in self._data:
             del self._data[key]
@@ -152,7 +152,7 @@ class SecurityAgent:
     Security Agent for vulnerability scanning, incident response,
     and security policy enforcement.
     """
-    
+
     def __init__(self, agent_id: str = "security-agent", state_store: Optional[Any] = None):
         self.agent_id = agent_id
         self.state_store = state_store or SimpleStateStore()
@@ -161,13 +161,13 @@ class SecurityAgent:
         self.secret_rotations: Dict[str, SecretRotation] = {}
         self.policies: Dict[str, SecurityPolicy] = {}
         self.access_logs: List[Dict[str, Any]] = []
-        
+
         # Security patterns for scanning
         self._init_security_patterns()
-        
+
         # Load persisted state
         self._load_state()
-    
+
     def _init_security_patterns(self):
         """Initialize security scanning patterns."""
         # Hardcoded secrets patterns
@@ -181,7 +181,7 @@ class SecurityAgent:
             'private_key': re.compile(r'-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----'),
             'jwt_secret': re.compile(r'(?i)(jwt[_-]?secret|jwt[_-]?key)\s*[:=]\s*["\']?[^"\'\s]{8,}'),
         }
-        
+
         # SQL injection patterns
         self.sql_injection_patterns = [
             re.compile(r'(?i)(\bSELECT\b.*\bFROM\b.*\bWHERE\b.*=.*\bOR\b)', re.IGNORECASE),
@@ -193,7 +193,7 @@ class SecurityAgent:
             re.compile(r"(?i)(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE).*\+", re.IGNORECASE),
             re.compile(r"\+\s*\w+"),
         ]
-        
+
         # XSS patterns
         self.xss_patterns = [
             re.compile(r'<script[^>]*>', re.IGNORECASE),
@@ -204,7 +204,7 @@ class SecurityAgent:
             re.compile(r'["\'][^"\']*<[a-z]+>[^"\']*["\']\s*\+\s*\w+', re.IGNORECASE),
             re.compile(r'\+\s*["\'][^"\']*</[a-z]+>["\']', re.IGNORECASE),
         ]
-        
+
         # Path traversal patterns
         self.path_traversal_patterns = [
             re.compile(r'\.\./'),
@@ -214,17 +214,17 @@ class SecurityAgent:
             # String concatenation with paths
             re.compile(r'["\'][^"\']*/[a-z]+["\']\s*\+\s*\w+', re.IGNORECASE),
         ]
-        
+
         # Command injection patterns
         self.command_injection_patterns = [
             re.compile(r'[;&|`$]'),
             re.compile(r'\$\([^)]+\)'),
             re.compile(r'`[^`]+`'),
         ]
-        
+
         # Initialize default policies
         self._init_default_policies()
-    
+
     def _init_default_policies(self):
         """Initialize default security policies."""
         self.policies = {
@@ -277,7 +277,7 @@ class SecurityAgent:
                 enforcement_level='warn',
             ),
         }
-    
+
     def _load_state(self):
         """Load persisted security state."""
         try:
@@ -287,7 +287,7 @@ class SecurityAgent:
                 logger.info("Security agent state loaded")
         except Exception as e:
             logger.debug(f"Could not load security state: {e}")
-    
+
     def _save_state(self):
         """Persist security state."""
         try:
@@ -299,25 +299,25 @@ class SecurityAgent:
             self.state_store.set(f"agent:{self.agent_id}:state", state)
         except Exception as e:
             logger.error(f"Could not save security state: {e}")
-    
+
     # ============================================
     # Vulnerability Scanning
     # ============================================
-    
+
     def scan_code(self, code: str, file_path: str = "unknown") -> List[SecurityFinding]:
         """
         Scan code for security vulnerabilities.
-        
+
         Args:
             code: Source code to scan
             file_path: File path for context
-            
+
         Returns:
             List of security findings
         """
         findings = []
         lines = code.split('\n')
-        
+
         # Check for hardcoded secrets
         for line_num, line in enumerate(lines, 1):
             for secret_type, pattern in self.secret_patterns.items():
@@ -336,7 +336,7 @@ class SecurityAgent:
                     )
                     findings.append(finding)
                     self.findings[finding.finding_id] = finding
-        
+
         # Check for SQL injection vulnerabilities
         for line_num, line in enumerate(lines, 1):
             for pattern in self.sql_injection_patterns:
@@ -356,7 +356,7 @@ class SecurityAgent:
                     )
                     findings.append(finding)
                     self.findings[finding.finding_id] = finding
-        
+
         # Check for XSS vulnerabilities
         for line_num, line in enumerate(lines, 1):
             for pattern in self.xss_patterns:
@@ -376,7 +376,7 @@ class SecurityAgent:
                     )
                     findings.append(finding)
                     self.findings[finding.finding_id] = finding
-        
+
         # Check for path traversal
         for line_num, line in enumerate(lines, 1):
             for pattern in self.path_traversal_patterns:
@@ -395,10 +395,10 @@ class SecurityAgent:
                     )
                     findings.append(finding)
                     self.findings[finding.finding_id] = finding
-        
+
         self._save_state()
         return findings
-    
+
     def scan_file(self, file_path: str) -> List[SecurityFinding]:
         """Scan a file for security vulnerabilities."""
         try:
@@ -408,40 +408,40 @@ class SecurityAgent:
         except Exception as e:
             logger.error(f"Error scanning file {file_path}: {e}")
             return []
-    
+
     def scan_directory(self, directory_path: str, extensions: Optional[List[str]] = None) -> List[SecurityFinding]:
         """
         Scan a directory recursively for security vulnerabilities.
-        
+
         Args:
             directory_path: Path to directory
             extensions: File extensions to scan (default: ['.py', '.js', '.ts', '.java', '.go'])
-            
+
         Returns:
             List of all findings
         """
         if extensions is None:
             extensions = ['.py', '.js', '.ts', '.java', '.go', '.rb', '.php', '.sh']
-        
+
         all_findings = []
-        
+
         for root, dirs, files in os.walk(directory_path):
             # Skip hidden and virtual environments
             dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['venv', 'node_modules', '__pycache__']]
-            
+
             for file in files:
                 if any(file.endswith(ext) for ext in extensions):
                     file_path = os.path.join(root, file)
                     findings = self.scan_file(file_path)
                     all_findings.extend(findings)
-        
+
         logger.info(f"Scanned {directory_path}: found {len(all_findings)} issues")
         return all_findings
-    
+
     # ============================================
     # Incident Response
     # ============================================
-    
+
     def create_incident(
         self,
         title: str,
@@ -463,46 +463,46 @@ class SecurityAgent:
             target_resource=target_resource,
             user_id=user_id,
         )
-        
+
         self.incidents[incident.incident_id] = incident
         logger.warning(f"Security incident created: {incident.incident_id} - {title}")
-        
+
         # Auto-respond based on severity
         if severity in [SeverityLevel.CRITICAL, SeverityLevel.HIGH]:
             self._auto_respond_incident(incident)
-        
+
         self._save_state()
         return incident
-    
+
     def _auto_respond_incident(self, incident: SecurityIncident):
         """Automated incident response actions."""
         actions = []
-        
+
         if incident.threat_type == ThreatType.BRUTE_FORCE:
             actions.append(f"Block IP {incident.source_ip} at firewall")
             actions.append("Force password reset for affected user")
             actions.append("Enable account lockout")
-        
+
         elif incident.threat_type == ThreatType.SQL_INJECTION:
             actions.append("Block suspicious requests at WAF")
             actions.append("Review database logs for data exfiltration")
             actions.append("Patch vulnerable endpoint")
-        
+
         elif incident.threat_type == ThreatType.SESSION_HIJACK:
             actions.append("Invalidate all sessions for user")
             actions.append("Force re-authentication")
             actions.append("Review session logs")
-        
+
         elif incident.severity == SeverityLevel.CRITICAL:
             actions.append("Alert security team immediately")
             actions.append("Enable enhanced logging")
             actions.append("Consider temporary service isolation")
-        
+
         incident.response_actions = actions
         incident.status = "investigating"
-        
+
         logger.info(f"Auto-response for incident {incident.incident_id}: {len(actions)} actions")
-    
+
     def update_incident_status(
         self,
         incident_id: str,
@@ -513,20 +513,20 @@ class SecurityAgent:
         """Update incident status."""
         if incident_id not in self.incidents:
             return None
-        
+
         incident = self.incidents[incident_id]
         incident.status = status
-        
+
         if response_actions:
             incident.response_actions.extend(response_actions)
-        
+
         if status == "resolved":
             incident.resolved_at = datetime.utcnow()
             incident.resolved_by = resolved_by
-        
+
         self._save_state()
         return incident
-    
+
     def get_incidents(
         self,
         status: Optional[str] = None,
@@ -536,25 +536,25 @@ class SecurityAgent:
     ) -> List[SecurityIncident]:
         """Get incidents with optional filtering."""
         incidents = list(self.incidents.values())
-        
+
         if status:
             incidents = [i for i in incidents if i.status == status]
-        
+
         if severity:
             incidents = [i for i in incidents if i.severity == severity]
-        
+
         if threat_type:
             incidents = [i for i in incidents if i.threat_type == threat_type]
-        
+
         # Sort by detection time (newest first)
         incidents.sort(key=lambda x: x.detected_at, reverse=True)
-        
+
         return incidents[:limit]
-    
+
     # ============================================
     # Secrets Management
     # ============================================
-    
+
     def register_secret(
         self,
         secret_name: str,
@@ -570,47 +570,47 @@ class SecurityAgent:
             last_rotated=now,
             next_rotation=now + timedelta(days=rotation_days),
         )
-        
+
         self.secret_rotations[rotation.rotation_id] = rotation
         logger.info(f"Registered secret for rotation: {secret_name}")
         return rotation
-    
+
     def rotate_secret(self, rotation_id: str, new_secret_value: str) -> bool:
         """
         Rotate a secret.
-        
+
         Args:
             rotation_id: Secret rotation record ID
             new_secret_value: New secret value (stored securely in production)
-            
+
         Returns:
             True if rotation successful
         """
         if rotation_id not in self.secret_rotations:
             return False
-        
+
         rotation = self.secret_rotations[rotation_id]
         rotation.last_rotated = datetime.utcnow()
         rotation.next_rotation = rotation.last_rotated + timedelta(days=90)
         rotation.rotation_count += 1
-        
+
         # In production, update the actual secret in secrets manager
         logger.info(f"Rotated secret: {rotation.secret_name} (count: {rotation.rotation_count})")
-        
+
         self._save_state()
         return True
-    
+
     def get_secrets_due_for_rotation(self, days_ahead: int = 7) -> List[SecretRotation]:
         """Get secrets due for rotation within specified days."""
         threshold = datetime.utcnow() + timedelta(days=days_ahead)
         due = []
-        
+
         for rotation in self.secret_rotations.values():
             if rotation.status == "active" and rotation.next_rotation <= threshold:
                 due.append(rotation)
-        
+
         return due
-    
+
     def generate_secure_secret(
         self,
         secret_type: str = "api_key",
@@ -626,11 +626,11 @@ class SecurityAgent:
             return secrets.token_hex(length)
         else:
             return secrets.token_urlsafe(length)
-    
+
     # ============================================
     # Access Log Analysis
     # ============================================
-    
+
     def log_access(
         self,
         user_id: str,
@@ -650,16 +650,16 @@ class SecurityAgent:
             'success': success,
             'metadata': metadata or {},
         }
-        
+
         self.access_logs.append(log_entry)
-        
+
         # Keep last 10000 entries in memory
         if len(self.access_logs) > 10000:
             self.access_logs = self.access_logs[-10000:]
-        
+
         # Check for suspicious patterns
         self._analyze_access_pattern(log_entry)
-    
+
     def _analyze_access_pattern(self, log_entry: Dict[str, Any]):
         """Analyze access patterns for anomalies."""
         # Check for brute force (multiple failed logins)
@@ -670,7 +670,7 @@ class SecurityAgent:
                 and log['action'] == 'login'
                 and not log['success']
             ]
-            
+
             if len(recent_failures) >= 5:
                 self.create_incident(
                     title=f"Brute force attempt detected",
@@ -680,25 +680,25 @@ class SecurityAgent:
                     source_ip=log_entry['source_ip'],
                     user_id=log_entry['user_id'],
                 )
-    
+
     def detect_anomalies(self, window_hours: int = 24) -> List[Dict[str, Any]]:
         """Detect anomalies in access logs."""
         anomalies = []
         cutoff = datetime.utcnow() - timedelta(hours=window_hours)
-        
+
         # Filter recent logs
         recent_logs = [
             log for log in self.access_logs
             if datetime.fromisoformat(log['timestamp']) > cutoff
         ]
-        
+
         # Count failed logins per user
         failed_by_user = {}
         for log in recent_logs:
             if not log['success'] and log['action'] == 'login':
                 user_id = log['user_id']
                 failed_by_user[user_id] = failed_by_user.get(user_id, 0) + 1
-        
+
         # Flag users with high failure rates
         for user_id, count in failed_by_user.items():
             if count >= 10:
@@ -708,7 +708,7 @@ class SecurityAgent:
                     'failure_count': count,
                     'severity': 'high',
                 })
-        
+
         # Check for unusual access times
         for log in recent_logs:
             hour = datetime.fromisoformat(log['timestamp']).hour
@@ -721,49 +721,49 @@ class SecurityAgent:
                         'timestamp': log['timestamp'],
                         'severity': 'medium',
                     })
-        
+
         return anomalies
-    
+
     # ============================================
     # Policy Enforcement
     # ============================================
-    
+
     def validate_password(self, password: str) -> Tuple[bool, List[str]]:
         """
         Validate password against security policy.
-        
+
         Returns:
             Tuple of (is_valid, list_of_violations)
         """
         policy = self.policies.get('password-complexity')
         if not policy or not policy.enabled:
             return True, []
-        
+
         violations = []
         rules = {rule['name']: rule['value'] for rule in policy.rules}
-        
+
         # Check minimum length
         if len(password) < rules.get('min_length', 12):
             violations.append(f"Password must be at least {rules['min_length']} characters")
-        
+
         # Check uppercase
         if rules.get('require_uppercase') and not any(c.isupper() for c in password):
             violations.append("Password must contain uppercase letters")
-        
+
         # Check lowercase
         if rules.get('require_lowercase') and not any(c.islower() for c in password):
             violations.append("Password must contain lowercase letters")
-        
+
         # Check numbers
         if rules.get('require_numbers') and not any(c.isdigit() for c in password):
             violations.append("Password must contain numbers")
-        
+
         # Check special characters
         if rules.get('require_special') and not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password):
             violations.append("Password must contain special characters")
-        
+
         return len(violations) == 0, violations
-    
+
     def check_rate_limit(
         self,
         identifier: str,
@@ -772,17 +772,17 @@ class SecurityAgent:
     ) -> Tuple[bool, int]:
         """
         Check if action is within rate limits.
-        
+
         Returns:
             Tuple of (is_allowed, remaining_attempts)
         """
         policy = self.policies.get('rate-limiting')
         if not policy or not policy.enabled:
             return True, 999
-        
+
         rules = {rule['name']: rule['value'] for rule in policy.rules}
         max_attempts = rules.get('max_attempts', 5)
-        
+
         # Count recent attempts
         cutoff = datetime.utcnow() - timedelta(minutes=window_minutes)
         recent_logs = [
@@ -791,58 +791,58 @@ class SecurityAgent:
             and log['user_id'] == identifier
             and log['action'] == action
         ]
-        
+
         attempts = len(recent_logs)
         remaining = max(0, max_attempts - attempts)
-        
+
         return attempts < max_attempts, remaining
-    
+
     def get_policy(self, policy_id: str) -> Optional[SecurityPolicy]:
         """Get a security policy by ID."""
         return self.policies.get(policy_id)
-    
+
     def update_policy(self, policy_id: str, enabled: bool, enforcement_level: Optional[str] = None) -> bool:
         """Update a security policy."""
         if policy_id not in self.policies:
             return False
-        
+
         policy = self.policies[policy_id]
         policy.enabled = enabled
-        
+
         if enforcement_level:
             policy.enforcement_level = enforcement_level
-        
+
         logger.info(f"Updated policy {policy_id}: enabled={enabled}")
         return True
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def generate_security_report(self, period_days: int = 30) -> Dict[str, Any]:
         """Generate a security status report."""
         cutoff = datetime.utcnow() - timedelta(days=period_days)
-        
+
         # Count findings by severity
         findings_by_severity = {}
         for finding in self.findings.values():
             if finding.created_at > cutoff:
                 sev = finding.severity.value
                 findings_by_severity[sev] = findings_by_severity.get(sev, 0) + 1
-        
+
         # Count incidents by status
         incidents_by_status = {}
         for incident in self.incidents.values():
             if incident.detected_at > cutoff:
                 status = incident.status
                 incidents_by_status[status] = incidents_by_status.get(status, 0) + 1
-        
+
         # Secrets due for rotation
         secrets_due = self.get_secrets_due_for_rotation()
-        
+
         # Anomalies detected
         anomalies = self.detect_anomalies()
-        
+
         report = {
             'generated_at': datetime.utcnow().isoformat(),
             'period_days': period_days,
@@ -866,19 +866,19 @@ class SecurityAgent:
                 'enabled': len([p for p in self.policies.values() if p.enabled]),
             },
         }
-        
+
         return report
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {

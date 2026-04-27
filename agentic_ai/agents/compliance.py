@@ -142,7 +142,7 @@ class ComplianceAgent:
     Compliance Agent for regulatory compliance tracking,
     policy management, audit preparation, and risk assessment.
     """
-    
+
     def __init__(self, agent_id: str = "compliance-agent"):
         self.agent_id = agent_id
         self.regulations: Dict[str, Regulation] = {}
@@ -150,10 +150,10 @@ class ComplianceAgent:
         self.audits: Dict[str, Audit] = {}
         self.policies: Dict[str, Policy] = {}
         self.findings: Dict[str, Finding] = {}
-        
+
         # Pre-built framework templates
         self.framework_templates = self._init_framework_templates()
-    
+
     def _init_framework_templates(self) -> Dict[str, Dict[str, Any]]:
         """Initialize compliance framework templates."""
         return {
@@ -190,11 +190,11 @@ class ComplianceAgent:
                 'rights': ['know', 'delete', 'opt-out', 'non-discrimination'],
             },
         }
-    
+
     # ============================================
     # Regulation Management
     # ============================================
-    
+
     def add_regulation(
         self,
         name: str,
@@ -213,11 +213,11 @@ class ComplianceAgent:
             owner=owner,
             next_assessment=next_assessment,
         )
-        
+
         self.regulations[regulation.regulation_id] = regulation
         logger.info(f"Added regulation: {regulation.name}")
         return regulation
-    
+
     def update_regulation_status(
         self,
         regulation_id: str,
@@ -227,37 +227,37 @@ class ComplianceAgent:
         """Update regulation compliance status based on controls."""
         if regulation_id not in self.regulations:
             return False
-        
+
         reg = self.regulations[regulation_id]
         reg.controls_count = controls_total
         reg.controls_passed = controls_passed
         reg.last_assessment = datetime.utcnow()
-        
+
         # Calculate status
         compliance_rate = controls_passed / controls_total if controls_total > 0 else 0
-        
+
         if compliance_rate >= 0.95:
             reg.status = ComplianceStatus.COMPLIANT
         elif compliance_rate >= 0.70:
             reg.status = ComplianceStatus.PARTIALLY_COMPLIANT
         else:
             reg.status = ComplianceStatus.NON_COMPLIANT
-        
+
         return True
-    
+
     def get_regulations(self, framework: Optional[str] = None) -> List[Regulation]:
         """Get regulations with filtering."""
         regulations = list(self.regulations.values())
-        
+
         if framework:
             regulations = [r for r in regulations if r.framework == framework]
-        
+
         return regulations
-    
+
     # ============================================
     # Control Management
     # ============================================
-    
+
     def create_control(
         self,
         name: str,
@@ -280,15 +280,15 @@ class ComplianceAgent:
             risk_level=risk_level,
             test_frequency=test_frequency,
         )
-        
+
         self.controls[control.control_id] = control
-        
+
         # Update regulation controls count
         if regulation_id in self.regulations:
             self.regulations[regulation_id].controls_count += 1
-        
+
         return control
-    
+
     def test_control(
         self,
         control_id: str,
@@ -298,14 +298,14 @@ class ComplianceAgent:
         """Test a control and update status."""
         if control_id not in self.controls:
             return False
-        
+
         control = self.controls[control_id]
         control.last_tested = datetime.utcnow()
         control.evidence_locations = evidence_locations or []
         control.status = ComplianceStatus.COMPLIANT if passed else ComplianceStatus.NON_COMPLIANT
-        
+
         return True
-    
+
     def get_controls(
         self,
         regulation_id: Optional[str] = None,
@@ -314,22 +314,22 @@ class ComplianceAgent:
     ) -> List[Control]:
         """Get controls with filtering."""
         controls = list(self.controls.values())
-        
+
         if regulation_id:
             controls = [c for c in controls if c.regulation_id == regulation_id]
-        
+
         if status:
             controls = [c for c in controls if c.status == status]
-        
+
         if control_type:
             controls = [c for c in controls if c.control_type == control_type]
-        
+
         return controls
-    
+
     # ============================================
     # Audit Management
     # ============================================
-    
+
     def create_audit(
         self,
         name: str,
@@ -348,19 +348,19 @@ class ComplianceAgent:
             start_date=start_date,
             auditor=auditor,
         )
-        
+
         self.audits[audit.audit_id] = audit
         logger.info(f"Created audit: {audit.name}")
         return audit
-    
+
     def start_audit(self, audit_id: str) -> bool:
         """Start an audit."""
         if audit_id not in self.audits:
             return False
-        
+
         self.audits[audit_id].status = AuditStatus.IN_PROGRESS
         return True
-    
+
     def complete_audit(
         self,
         audit_id: str,
@@ -371,29 +371,29 @@ class ComplianceAgent:
         """Complete an audit."""
         if audit_id not in self.audits:
             return False
-        
+
         audit = self.audits[audit_id]
         audit.status = AuditStatus.COMPLETED
         audit.end_date = datetime.utcnow()
         audit.score = score
         audit.findings = findings or []
         audit.recommendations = recommendations or []
-        
+
         return True
-    
+
     def get_audits(self, status: Optional[AuditStatus] = None) -> List[Audit]:
         """Get audits with filtering."""
         audits = list(self.audits.values())
-        
+
         if status:
             audits = [a for a in audits if a.status == status]
-        
+
         return audits
-    
+
     # ============================================
     # Policy Management
     # ============================================
-    
+
     def create_policy(
         self,
         title: str,
@@ -412,27 +412,27 @@ class ComplianceAgent:
             owner=owner,
             review_date=review_date,
         )
-        
+
         self.policies[policy.policy_id] = policy
         return policy
-    
+
     def approve_policy(self, policy_id: str, approver: str) -> bool:
         """Approve a policy."""
         if policy_id not in self.policies:
             return False
-        
+
         policy = self.policies[policy_id]
-        
+
         if approver not in policy.approvers:
             policy.approvers.append(approver)
-        
+
         # Auto-approve if at least 2 approvers
         if len(policy.approvers) >= 2:
             policy.status = "approved"
             policy.effective_date = datetime.utcnow()
-        
+
         return True
-    
+
     def get_policies(
         self,
         category: Optional[str] = None,
@@ -440,28 +440,28 @@ class ComplianceAgent:
     ) -> List[Policy]:
         """Get policies with filtering."""
         policies = list(self.policies.values())
-        
+
         if category:
             policies = [p for p in policies if p.category == category]
-        
+
         if status:
             policies = [p for p in policies if p.status == status]
-        
+
         return policies
-    
+
     def get_policies_due_for_review(self, days_ahead: int = 30) -> List[Policy]:
         """Get policies due for review."""
         threshold = datetime.utcnow() + timedelta(days=days_ahead)
-        
+
         return [
             p for p in self.policies.values()
             if p.review_date and p.review_date <= threshold and p.status == "approved"
         ]
-    
+
     # ============================================
     # Finding Management
     # ============================================
-    
+
     def create_finding(
         self,
         title: str,
@@ -485,11 +485,11 @@ class ComplianceAgent:
             assigned_to=assigned_to,
             due_date=due_date,
         )
-        
+
         self.findings[finding.finding_id] = finding
         logger.info(f"Created finding: {finding.title}")
         return finding
-    
+
     def resolve_finding(
         self,
         finding_id: str,
@@ -498,14 +498,14 @@ class ComplianceAgent:
         """Resolve a finding."""
         if finding_id not in self.findings:
             return False
-        
+
         finding = self.findings[finding_id]
         finding.status = "resolved"
         finding.remediation_plan = remediation_plan
         finding.resolved_date = datetime.utcnow()
-        
+
         return True
-    
+
     def get_findings(
         self,
         severity: Optional[RiskLevel] = None,
@@ -513,39 +513,39 @@ class ComplianceAgent:
     ) -> List[Finding]:
         """Get findings with filtering."""
         findings = list(self.findings.values())
-        
+
         if severity:
             findings = [f for f in findings if f.severity == severity]
-        
+
         if status:
             findings = [f for f in findings if f.status == status]
-        
+
         return findings
-    
+
     # ============================================
     # Compliance Reporting
     # ============================================
-    
+
     def get_compliance_report(self) -> Dict[str, Any]:
         """Generate comprehensive compliance report."""
         regulations = list(self.regulations.values())
         controls = list(self.controls.values())
         audits = list(self.audits.values())
         findings = list(self.findings.values())
-        
+
         # Calculate overall compliance
         total_controls = len(controls)
         compliant_controls = len([c for c in controls if c.status == ComplianceStatus.COMPLIANT])
         compliance_rate = (compliant_controls / total_controls * 100) if total_controls > 0 else 0
-        
+
         # Findings by severity
         critical_findings = len([f for f in findings if f.severity == RiskLevel.CRITICAL and f.status != 'resolved'])
         high_findings = len([f for f in findings if f.severity == RiskLevel.HIGH and f.status != 'resolved'])
-        
+
         # Audit status
         completed_audits = len([a for a in audits if a.status == AuditStatus.COMPLETED])
         avg_audit_score = sum(a.score for a in audits if a.score) / completed_audits if completed_audits > 0 else 0
-        
+
         return {
             'summary': {
                 'compliance_rate': round(compliance_rate, 1),
@@ -573,28 +573,28 @@ class ComplianceAgent:
             },
             'risk_score': self._calculate_risk_score(critical_findings, high_findings, compliance_rate),
         }
-    
+
     def _calculate_risk_score(self, critical: int, high: int, compliance_rate: float) -> float:
         """Calculate overall risk score (0-100, lower is better)."""
         base_score = 100 - compliance_rate
         critical_penalty = critical * 15
         high_penalty = high * 8
-        
+
         return min(100, base_score + critical_penalty + high_penalty)
-    
+
     def get_framework_status(self, framework: str) -> Dict[str, Any]:
         """Get status for a specific framework."""
         regulations = [r for r in self.regulations.values() if r.framework == framework]
-        
+
         if not regulations:
             return {'error': f'No regulations found for framework: {framework}'}
-        
+
         reg_ids = [r.regulation_id for r in regulations]
         controls = [c for c in self.controls.values() if c.regulation_id in reg_ids]
-        
+
         total = len(controls)
         passed = len([c for c in controls if c.status == ComplianceStatus.COMPLIANT])
-        
+
         return {
             'framework': framework,
             'regulations_count': len(regulations),
@@ -603,17 +603,17 @@ class ComplianceAgent:
             'compliance_rate': round(passed / total * 100, 1) if total > 0 else 0,
             'template': self.framework_templates.get(framework, {}),
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -662,7 +662,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = ComplianceAgent()
-    
+
     # Add regulation
     reg = agent.add_regulation(
         name="SOC 2 Type II",
@@ -671,9 +671,9 @@ if __name__ == "__main__":
         owner="compliance@example.com",
         next_assessment=datetime.utcnow() + timedelta(days=180),
     )
-    
+
     print(f"Added regulation: {reg.name}")
-    
+
     # Create controls
     ctrl1 = agent.create_control(
         name="Access Control Policy",
@@ -682,19 +682,19 @@ if __name__ == "__main__":
         regulation_id=reg.regulation_id,
         risk_level=RiskLevel.HIGH,
     )
-    
+
     ctrl2 = agent.create_control(
         name="Encryption at Rest",
         description="All data must be encrypted at rest",
         control_type=ControlType.TECHNICAL,
         regulation_id=reg.regulation_id,
     )
-    
+
     print(f"Created {len(agent.controls)} controls")
-    
+
     # Test control
     agent.test_control(ctrl1.control_id, passed=True, evidence_locations=["/docs/access-policy.pdf"])
-    
+
     # Create audit
     audit = agent.create_audit(
         name="SOC 2 Annual Audit",
@@ -703,9 +703,9 @@ if __name__ == "__main__":
         start_date=datetime.utcnow(),
         auditor="External Auditor LLC",
     )
-    
+
     print(f"Created audit: {audit.name}")
-    
+
     # Create policy
     policy = agent.create_policy(
         title="Information Security Policy",
@@ -714,9 +714,9 @@ if __name__ == "__main__":
         owner="ciso@example.com",
         review_date=datetime.utcnow() + timedelta(days=365),
     )
-    
+
     print(f"Created policy: {policy.title}")
-    
+
     # Create finding
     finding = agent.create_finding(
         title="Missing MFA for admin accounts",
@@ -726,12 +726,12 @@ if __name__ == "__main__":
         assigned_to="security@example.com",
         due_date=datetime.utcnow() + timedelta(days=30),
     )
-    
+
     print(f"Created finding: {finding.title}")
-    
+
     # Get compliance report
     report = agent.get_compliance_report()
     print(f"\nCompliance Rate: {report['summary']['compliance_rate']}%")
     print(f"Risk Score: {report['risk_score']}")
-    
+
     print(f"\nState: {agent.get_state()}")

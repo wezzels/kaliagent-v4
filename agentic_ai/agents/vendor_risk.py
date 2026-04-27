@@ -206,7 +206,7 @@ class VendorRiskAgent:
     Vendor Risk Agent for third-party risk management,
     assessments, SIG questionnaires, and continuous monitoring.
     """
-    
+
     def __init__(self, agent_id: str = "vendor-risk-agent"):
         self.agent_id = agent_id
         self.vendors: Dict[str, Vendor] = {}
@@ -216,10 +216,10 @@ class VendorRiskAgent:
         self.assessments: Dict[str, Assessment] = {}
         self.monitors: Dict[str, ContinuousMonitor] = {}
         self.alerts: Dict[str, Alert] = {}
-        
+
         # SIG questionnaires
         self.sig_questions = self._load_sig_questions()
-        
+
         # Risk weights by domain
         self.domain_weights = {
             RiskDomain.INFORMATION_SECURITY: 0.30,
@@ -231,11 +231,11 @@ class VendorRiskAgent:
             RiskDomain.REPUTATIONAL: 0.03,
             RiskDomain.STRATEGIC: 0.02,
         }
-    
+
     # ============================================
     # Vendor Management
     # ============================================
-    
+
     def add_vendor(
         self,
         name: str,
@@ -265,7 +265,7 @@ class VendorRiskAgent:
             security_contact=security_contact,
             risk_owner=risk_owner,
         )
-        
+
         # Calculate inherent risk based on tier
         tier_risk = {
             VendorTier.TIER_1: 0.9,
@@ -274,10 +274,10 @@ class VendorRiskAgent:
             VendorTier.TIER_4: 0.3,
         }
         vendor.inherent_risk = tier_risk.get(tier, 0.5)
-        
+
         self.vendors[vendor.vendor_id] = vendor
         return vendor
-    
+
     def update_vendor_risk(
         self,
         vendor_id: str,
@@ -286,10 +286,10 @@ class VendorRiskAgent:
         """Update vendor residual risk."""
         if vendor_id not in self.vendors:
             return False
-        
+
         self.vendors[vendor_id].residual_risk = residual_risk
         return True
-    
+
     def get_vendors(
         self,
         tier: Optional[VendorTier] = None,
@@ -298,32 +298,32 @@ class VendorRiskAgent:
     ) -> List[Vendor]:
         """Get vendors with filtering."""
         vendors = list(self.vendors.values())
-        
+
         if tier:
             vendors = [v for v in vendors if v.tier == tier]
-        
+
         if status:
             vendors = [v for v in vendors if v.status == status]
-        
+
         if category:
             vendors = [v for v in vendors if v.category == category]
-        
+
         return vendors
-    
+
     def get_vendors_due_for_assessment(self, days: int = 30) -> List[Vendor]:
         """Get vendors due for assessment within specified days."""
         now = datetime.utcnow()
         threshold = now + timedelta(days=days)
-        
+
         return [
             v for v in self.vendors.values()
             if v.next_assessment and v.next_assessment <= threshold
         ]
-    
+
     # ============================================
     # Questionnaire Management
     # ============================================
-    
+
     def create_questionnaire(
         self,
         vendor_id: str,
@@ -333,7 +333,7 @@ class VendorRiskAgent:
         """Create vendor questionnaire."""
         if vendor_id not in self.vendors:
             raise ValueError(f"Vendor {vendor_id} not found")
-        
+
         questionnaire = Questionnaire(
             questionnaire_id=self._generate_id("quest"),
             vendor_id=vendor_id,
@@ -341,13 +341,13 @@ class VendorRiskAgent:
             version=version,
             status="draft",
         )
-        
+
         # Populate questions based on type
         self._populate_questions(questionnaire)
-        
+
         self.questionnaires[questionnaire.questionnaire_id] = questionnaire
         return questionnaire
-    
+
     def _populate_questions(self, questionnaire: Questionnaire) -> None:
         """Populate questionnaire with questions."""
         question_count = {
@@ -356,14 +356,14 @@ class VendorRiskAgent:
             QuestionnaireType.SIG_FULL: 300,
             QuestionnaireType.CAIQ: 200,
         }
-        
+
         count = question_count.get(questionnaire.questionnaire_type, 100)
         questionnaire.total_questions = count
-        
+
         # Create sample questions across domains
         domains = list(RiskDomain)
         questions_per_domain = count // len(domains)
-        
+
         for domain in domains:
             for i in range(questions_per_domain):
                 question = Question(
@@ -376,16 +376,16 @@ class VendorRiskAgent:
                     response_options=["Yes", "No", "Partial", "N/A"],
                 )
                 self.questions[question.question_id] = question
-    
+
     def send_questionnaire(self, questionnaire_id: str) -> bool:
         """Send questionnaire to vendor."""
         if questionnaire_id not in self.questionnaires:
             return False
-        
+
         self.questionnaires[questionnaire_id].status = "sent"
         self.questionnaires[questionnaire_id].sent_at = datetime.utcnow()
         return True
-    
+
     def respond_to_question(
         self,
         question_id: str,
@@ -396,12 +396,12 @@ class VendorRiskAgent:
         """Record question response."""
         if question_id not in self.questions:
             return False
-        
+
         question = self.questions[question_id]
         question.response = response
         question.evidence_provided = evidence_provided
         question.notes = notes
-        
+
         # Score response
         if response.lower() in ["yes", "fully implemented"]:
             question.score = 1.0
@@ -409,7 +409,7 @@ class VendorRiskAgent:
             question.score = 0.5
         else:
             question.score = 0.0
-        
+
         # Update questionnaire progress
         questionnaire = self.questionnaires.get(question.questionnaire_id)
         if questionnaire:
@@ -418,13 +418,13 @@ class VendorRiskAgent:
                 if q.questionnaire_id == questionnaire.questionnaire_id and q.response
             ])
             questionnaire.answered_questions = answered
-            
+
             if answered == questionnaire.total_questions:
                 questionnaire.status = "completed"
                 questionnaire.completed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_questionnaires(
         self,
         vendor_id: Optional[str] = None,
@@ -433,22 +433,22 @@ class VendorRiskAgent:
     ) -> List[Questionnaire]:
         """Get questionnaires with filtering."""
         questionnaires = list(self.questionnaires.values())
-        
+
         if vendor_id:
             questionnaires = [q for q in questionnaires if q.vendor_id == vendor_id]
-        
+
         if status:
             questionnaires = [q for q in questionnaires if q.status == status]
-        
+
         if questionnaire_type:
             questionnaires = [q for q in questionnaires if q.questionnaire_type == questionnaire_type]
-        
+
         return questionnaires
-    
+
     # ============================================
     # Assessment
     # ============================================
-    
+
     def create_assessment(
         self,
         vendor_id: str,
@@ -459,7 +459,7 @@ class VendorRiskAgent:
         """Create vendor risk assessment."""
         if vendor_id not in self.vendors:
             raise ValueError(f"Vendor {vendor_id} not found")
-        
+
         assessment = Assessment(
             assessment_id=self._generate_id("assess"),
             vendor_id=vendor_id,
@@ -468,18 +468,18 @@ class VendorRiskAgent:
             status="planned",
             questionnaire_id=questionnaire_id,
         )
-        
+
         self.assessments[assessment.assessment_id] = assessment
         return assessment
-    
+
     def start_assessment(self, assessment_id: str) -> bool:
         """Start assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         self.assessments[assessment_id].status = "in_progress"
         return True
-    
+
     def complete_assessment(
         self,
         assessment_id: str,
@@ -493,14 +493,14 @@ class VendorRiskAgent:
         """Complete assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         assessment = self.assessments[assessment_id]
         assessment.status = "completed"
         assessment.completed_at = datetime.utcnow()
         assessment.inherent_risk_score = inherent_risk_score
         assessment.control_effectiveness = control_effectiveness
         assessment.residual_risk_score = residual_risk_score
-        
+
         # Determine risk level
         if residual_risk_score >= 0.8:
             assessment.residual_risk_level = ResidualRisk.EXTREME
@@ -512,16 +512,16 @@ class VendorRiskAgent:
             assessment.residual_risk_level = ResidualRisk.LOW
         else:
             assessment.residual_risk_level = ResidualRisk.MINIMAL
-        
+
         assessment.recommendations = recommendations or []
         assessment.overall_opinion = overall_opinion
-        
+
         # Update vendor
         vendor = self.vendors[assessment.vendor_id]
         vendor.residual_risk = residual_risk_score
         vendor.last_assessment = datetime.utcnow()
         vendor.next_assessment = datetime.utcnow() + timedelta(days=365)
-        
+
         # Create findings
         if findings:
             for f in findings:
@@ -535,9 +535,9 @@ class VendorRiskAgent:
                     f.get('control_effectiveness', 0.5),
                     f.get('residual_risk', 0.3),
                 )
-        
+
         return True
-    
+
     def get_assessments(
         self,
         vendor_id: Optional[str] = None,
@@ -546,22 +546,22 @@ class VendorRiskAgent:
     ) -> List[Assessment]:
         """Get assessments with filtering."""
         assessments = list(self.assessments.values())
-        
+
         if vendor_id:
             assessments = [a for a in assessments if a.vendor_id == vendor_id]
-        
+
         if status:
             assessments = [a for a in assessments if a.status == status]
-        
+
         if assessment_type:
             assessments = [a for a in assessments if a.assessment_type == assessment_type]
-        
+
         return assessments
-    
+
     # ============================================
     # Finding Management
     # ============================================
-    
+
     def create_finding(
         self,
         assessment_id: str,
@@ -576,9 +576,9 @@ class VendorRiskAgent:
         """Create assessment finding."""
         if assessment_id not in self.assessments:
             raise ValueError(f"Assessment {assessment_id} not found")
-        
+
         assessment = self.assessments[assessment_id]
-        
+
         finding = Finding(
             finding_id=self._generate_id("finding"),
             vendor_id=assessment.vendor_id,
@@ -591,15 +591,15 @@ class VendorRiskAgent:
             control_effectiveness=control_effectiveness,
             residual_risk=residual_risk,
         )
-        
+
         self.findings[finding.finding_id] = finding
         assessment.findings_count += 1
-        
+
         if severity == "critical":
             assessment.critical_findings += 1
-        
+
         return finding
-    
+
     def update_finding(
         self,
         finding_id: str,
@@ -611,9 +611,9 @@ class VendorRiskAgent:
         """Update finding details."""
         if finding_id not in self.findings:
             return False
-        
+
         finding = self.findings[finding_id]
-        
+
         if recommendation:
             finding.recommendation = recommendation
         if management_response:
@@ -622,9 +622,9 @@ class VendorRiskAgent:
             finding.remediation_plan = remediation_plan
         if due_date:
             finding.due_date = due_date
-        
+
         return True
-    
+
     def update_finding_status(
         self,
         finding_id: str,
@@ -633,14 +633,14 @@ class VendorRiskAgent:
         """Update finding status."""
         if finding_id not in self.findings:
             return False
-        
+
         self.findings[finding_id].status = status
-        
+
         if status == "closed":
             self.findings[finding_id].closed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_findings(
         self,
         vendor_id: Optional[str] = None,
@@ -649,22 +649,22 @@ class VendorRiskAgent:
     ) -> List[Finding]:
         """Get findings with filtering."""
         findings = list(self.findings.values())
-        
+
         if vendor_id:
             findings = [f for f in findings if f.vendor_id == vendor_id]
-        
+
         if severity:
             findings = [f for f in findings if f.severity == severity]
-        
+
         if status:
             findings = [f for f in findings if f.status == status]
-        
+
         return findings
-    
+
     # ============================================
     # Continuous Monitoring
     # ============================================
-    
+
     def enable_monitoring(
         self,
         vendor_id: str,
@@ -674,7 +674,7 @@ class VendorRiskAgent:
         """Enable continuous monitoring for vendor."""
         if vendor_id not in self.vendors:
             raise ValueError(f"Vendor {vendor_id} not found")
-        
+
         monitor = ContinuousMonitor(
             monitor_id=self._generate_id("monitor"),
             vendor_id=vendor_id,
@@ -682,10 +682,10 @@ class VendorRiskAgent:
             monitoring_types=monitoring_types,
             check_frequency=check_frequency,
         )
-        
+
         self.monitors[monitor.monitor_id] = monitor
         return monitor
-    
+
     def record_monitoring_result(
         self,
         monitor_id: str,
@@ -695,30 +695,30 @@ class VendorRiskAgent:
         """Record monitoring check result."""
         if monitor_id not in self.monitors:
             return False
-        
+
         monitor = self.monitors[monitor_id]
         monitor.last_check = datetime.utcnow()
         monitor.risk_trend = risk_trend
         monitor.alerts = alerts or []
-        
+
         return True
-    
+
     def get_monitors(
         self,
         enabled: Optional[bool] = None,
     ) -> List[ContinuousMonitor]:
         """Get monitors with filtering."""
         monitors = list(self.monitors.values())
-        
+
         if enabled is not None:
             monitors = [m for m in monitors if m.enabled == enabled]
-        
+
         return monitors
-    
+
     # ============================================
     # Alert Management
     # ============================================
-    
+
     def create_alert(
         self,
         vendor_id: str,
@@ -738,28 +738,28 @@ class VendorRiskAgent:
             description=description,
             source=source,
         )
-        
+
         self.alerts[alert.alert_id] = alert
         return alert
-    
+
     def acknowledge_alert(self, alert_id: str) -> bool:
         """Acknowledge alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         self.alerts[alert_id].status = "acknowledged"
         self.alerts[alert_id].acknowledged_at = datetime.utcnow()
         return True
-    
+
     def resolve_alert(self, alert_id: str) -> bool:
         """Resolve alert."""
         if alert_id not in self.alerts:
             return False
-        
+
         self.alerts[alert_id].status = "resolved"
         self.alerts[alert_id].resolved_at = datetime.utcnow()
         return True
-    
+
     def get_alerts(
         self,
         vendor_id: Optional[str] = None,
@@ -768,34 +768,34 @@ class VendorRiskAgent:
     ) -> List[Alert]:
         """Get alerts with filtering."""
         alerts = list(self.alerts.values())
-        
+
         if vendor_id:
             alerts = [a for a in alerts if a.vendor_id == vendor_id]
-        
+
         if severity:
             alerts = [a for a in alerts if a.severity == severity]
-        
+
         if status:
             alerts = [a for a in alerts if a.status == status]
-        
+
         return alerts
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_vendor_risk_report(self, vendor_id: str) -> Dict[str, Any]:
         """Generate vendor risk report."""
         if vendor_id not in self.vendors:
             return {'error': 'Vendor not found'}
-        
+
         vendor = self.vendors[vendor_id]
         assessments = self.get_assessments(vendor_id=vendor_id)
         findings = self.get_findings(vendor_id=vendor_id)
         alerts = self.get_alerts(vendor_id=vendor_id)
-        
+
         latest_assessment = assessments[-1] if assessments else None
-        
+
         return {
             'vendor': {
                 'vendor_id': vendor_id,
@@ -837,30 +837,30 @@ class VendorRiskAgent:
                 'new': len([a for a in alerts if a.status == 'new']),
             },
         }
-    
+
     def get_vendor_risk_dashboard(self) -> Dict[str, Any]:
         """Generate vendor risk dashboard."""
         vendors = list(self.vendors.values())
         assessments = list(self.assessments.values())
         findings = list(self.findings.values())
         alerts = list(self.alerts.values())
-        
+
         # Vendors by tier
         by_tier = {}
         for tier in VendorTier:
             by_tier[tier.value] = len([v for v in vendors if v.tier == tier])
-        
+
         # Assessments due
         due_soon = len(self.get_vendors_due_for_assessment(30))
-        
+
         # Findings by severity
         by_severity = {}
         for sev in ['critical', 'high', 'medium', 'low']:
             by_severity[sev] = len([f for f in findings if f.severity == sev])
-        
+
         # Open findings
         open_findings = len([f for f in findings if f.status != 'closed'])
-        
+
         return {
             'vendors': {
                 'total': len(vendors),
@@ -885,11 +885,11 @@ class VendorRiskAgent:
                 'enabled': len([m for m in self.monitors.values() if m.enabled]),
             },
         }
-    
+
     # ============================================
     # SIG Questions
     # ============================================
-    
+
     def _load_sig_questions(self) -> Dict[str, Any]:
         """Load SIG questionnaire templates."""
         return {
@@ -909,17 +909,17 @@ class VendorRiskAgent:
                 'domains': list(RiskDomain),
             },
         }
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         return {
@@ -981,7 +981,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = VendorRiskAgent()
-    
+
     # Add vendors
     vendor1 = agent.add_vendor(
         name="CloudProvider Inc",
@@ -996,7 +996,7 @@ if __name__ == "__main__":
         security_contact="security@cloudprovider.com",
         risk_owner="cto@example.com",
     )
-    
+
     vendor2 = agent.add_vendor(
         name="SaaS Vendor",
         legal_name="SaaS Vendor LLC",
@@ -1006,20 +1006,20 @@ if __name__ == "__main__":
         contract_start=datetime.utcnow() - timedelta(days=180),
         contract_value=100000.0,
     )
-    
+
     print(f"Added {len(agent.vendors)} vendors")
-    
+
     # Create questionnaire
     questionnaire = agent.create_questionnaire(
         vendor1.vendor_id,
         QuestionnaireType.SIG_CORE,
     )
-    
+
     print(f"Created questionnaire: {questionnaire.questionnaire_type.value}")
-    
+
     # Send questionnaire
     agent.send_questionnaire(questionnaire.questionnaire_id)
-    
+
     # Create assessment
     assessment = agent.create_assessment(
         vendor1.vendor_id,
@@ -1027,9 +1027,9 @@ if __name__ == "__main__":
         assessor="risk-team@example.com",
         questionnaire_id=questionnaire.questionnaire_id,
     )
-    
+
     agent.start_assessment(assessment.assessment_id)
-    
+
     # Complete assessment
     agent.complete_assessment(
         assessment.assessment_id,
@@ -1050,16 +1050,16 @@ if __name__ == "__main__":
         recommendations=["Enforce MFA for all users"],
         overall_opinion="Acceptable with remediation",
     )
-    
+
     print(f"Assessment completed: {assessment.residual_risk_level.value}")
-    
+
     # Enable monitoring
     monitor = agent.enable_monitoring(
         vendor1.vendor_id,
         monitoring_types=['security_ratings', 'breaches', 'news'],
         check_frequency="daily",
     )
-    
+
     # Create alert
     alert = agent.create_alert(
         vendor1.vendor_id,
@@ -1069,9 +1069,9 @@ if __name__ == "__main__":
         description="Vendor security rating dropped from A to B",
         source="security_ratings",
     )
-    
+
     print(f"Created alert: {alert.title}")
-    
+
     # Get dashboard
     dashboard = agent.get_vendor_risk_dashboard()
     print(f"\nVendor Risk Dashboard:")
@@ -1079,5 +1079,5 @@ if __name__ == "__main__":
     print(f"  Tier 1: {dashboard['vendors']['by_tier']['tier_1']}")
     print(f"  Assessments Due: {dashboard['assessments']['due_soon']}")
     print(f"  Open Findings: {dashboard['findings']['open']}")
-    
+
     print(f"\nState: {agent.get_state()}")

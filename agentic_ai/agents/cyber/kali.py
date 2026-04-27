@@ -160,7 +160,7 @@ KALI_TOOLS_DB = {
         output_parser="nmap_xml",
         timeout_seconds=600,
     ),
-    
+
     "masscan": ToolDefinition(
         name="masscan",
         category=ToolCategory.RECONNAISSANCE,
@@ -174,7 +174,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=300,
     ),
-    
+
     "recon_ng": ToolDefinition(
         name="recon-ng",
         category=ToolCategory.RECONNAISSANCE,
@@ -187,7 +187,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     # Vulnerability Analysis
     "nikto": ToolDefinition(
         name="nikto",
@@ -203,7 +203,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "openvas": ToolDefinition(
         name="openvas",
         category=ToolCategory.VULNERABILITY_ANALYSIS,
@@ -216,7 +216,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=3600,
     ),
-    
+
     # Web Application
     "sqlmap": ToolDefinition(
         name="sqlmap",
@@ -236,7 +236,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=900,
     ),
-    
+
     "burpsuite": ToolDefinition(
         name="burpsuite",
         category=ToolCategory.WEB_APPLICATION,
@@ -249,7 +249,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=7200,
     ),
-    
+
     "dirb": ToolDefinition(
         name="dirb",
         category=ToolCategory.WEB_APPLICATION,
@@ -262,7 +262,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "gobuster": ToolDefinition(
         name="gobuster",
         category=ToolCategory.WEB_APPLICATION,
@@ -278,7 +278,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     "wpscan": ToolDefinition(
         name="wpscan",
         category=ToolCategory.WEB_APPLICATION,
@@ -293,7 +293,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "ffuf": ToolDefinition(
         name="ffuf",
         category=ToolCategory.WEB_APPLICATION,
@@ -309,7 +309,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     # Password Attacks
     "john": ToolDefinition(
         name="john",
@@ -325,7 +325,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=7200,
     ),
-    
+
     "hashcat": ToolDefinition(
         name="hashcat",
         category=ToolCategory.PASSWORD,
@@ -340,7 +340,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=14400,
     ),
-    
+
     "hydra": ToolDefinition(
         name="hydra",
         category=ToolCategory.PASSWORD,
@@ -357,7 +357,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=3600,
     ),
-    
+
     "medusa": ToolDefinition(
         name="medusa",
         category=ToolCategory.PASSWORD,
@@ -374,7 +374,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=3600,
     ),
-    
+
     "cewl": ToolDefinition(
         name="cewl",
         category=ToolCategory.PASSWORD,
@@ -389,7 +389,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "crunch": ToolDefinition(
         name="crunch",
         category=ToolCategory.PASSWORD,
@@ -404,7 +404,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=3600,
     ),
-    
+
     # Exploitation
     "metasploit": ToolDefinition(
         name="metasploit",
@@ -421,7 +421,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=3600,
     ),
-    
+
     "searchsploit": ToolDefinition(
         name="searchsploit",
         category=ToolCategory.EXPLOITATION,
@@ -435,7 +435,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=60,
     ),
-    
+
     # Post Exploitation
     "mimikatz": ToolDefinition(
         name="mimikatz",
@@ -448,7 +448,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=300,
     ),
-    
+
     # Wireless
     "aircrack_ng": ToolDefinition(
         name="aircrack-ng",
@@ -463,7 +463,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=3600,
     ),
-    
+
     # Sniffing/Spoofing
     "wireshark": ToolDefinition(
         name="wireshark",
@@ -479,7 +479,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "responder": ToolDefinition(
         name="responder",
         category=ToolCategory.SNIFFING_SPOOFING,
@@ -493,7 +493,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=1800,
     ),
-    
+
     # Forensics
     "volatility": ToolDefinition(
         name="volatility",
@@ -508,7 +508,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     # Additional Reconnaissance
     "theHarvester": ToolDefinition(
         name="theHarvester",
@@ -524,7 +524,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "amass": ToolDefinition(
         name="amass",
         category=ToolCategory.RECONNAISSANCE,
@@ -539,7 +539,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     "subfinder": ToolDefinition(
         name="subfinder",
         category=ToolCategory.RECONNAISSANCE,
@@ -554,7 +554,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "dnsrecon": ToolDefinition(
         name="dnsrecon",
         category=ToolCategory.RECONNAISSANCE,
@@ -568,7 +568,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     # Additional Web
     "joomscan": ToolDefinition(
         name="joomscan",
@@ -583,7 +583,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "zap_cli": ToolDefinition(
         name="zap_cli",
         category=ToolCategory.WEB_APPLICATION,
@@ -598,7 +598,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=1800,
     ),
-    
+
     # Additional Wireless
     "reaver": ToolDefinition(
         name="reaver",
@@ -614,7 +614,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=7200,
     ),
-    
+
     "wifite": ToolDefinition(
         name="wifite",
         category=ToolCategory.WIRELESS,
@@ -628,7 +628,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=3600,
     ),
-    
+
     # Post-Exploitation
     "bloodhound": ToolDefinition(
         name="bloodhound",
@@ -645,7 +645,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=1800,
     ),
-    
+
     "empire": ToolDefinition(
         name="empire",
         category=ToolCategory.POST_EXPLOITATION,
@@ -659,7 +659,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=3600,
     ),
-    
+
     # Social Engineering
     "setoolkit": ToolDefinition(
         name="setoolkit",
@@ -674,7 +674,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=1800,
     ),
-    
+
     # Malware Analysis
     "binwalk": ToolDefinition(
         name="binwalk",
@@ -689,7 +689,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "foremost": ToolDefinition(
         name="foremost",
         category=ToolCategory.FORENSICS,
@@ -703,7 +703,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     # Additional Nmap NSE Scripts
     "nmap_vuln": ToolDefinition(
         name="nmap-vuln",
@@ -718,7 +718,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=900,
     ),
-    
+
     "nmap_exploit": ToolDefinition(
         name="nmap-exploit",
         category=ToolCategory.EXPLOITATION,
@@ -732,7 +732,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=600,
     ),
-    
+
     # Additional Reconnaissance
     "shodan": ToolDefinition(
         name="shodan",
@@ -746,7 +746,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=300,
     ),
-    
+
     "maltego": ToolDefinition(
         name="maltego",
         category=ToolCategory.RECONNAISSANCE,
@@ -759,7 +759,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     "spiderfoot": ToolDefinition(
         name="spiderfoot",
         category=ToolCategory.RECONNAISSANCE,
@@ -773,7 +773,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     # Additional Web
     "whatweb": ToolDefinition(
         name="whatweb",
@@ -788,7 +788,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=300,
     ),
-    
+
     "sslscan": ToolDefinition(
         name="sslscan",
         category=ToolCategory.WEB_APPLICATION,
@@ -802,7 +802,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=300,
     ),
-    
+
     "testssl": ToolDefinition(
         name="testssl",
         category=ToolCategory.WEB_APPLICATION,
@@ -816,7 +816,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     # Additional Password
     "hash_identifier": ToolDefinition(
         name="hash-identifier",
@@ -829,7 +829,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=60,
     ),
-    
+
     "rsmangler": ToolDefinition(
         name="rsmangler",
         category=ToolCategory.PASSWORD,
@@ -844,7 +844,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=600,
     ),
-    
+
     # Additional Wireless
     "kismet": ToolDefinition(
         name="kismet",
@@ -858,7 +858,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=1800,
     ),
-    
+
     "mdk4": ToolDefinition(
         name="mdk4",
         category=ToolCategory.WIRELESS,
@@ -872,7 +872,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.ADVANCED,
         timeout_seconds=600,
     ),
-    
+
     # Additional Post-Exploitation
     "mimikatz": ToolDefinition(
         name="mimikatz",
@@ -886,7 +886,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=300,
     ),
-    
+
     "lazagne": ToolDefinition(
         name="lazagne",
         category=ToolCategory.POST_EXPLOITATION,
@@ -899,7 +899,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.CRITICAL,
         timeout_seconds=600,
     ),
-    
+
     # Additional Forensics
     "sleuthkit": ToolDefinition(
         name="sleuthkit",
@@ -913,7 +913,7 @@ KALI_TOOLS_DB = {
         authorization=AuthorizationLevel.BASIC,
         timeout_seconds=900,
     ),
-    
+
     "exiftool": ToolDefinition(
         name="exiftool",
         category=ToolCategory.FORENSICS,
@@ -935,18 +935,18 @@ KALI_TOOLS_DB = {
 
 class MetasploitRPC:
     """Metasploit RPC client for automation."""
-    
+
     def __init__(self, host: str = "127.0.0.1", port: int = 55553, token: Optional[str] = None):
         self.host = host
         self.port = port
         self.token = token
         self.session = None
         self.url = f"http://{host}:{port}/api"
-        
+
     def login(self, password: str) -> bool:
         """Authenticate with Metasploit RPC."""
         import requests
-        
+
         try:
             response = requests.post(
                 f"{self.url}/auth/login",
@@ -954,7 +954,7 @@ class MetasploitRPC:
                 headers={"Content-Type": "application/json"},
                 timeout=10
             )
-            
+
             data = response.json()
             if data.get("result") == "success":
                 self.token = data.get("token")
@@ -963,14 +963,14 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Metasploit login failed: {e}")
             return False
-    
+
     def logout(self) -> bool:
         """Logout from Metasploit RPC."""
         import requests
-        
+
         if not self.token:
             return False
-        
+
         try:
             response = requests.post(
                 f"{self.url}/auth/logout",
@@ -981,14 +981,14 @@ class MetasploitRPC:
             return True
         except Exception:
             return False
-    
+
     def get_modules(self, module_type: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get available modules."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             response = requests.post(
                 f"{self.url}/module/exploits",
@@ -996,15 +996,15 @@ class MetasploitRPC:
                 timeout=30
             )
             modules = response.json().get("modules", [])
-            
+
             if module_type:
                 modules = [m for m in modules if module_type in m[0]]
-            
+
             return [{"path": m[0], "rank": m[1]} for m in modules]
         except Exception as e:
             logger.error(f"Failed to get modules: {e}")
             return []
-    
+
     def execute_exploit(
         self,
         exploit: str,
@@ -1014,20 +1014,20 @@ class MetasploitRPC:
     ) -> Optional[MetasploitJob]:
         """Execute an exploit."""
         import requests
-        
+
         if not self.token:
             return None
-        
+
         try:
             job_options = {
                 "MODULE": exploit,
                 "TARGET": target,
                 "payload": payload,
             }
-            
+
             if options:
                 job_options.update(options)
-            
+
             response = requests.post(
                 f"{self.url}/job.create",
                 json={
@@ -1036,7 +1036,7 @@ class MetasploitRPC:
                 },
                 timeout=30
             )
-            
+
             data = response.json()
             if data.get("result") == "success":
                 return MetasploitJob(
@@ -1053,21 +1053,21 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Exploit execution failed: {e}")
             return None
-    
+
     def get_sessions(self) -> List[MetasploitSession]:
         """Get active sessions."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             response = requests.post(
                 f"{self.url}/session/list",
                 json={"method": "session.list", "params": [self.token]},
                 timeout=10
             )
-            
+
             sessions = []
             for sid, info in response.json().get("sessions", {}).items():
                 sessions.append(MetasploitSession(
@@ -1081,19 +1081,19 @@ class MetasploitRPC:
                     last_activity=datetime.utcnow(),
                     user_context=info.get("username"),
                 ))
-            
+
             return sessions
         except Exception as e:
             logger.error(f"Failed to get sessions: {e}")
             return []
-    
+
     def session_write(self, session_id: str, command: str) -> str:
         """Write to a session."""
         import requests
-        
+
         if not self.token:
             return ""
-        
+
         try:
             response = requests.post(
                 f"{self.url}/session/meterpreter_write",
@@ -1107,14 +1107,14 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Session write failed: {e}")
             return ""
-    
+
     def get_hosts(self) -> List[Dict[str, Any]]:
         """Get hosts from Metasploit database."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             response = requests.post(
                 f"{self.url}/db_hosts",
@@ -1125,19 +1125,19 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Get hosts failed: {e}")
             return []
-    
+
     def get_services(self, host: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get services from Metasploit database."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             params = [self.token]
             if host:
                 params.append({"address": host})
-            
+
             response = requests.post(
                 f"{self.url}/db_services",
                 json={"method": "db.services", "params": params},
@@ -1147,19 +1147,19 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Get services failed: {e}")
             return []
-    
+
     def get_vulns(self, host: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get vulnerabilities from Metasploit database."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             params = [self.token]
             if host:
                 params.append({"address": host})
-            
+
             response = requests.post(
                 f"{self.url}/db_vulns",
                 json={"method": "db.vulns", "params": params},
@@ -1169,14 +1169,14 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Get vulns failed: {e}")
             return []
-    
+
     def get_creds(self) -> List[Dict[str, Any]]:
         """Get credentials from Metasploit database."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             response = requests.post(
                 f"{self.url}/db_creds",
@@ -1187,14 +1187,14 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Get creds failed: {e}")
             return []
-    
+
     def get_loots(self) -> List[Dict[str, Any]]:
         """Get loots from Metasploit database."""
         import requests
-        
+
         if not self.token:
             return []
-        
+
         try:
             response = requests.post(
                 f"{self.url}/db_loots",
@@ -1205,18 +1205,18 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Get loots failed: {e}")
             return []
-    
+
     def import_nmap(self, nmap_file: str) -> bool:
         """Import Nmap XML results into Metasploit database."""
         import requests
-        
+
         if not self.token:
             return False
-        
+
         try:
             with open(nmap_file, "rb") as f:
                 file_data = f.read()
-            
+
             response = requests.post(
                 f"{self.url}/db_import_nmap",
                 json={
@@ -1229,7 +1229,7 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Nmap import failed: {e}")
             return False
-    
+
     def run_post_module(
         self,
         module: str,
@@ -1238,19 +1238,19 @@ class MetasploitRPC:
     ) -> Dict[str, Any]:
         """Run a post-exploitation module."""
         import requests
-        
+
         if not self.token:
             return {"success": False, "error": "Not authenticated"}
-        
+
         try:
             params = {
                 "MODULE": module,
                 "SESSION": session_id,
             }
-            
+
             if options:
                 params.update(options)
-            
+
             response = requests.post(
                 f"{self.url}/run",
                 json={
@@ -1263,7 +1263,7 @@ class MetasploitRPC:
         except Exception as e:
             logger.error(f"Post module failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     def generate_payload(
         self,
         payload: str,
@@ -1274,9 +1274,9 @@ class MetasploitRPC:
     ) -> Optional[bytes]:
         """Generate payload using msfvenom."""
         import subprocess
-        
+
         cmd = f"msfvenom -p {payload} LHOST={lhost} LPORT={lport} -f {format}"
-        
+
         if output_file:
             cmd += f" -o {output_file}"
             try:
@@ -1303,14 +1303,14 @@ class MetasploitRPC:
 class KaliAgent:
     """
     Kali Linux Tool Orchestration Agent
-    
+
     Provides comprehensive integration with Kali Linux tools including:
     - 600+ penetration testing tools
     - Metasploit Framework automation
     - Safety gates and authorization controls
     - Automated reporting
     """
-    
+
     def __init__(
         self,
         agent_id: str = "kali-agent",
@@ -1322,35 +1322,35 @@ class KaliAgent:
         self.log_dir = Path(log_dir)
         self.workspace.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Tool registry
         self.tools = KALI_TOOLS_DB
         self.executions: Dict[str, ToolExecution] = {}
-        
+
         # Metasploit integration
         self.msfrpc: Optional[MetasploitRPC] = None
         self.msfsessions: Dict[str, MetasploitSession] = {}
         self.msfjobs: Dict[str, MetasploitJob] = {}
-        
+
         # Authorization tracking
         self.authorization_level = AuthorizationLevel.NONE
         self.engagement_authorizations: Dict[str, AuthorizationLevel] = {}
-        
+
         # Safety controls
         self.safe_mode = True
         self.dry_run = False
         self.max_concurrent_jobs = 5
         self.current_jobs = 0
         self.job_lock = threading.Lock()
-        
+
         # IP whitelist/blacklist for target validation
         self.ip_whitelist: Optional[List[str]] = None  # If set, only these targets allowed
         self.ip_blacklist: List[str] = []  # These targets always blocked
-        
+
         # Audit logging
         self.audit_log_file: Optional[Path] = None
         self.enable_audit_logging()
-        
+
         # Output parsers
         self.parsers = {
             "nmap_xml": self._parse_nmap_xml,
@@ -1360,15 +1360,15 @@ class KaliAgent:
             "sqlmap": self._parse_sqlmap,
             "gobuster": self._parse_gobuster,
         }
-        
+
         logger.info(f"KaliAgent initialized: {agent_id}")
         logger.info(f"Workspace: {self.workspace}")
         logger.info(f"Registered tools: {len(self.tools)}")
-    
+
     # ============================================
     # Authorization & Safety
     # ============================================
-    
+
     def set_authorization(
         self,
         level: AuthorizationLevel,
@@ -1379,139 +1379,139 @@ class KaliAgent:
         if expires_at and expires_at < datetime.utcnow():
             logger.warning("Authorization expiry is in the past")
             return False
-        
+
         if engagement_id:
             self.engagement_authorizations[engagement_id] = level
         else:
             self.authorization_level = level
-        
+
         logger.info(f"Authorization set to: {level.value}")
         return True
-    
+
     def revoke_authorization(self, engagement_id: Optional[str] = None) -> bool:
         """Revoke authorization."""
         if engagement_id:
             self.engagement_authorizations.pop(engagement_id, None)
         else:
             self.authorization_level = AuthorizationLevel.NONE
-        
+
         logger.info("Authorization revoked")
         return True
-    
+
     def check_authorization(self, tool_name: str) -> Tuple[bool, str]:
         """Check if tool execution is authorized."""
         if tool_name not in self.tools:
             return False, f"Unknown tool: {tool_name}"
-        
+
         tool = self.tools[tool_name]
         required_level = tool.authorization
-        
+
         # Check engagement-specific authorization first
         effective_level = self.authorization_level
         for eng_id, level in self.engagement_authorizations.items():
             if level.value > effective_level.value:
                 effective_level = level
-        
+
         if required_level.value > effective_level.value:
             return False, f"Authorization level {required_level.value} required, have {effective_level.value}"
-        
+
         return True, "Authorized"
-    
+
     def enable_safe_mode(self) -> bool:
         """Enable safe mode (read-only operations)."""
         self.safe_mode = True
         logger.info("Safe mode enabled")
         return True
-    
+
     def disable_safe_mode(self) -> bool:
         """Disable safe mode (allows system changes)."""
         self.safe_mode = False
         logger.warning("Safe mode disabled - system changes allowed")
         return True
-    
+
     def enable_dry_run(self) -> bool:
         """Enable dry-run mode (commands logged but not executed)."""
         self.dry_run = True
         logger.info("Dry-run mode enabled")
         return True
-    
+
     def disable_dry_run(self) -> bool:
         """Disable dry-run mode."""
         self.dry_run = False
         logger.info("Dry-run mode disabled")
         return True
-    
+
     def set_ip_whitelist(self, ips: List[str]) -> bool:
         """Set IP whitelist (only these targets allowed)."""
         self.ip_whitelist = ips
         logger.info(f"IP whitelist set: {len(ips)} addresses")
         return True
-    
+
     def clear_ip_whitelist(self) -> bool:
         """Clear IP whitelist."""
         self.ip_whitelist = None
         logger.info("IP whitelist cleared")
         return True
-    
+
     def add_to_blacklist(self, ip: str) -> bool:
         """Add IP to blacklist (always blocked)."""
         if ip not in self.ip_blacklist:
             self.ip_blacklist.append(ip)
             logger.info(f"IP added to blacklist: {ip}")
         return True
-    
+
     def remove_from_blacklist(self, ip: str) -> bool:
         """Remove IP from blacklist."""
         if ip in self.ip_blacklist:
             self.ip_blacklist.remove(ip)
             logger.info(f"IP removed from blacklist: {ip}")
         return True
-    
+
     def validate_target(self, target: str) -> Tuple[bool, str]:
         """Validate target against whitelist/blacklist."""
         # Check blacklist first
         if target in self.ip_blacklist:
             return False, f"Target {target} is blacklisted"
-        
+
         # Check whitelist if configured
         if self.ip_whitelist:
             if target not in self.ip_whitelist:
                 return False, f"Target {target} not in whitelist"
-        
+
         return True, "Target validated"
-    
+
     def enable_audit_logging(self, log_file: Optional[str] = None) -> bool:
         """Enable audit logging for all executions."""
         if log_file:
             self.audit_log_file = Path(log_file)
         else:
             self.audit_log_file = self.log_dir / "audit_log.jsonl"
-        
+
         logger.info(f"Audit logging enabled: {self.audit_log_file}")
         return True
-    
+
     def disable_audit_logging(self) -> bool:
         """Disable audit logging."""
         self.audit_log_file = None
         logger.info("Audit logging disabled")
         return True
-    
+
     def _log_audit(self, event: Dict[str, Any]) -> None:
         """Write audit log entry."""
         if not self.audit_log_file:
             return
-        
+
         try:
             event["timestamp"] = datetime.utcnow().isoformat()
             with open(self.audit_log_file, "a") as f:
                 f.write(json.dumps(event) + "\n")
         except Exception as e:
             logger.error(f"Audit log write failed: {e}")
-    
+
     # ============================================
     # Tool Execution
     # ============================================
-    
+
     def execute_tool(
         self,
         tool_name: str,
@@ -1525,13 +1525,13 @@ class KaliAgent:
         if not authorized:
             logger.error(f"Execution denied: {message}")
             return self._create_failed_execution(tool_name, arguments, message)
-        
+
         # Check tool exists
         if tool_name not in self.tools:
             return self._create_failed_execution(tool_name, arguments, f"Unknown tool: {tool_name}")
-        
+
         tool = self.tools[tool_name]
-        
+
         # Validate target if present in arguments
         target_fields = ["target", "host", "url", "domain", "bssid"]
         for field in target_fields:
@@ -1540,15 +1540,15 @@ class KaliAgent:
                 if not valid:
                     logger.error(f"Target validation failed: {msg}")
                     return self._create_failed_execution(tool_name, arguments, msg)
-        
+
         # Validate arguments
         validation_error = self._validate_arguments(tool.args_schema, arguments)
         if validation_error:
             return self._create_failed_execution(tool_name, arguments, validation_error)
-        
+
         # Build command
         command = self._build_command(tool, arguments)
-        
+
         # Create execution record
         execution = ToolExecution(
             execution_id=self._generate_id("exec"),
@@ -1566,7 +1566,7 @@ class KaliAgent:
             authorization_level=tool.authorization,
             engagement_id=engagement_id,
         )
-        
+
         # Check job limit
         with self.job_lock:
             if self.current_jobs >= self.max_concurrent_jobs:
@@ -1576,9 +1576,9 @@ class KaliAgent:
                 execution.duration_seconds = 0
                 self.executions[execution.execution_id] = execution
                 return execution
-            
+
             self.current_jobs += 1
-        
+
         # Execute (or dry-run)
         if self.dry_run:
             logger.info(f"DRY-RUN: {command}")
@@ -1587,14 +1587,14 @@ class KaliAgent:
             execution.exit_code = 0
         else:
             execution = self._execute_command(execution, timeout_override or tool.timeout_seconds)
-        
+
         # Update job count
         with self.job_lock:
             self.current_jobs -= 1
-        
+
         self.executions[execution.execution_id] = execution
         return execution
-    
+
     def _execute_command(
         self,
         execution: ToolExecution,
@@ -1602,7 +1602,7 @@ class KaliAgent:
     ) -> ToolExecution:
         """Execute a shell command."""
         execution.status = "running"
-        
+
         try:
             process = subprocess.Popen(
                 execution.command,
@@ -1611,7 +1611,7 @@ class KaliAgent:
                 stderr=subprocess.PIPE,
                 cwd=str(self.workspace),
             )
-            
+
             try:
                 stdout, stderr = process.communicate(timeout=timeout)
                 execution.stdout = stdout.decode("utf-8", errors="replace")
@@ -1622,15 +1622,15 @@ class KaliAgent:
                 process.kill()
                 execution.status = "timeout"
                 execution.stderr = f"Command timed out after {timeout} seconds"
-            
+
         except Exception as e:
             execution.status = "failed"
             execution.stderr = str(e)
             execution.exit_code = -1
-        
+
         execution.completed_at = datetime.utcnow()
         execution.duration_seconds = (execution.completed_at - execution.started_at).total_seconds()
-        
+
         # Save output to file
         if execution.stdout or execution.stderr:
             output_file = self.log_dir / f"{execution.execution_id}.log"
@@ -1643,7 +1643,7 @@ class KaliAgent:
                 f.write("\nSTDERR:\n")
                 f.write(execution.stderr)
             execution.output_file = str(output_file)
-        
+
         # Parse output if parser available
         tool = self.tools.get(execution.tool_name)
         if tool and tool.output_parser and tool.output_parser in self.parsers:
@@ -1652,9 +1652,9 @@ class KaliAgent:
                 parsed_file = self.log_dir / f"{execution.execution_id}_parsed.json"
                 with open(parsed_file, "w") as f:
                     json.dump(parsed, f, indent=2, default=str)
-        
+
         return execution
-    
+
     def _create_failed_execution(
         self,
         tool_name: str,
@@ -1677,7 +1677,7 @@ class KaliAgent:
             duration_seconds=0,
             authorization_level=AuthorizationLevel.NONE,
         )
-    
+
     def _validate_arguments(
         self,
         schema: Dict[str, Any],
@@ -1688,7 +1688,7 @@ class KaliAgent:
             if arg_spec.get("required") and arg_name not in arguments:
                 return f"Missing required argument: {arg_name}"
         return None
-    
+
     def _build_command(
         self,
         tool: ToolDefinition,
@@ -1696,11 +1696,11 @@ class KaliAgent:
     ) -> str:
         """Build command line from tool definition and arguments."""
         cmd_parts = [tool.command]
-        
+
         for arg_name, value in arguments.items():
             if value is None:
                 continue
-            
+
             if isinstance(value, bool):
                 if value:
                     cmd_parts.append(f"--{arg_name.replace('_', '-')}")
@@ -1710,19 +1710,19 @@ class KaliAgent:
                 # Escape special characters
                 safe_value = str(value).replace("'", "'\\''")
                 cmd_parts.append(f"--{arg_name.replace('_', '-')} '{safe_value}'")
-        
+
         return " ".join(cmd_parts)
-    
+
     # ============================================
     # Output Parsers
     # ============================================
-    
+
     def _parse_nmap_xml(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse Nmap XML output."""
         try:
             root = ET.fromstring(output)
             hosts = []
-            
+
             for host in root.findall(".//host"):
                 host_info = {
                     "address": "",
@@ -1730,15 +1730,15 @@ class KaliAgent:
                     "ports": [],
                     "os": None,
                 }
-                
+
                 addr = host.find("address")
                 if addr is not None:
                     host_info["address"] = addr.get("addr", "")
-                
+
                 hostname = host.find(".//hostname")
                 if hostname is not None:
                     host_info["hostname"] = hostname.get("name", "")
-                
+
                 for port in host.findall(".//port"):
                     port_info = {
                         "port": int(port.get("portid", 0)),
@@ -1746,53 +1746,53 @@ class KaliAgent:
                         "state": "",
                         "service": "",
                     }
-                    
+
                     state = port.find("state")
                     if state is not None:
                         port_info["state"] = state.get("state", "")
-                    
+
                     service = port.find("service")
                     if service is not None:
                         port_info["service"] = service.get("name", "")
-                    
+
                     if port_info["state"] == "open":
                         host_info["ports"].append(port_info)
-                
+
                 os_match = host.find(".//osmatch")
                 if os_match is not None:
                     host_info["os"] = os_match.get("name", "")
-                
+
                 hosts.append(host_info)
-            
+
             return {"hosts": hosts, "scan_time": datetime.utcnow().isoformat()}
         except Exception as e:
             logger.error(f"Nmap XML parse failed: {e}")
             return None
-    
+
     def _parse_json(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse JSON output."""
         try:
             return json.loads(output)
         except Exception:
             return None
-    
+
     def _parse_csv(self, output: str) -> Optional[List[Dict[str, Any]]]:
         """Parse CSV output."""
         import csv
         from io import StringIO
-        
+
         try:
             reader = csv.DictReader(StringIO(output))
             return list(reader)
         except Exception:
             return None
-    
+
     def _parse_nikto(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse Nikto output (text format)."""
         try:
             vulnerabilities = []
             lines = output.split("\n")
-            
+
             for line in lines:
                 if "+ " in line:
                     vuln = {
@@ -1800,7 +1800,7 @@ class KaliAgent:
                         "description": line.replace("+ ", "").strip(),
                         "severity": "info",
                     }
-                    
+
                     # Extract severity
                     if "CRITICAL" in line.upper():
                         vuln["severity"] = "critical"
@@ -1810,9 +1810,9 @@ class KaliAgent:
                         vuln["severity"] = "medium"
                     elif "LOW" in line.upper():
                         vuln["severity"] = "low"
-                    
+
                     vulnerabilities.append(vuln)
-            
+
             return {
                 "vulnerabilities": vulnerabilities,
                 "total": len(vulnerabilities),
@@ -1821,7 +1821,7 @@ class KaliAgent:
         except Exception as e:
             logger.error(f"Nikto parse failed: {e}")
             return None
-    
+
     def _parse_sqlmap(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse SQLMap output."""
         try:
@@ -1832,23 +1832,23 @@ class KaliAgent:
                 "tables": [],
                 "columns": [],
             }
-            
+
             # Check for vulnerability indicators
             if "is vulnerable" in output.lower():
                 result["vulnerable"] = True
-            
+
             # Extract injection type
             if "Type: " in output:
                 for line in output.split("\n"):
                     if "Type: " in line:
                         result["injection_type"] = line.split("Type: ")[1].strip()
-            
+
             # Extract database name
             if "current database: " in output:
                 for line in output.split("\n"):
                     if "current database: " in line:
                         result["database"] = line.split("current database: ")[1].strip()
-            
+
             # Extract tables
             if "available databases" in output.lower():
                 in_tables = False
@@ -1857,18 +1857,18 @@ class KaliAgent:
                         result["tables"].append(line.replace("[*]", "").strip())
                     if "available databases" in line.lower():
                         in_tables = True
-            
+
             return result
         except Exception as e:
             logger.error(f"SQLMap parse failed: {e}")
             return None
-    
+
     def _parse_gobuster(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse Gobuster output."""
         try:
             found_paths = []
             lines = output.split("\n")
-            
+
             for line in lines:
                 if line.startswith("/") or ("Status:" in line and len(line.split()) > 1):
                     parts = line.split()
@@ -1878,7 +1878,7 @@ class KaliAgent:
                             "status": int(parts[1]) if parts[1].isdigit() else 0,
                         }
                         found_paths.append(path)
-            
+
             return {
                 "paths": found_paths,
                 "total_found": len(found_paths),
@@ -1887,11 +1887,11 @@ class KaliAgent:
         except Exception as e:
             logger.error(f"Gobuster parse failed: {e}")
             return None
-    
+
     # ============================================
     # Metasploit Integration
     # ============================================
-    
+
     def connect_metasploit(
         self,
         host: str = "127.0.0.1",
@@ -1900,7 +1900,7 @@ class KaliAgent:
     ) -> bool:
         """Connect to Metasploit RPC."""
         self.msfrpc = MetasploitRPC(host, port)
-        
+
         if password:
             success = self.msfrpc.login(password)
             if success:
@@ -1912,7 +1912,7 @@ class KaliAgent:
         else:
             logger.warning("Metasploit RPC created but not authenticated")
             return False
-    
+
     def disconnect_metasploit(self) -> bool:
         """Disconnect from Metasploit RPC."""
         if self.msfrpc:
@@ -1921,14 +1921,14 @@ class KaliAgent:
             logger.info("Disconnected from Metasploit")
             return True
         return False
-    
+
     def get_metasploit_modules(self, module_type: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get available Metasploit modules."""
         if not self.msfrpc:
             return []
-        
+
         return self.msfrpc.get_modules(module_type)
-    
+
     def execute_metasploit_exploit(
         self,
         exploit: str,
@@ -1941,30 +1941,30 @@ class KaliAgent:
         if self.authorization_level.value < AuthorizationLevel.CRITICAL.value:
             logger.error("CRITICAL authorization required for Metasploit exploits")
             return None
-        
+
         if not self.msfrpc:
             logger.error("Not connected to Metasploit RPC")
             return None
-        
+
         job = self.msfrpc.execute_exploit(exploit, payload, target, options)
-        
+
         if job:
             self.msfjobs[job.job_id] = job
             logger.info(f"Metasploit job started: {job.job_id}")
-        
+
         return job
-    
+
     def get_metasploit_sessions(self) -> List[MetasploitSession]:
         """Get active Metasploit sessions."""
         if not self.msfrpc:
             return []
-        
+
         sessions = self.msfrpc.get_sessions()
         for session in sessions:
             self.msfsessions[session.session_id] = session
-        
+
         return sessions
-    
+
     def metasploit_session_command(
         self,
         session_id: str,
@@ -1973,16 +1973,16 @@ class KaliAgent:
         """Execute command in Metasploit session."""
         if not self.msfrpc:
             return ""
-        
+
         if session_id not in self.msfsessions:
             return "Session not found"
-        
+
         return self.msfrpc.session_write(session_id, command)
-    
+
     # ============================================
     # Pre-built Tool Methods
     # ============================================
-    
+
     def nmap_scan(
         self,
         target: str,
@@ -1999,7 +1999,7 @@ class KaliAgent:
             "os_detect": os_detect,
             "output_xml": output_xml,
         })
-    
+
     def nikto_scan(
         self,
         host: str,
@@ -2012,7 +2012,7 @@ class KaliAgent:
             "port": port,
             "ssl": ssl,
         })
-    
+
     def sqlmap_scan(
         self,
         url: str,
@@ -2025,7 +2025,7 @@ class KaliAgent:
             "level": level,
             "risk": risk,
         })
-    
+
     def searchsploit_search(
         self,
         query: str,
@@ -2036,7 +2036,7 @@ class KaliAgent:
             "query": query,
             "exact": exact,
         })
-    
+
     def john_crack(
         self,
         hash_file: str,
@@ -2047,7 +2047,7 @@ class KaliAgent:
             "hash_file": hash_file,
             "wordlist": wordlist,
         })
-    
+
     def hydra_bruteforce(
         self,
         target: str,
@@ -2062,7 +2062,7 @@ class KaliAgent:
             "userlist": userlist,
             "passlist": passlist,
         })
-    
+
     def gobuster_scan(
         self,
         target: str,
@@ -2079,7 +2079,7 @@ class KaliAgent:
             "extensions": extensions,
             "threads": threads,
         })
-    
+
     def wpscan_scan(
         self,
         url: str,
@@ -2092,7 +2092,7 @@ class KaliAgent:
             "enumerate": enumerate,
             "api_token": api_token,
         })
-    
+
     def dirb_scan(
         self,
         url: str,
@@ -2103,7 +2103,7 @@ class KaliAgent:
             "url": url,
             "wordlist": wordlist,
         })
-    
+
     def ffuf_fuzz(
         self,
         url: str,
@@ -2118,7 +2118,7 @@ class KaliAgent:
             "method": method,
             "threads": threads,
         })
-    
+
     def theharvester_scan(
         self,
         domain: str,
@@ -2131,7 +2131,7 @@ class KaliAgent:
             "source": source,
             "limit": limit,
         })
-    
+
     def amass_enum(
         self,
         domain: str,
@@ -2145,7 +2145,7 @@ class KaliAgent:
             "output": output,
             "timeout": timeout,
         })
-    
+
     def subfinder_scan(
         self,
         domain: str,
@@ -2156,7 +2156,7 @@ class KaliAgent:
             "domain": domain,
             "output": output,
         })
-    
+
     def dnsrecon_scan(
         self,
         domain: str,
@@ -2167,7 +2167,7 @@ class KaliAgent:
             "domain": domain,
             "type": type,
         })
-    
+
     def medusa_bruteforce(
         self,
         target: str,
@@ -2184,7 +2184,7 @@ class KaliAgent:
             "passlist": passlist,
             "threads": threads,
         })
-    
+
     def cewl_generate(
         self,
         url: str,
@@ -2199,7 +2199,7 @@ class KaliAgent:
             "min_length": min_length,
             "output": output,
         })
-    
+
     def crunch_generate(
         self,
         min_length: int,
@@ -2214,7 +2214,7 @@ class KaliAgent:
             "charset": charset,
             "output": output,
         })
-    
+
     def joomscan_scan(
         self,
         url: str,
@@ -2223,7 +2223,7 @@ class KaliAgent:
         return self.execute_tool("joomscan", {
             "url": url,
         })
-    
+
     def aircrack_crack(
         self,
         capture_file: str,
@@ -2234,7 +2234,7 @@ class KaliAgent:
             "capture_file": capture_file,
             "wordlist": wordlist,
         })
-    
+
     def reaver_attack(
         self,
         interface: str,
@@ -2247,7 +2247,7 @@ class KaliAgent:
             "bssid": bssid,
             "timeout": timeout,
         })
-    
+
     def bloodhound_collect(
         self,
         domain: str,
@@ -2262,7 +2262,7 @@ class KaliAgent:
             "password": password,
             "collection": collection,
         })
-    
+
     def binwalk_analyze(
         self,
         file: str,
@@ -2273,7 +2273,7 @@ class KaliAgent:
             "file": file,
             "extract": extract,
         })
-    
+
     def volatility_analyze(
         self,
         memory_file: str,
@@ -2286,11 +2286,11 @@ class KaliAgent:
             "plugin": plugin,
             "profile": profile,
         })
-    
+
     # ============================================
     # Playbook System - Automated Workflows
     # ============================================
-    
+
     def run_recon_playbook(
         self,
         target: str,
@@ -2298,11 +2298,11 @@ class KaliAgent:
         output_dir: Optional[str] = None,
     ) -> Dict[str, ToolExecution]:
         """Run comprehensive reconnaissance playbook.
-        
+
         Executes: nmap → theHarvester → amass → dnsrecon → nikto (if web)
         """
         results = {}
-        
+
         # 1. Nmap scan
         results["nmap"] = self.nmap_scan(
             target=target,
@@ -2310,24 +2310,24 @@ class KaliAgent:
             version_detect=True,
             os_detect=True,
         )
-        
+
         # 2. Email/subdomain harvesting
         if domain:
             results["theharvester"] = self.theharvester_scan(
                 domain=domain,
                 source="all",
             )
-            
+
             # 3. Subdomain enumeration
             results["amass"] = self.amass_enum(
                 domain=domain,
             )
-            
+
             # 4. DNS enumeration
             results["dnsrecon"] = self.dnsrecon_scan(
                 domain=domain,
             )
-        
+
         # 5. Web scan (if HTTP detected)
         if results["nmap"].exit_code == 0:
             if "80/open" in results["nmap"].stdout or "443/open" in results["nmap"].stdout:
@@ -2335,9 +2335,9 @@ class KaliAgent:
                     host=target,
                     port=80,
                 )
-        
+
         return results
-    
+
     def run_web_audit_playbook(
         self,
         url: str,
@@ -2345,45 +2345,45 @@ class KaliAgent:
         wordlist: str = "/usr/share/ffuf/wordlist.txt",
     ) -> Dict[str, ToolExecution]:
         """Run web application audit playbook.
-        
+
         Executes: gobuster → nikto → wpscan (if WordPress) → sqlmap (if forms)
         """
         results = {}
-        
+
         # 1. Directory brute-force
         results["gobuster"] = self.gobuster_scan(
             target=url,
             wordlist=wordlist,
             mode="dir",
         )
-        
+
         # 2. Web server scan
         from urllib.parse import urlparse
         parsed = urlparse(url)
         host = parsed.hostname or target
         port = parsed.port or (443 if parsed.scheme == "https" else 80)
-        
+
         results["nikto"] = self.nikto_scan(
             host=host,
             port=port,
             ssl=(parsed.scheme == "https"),
         )
-        
+
         # 3. WordPress scan (auto-detect)
         results["wpscan"] = self.wpscan_scan(
             url=url,
             enumerate="vp,vt,u",
         )
-        
+
         # 4. SQL injection scan
         results["sqlmap"] = self.sqlmap_scan(
             url=url,
             level=2,
             risk=2,
         )
-        
+
         return results
-    
+
     def run_password_audit_playbook(
         self,
         hash_file: str,
@@ -2391,17 +2391,17 @@ class KaliAgent:
         custom_wordlist: Optional[str] = None,
     ) -> Dict[str, ToolExecution]:
         """Run password cracking playbook.
-        
+
         Executes: john → hashcat (if john fails) → report
         """
         results = {}
-        
+
         # 1. John the Ripper
         results["john"] = self.john_crack(
             hash_file=hash_file,
             wordlist=wordlist,
         )
-        
+
         # 2. Hashcat (if custom wordlist provided)
         if custom_wordlist:
             results["hashcat"] = self.execute_tool("hashcat", {
@@ -2410,9 +2410,9 @@ class KaliAgent:
                 "hash_type": 0,
                 "wordlist": custom_wordlist,
             })
-        
+
         return results
-    
+
     def run_wireless_audit_playbook(
         self,
         interface: str,
@@ -2420,32 +2420,32 @@ class KaliAgent:
         capture_file: Optional[str] = None,
     ) -> Dict[str, ToolExecution]:
         """Run wireless security audit playbook.
-        
+
         Executes: monitor mode → capture → aircrack/reaver
         """
         results = {}
-        
+
         # 1. Wifite automated audit
         results["wifite"] = self.execute_tool("wifite", {
             "interface": interface,
             "target_bssid": target_bssid,
         })
-        
+
         # 2. Aircrack (if capture file provided)
         if capture_file:
             results["aircrack"] = self.aircrack_crack(
                 capture_file=capture_file,
             )
-        
+
         # 3. Reaver (if target BSSID provided)
         if target_bssid:
             results["reaver"] = self.reaver_attack(
                 interface=interface,
                 bssid=target_bssid,
             )
-        
+
         return results
-    
+
     def run_ad_audit_playbook(
         self,
         domain: str,
@@ -2454,11 +2454,11 @@ class KaliAgent:
         output_dir: Optional[str] = None,
     ) -> Dict[str, ToolExecution]:
         """Run Active Directory audit playbook.
-        
+
         Executes: bloodhound → enum4linux → ldapsearch
         """
         results = {}
-        
+
         # 1. Bloodhound collection
         results["bloodhound"] = self.bloodhound_collect(
             domain=domain,
@@ -2466,9 +2466,9 @@ class KaliAgent:
             password=password,
             collection="all",
         )
-        
+
         return results
-    
+
     def generate_playbook_report(
         self,
         playbook_name: str,
@@ -2484,7 +2484,7 @@ class KaliAgent:
             "## Execution Summary",
             "",
         ]
-        
+
         for tool_name, result in results.items():
             status_emoji = "✅" if result.status == "completed" else "❌"
             lines.append(f"### {status_emoji} {tool_name}")
@@ -2494,20 +2494,20 @@ class KaliAgent:
             if result.stderr:
                 lines.append(f"- Errors: {result.stderr[:200]}")
             lines.append("")
-        
+
         # Success summary
         successful = sum(1 for r in results.values() if r.status == "completed" and r.exit_code == 0)
         lines.append("## Summary")
         lines.append(f"- Total Tools: {len(results)}")
         lines.append(f"- Successful: {successful}")
         lines.append(f"- Failed: {len(results) - successful}")
-        
+
         return "\n".join(lines)
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_execution_history(
         self,
         engagement_id: Optional[str] = None,
@@ -2516,18 +2516,18 @@ class KaliAgent:
     ) -> List[ToolExecution]:
         """Get execution history with filtering."""
         executions = list(self.executions.values())
-        
+
         if engagement_id:
             executions = [e for e in executions if e.engagement_id == engagement_id]
-        
+
         if tool_name:
             executions = [e for e in executions if e.tool_name == tool_name]
-        
+
         if status:
             executions = [e for e in executions if e.status == status]
-        
+
         return sorted(executions, key=lambda e: e.started_at, reverse=True)
-    
+
     def generate_report(
         self,
         engagement_id: Optional[str] = None,
@@ -2535,7 +2535,7 @@ class KaliAgent:
     ) -> str:
         """Generate execution report."""
         executions = self.get_execution_history(engagement_id)
-        
+
         if output_format == "markdown":
             return self._generate_markdown_report(executions)
         elif output_format == "json":
@@ -2553,7 +2553,7 @@ class KaliAgent:
             ], indent=2)
         else:
             return f"Unknown format: {output_format}"
-    
+
     def _generate_markdown_report(
         self,
         executions: List[ToolExecution]
@@ -2569,20 +2569,20 @@ class KaliAgent:
             "| Tool | Status | Duration | Time |",
             "|------|--------|----------|------|",
         ]
-        
+
         for e in executions[:20]:  # Limit to 20
             status_emoji = "✅" if e.status == "completed" else "❌"
             lines.append(
                 f"| {e.tool_name} | {status_emoji} {e.status} | "
                 f"{e.duration_seconds:.1f}s | {e.started_at.strftime('%H:%M:%S')} |"
             )
-        
+
         lines.extend([
             "",
             "## Failed Executions",
             "",
         ])
-        
+
         failed = [e for e in executions if e.status == "failed"]
         if failed:
             for e in failed:
@@ -2594,24 +2594,24 @@ class KaliAgent:
                 ])
         else:
             lines.append("No failed executions.")
-        
+
         return "\n".join(lines)
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate unique ID."""
         return f"{prefix}_{secrets.token_hex(8)}"
-    
+
     def list_tools(self, category: Optional[ToolCategory] = None) -> List[Dict[str, Any]]:
         """List available tools."""
         tools = list(self.tools.values())
-        
+
         if category:
             tools = [t for t in tools if t.category == category]
-        
+
         return [
             {
                 "name": t.name,
@@ -2621,12 +2621,12 @@ class KaliAgent:
             }
             for t in tools
         ]
-    
+
     def get_tool_info(self, tool_name: str) -> Optional[Dict[str, Any]]:
         """Get detailed tool information."""
         if tool_name not in self.tools:
             return None
-        
+
         tool = self.tools[tool_name]
         return {
             "name": tool.name,
@@ -2649,17 +2649,17 @@ def demo_kali_agent():
     print("KALI AGENT DEMONSTRATION")
     print("=" * 70)
     print()
-    
+
     # Initialize agent
     agent = KaliAgent(
         workspace="/tmp/kali-demo",
         log_dir="/tmp/kali-demo/logs"
     )
-    
+
     # Show available tools
     print("📦 Available Tools by Category:")
     print()
-    
+
     for category in ToolCategory:
         tools = agent.list_tools(category)
         if tools:
@@ -2669,65 +2669,65 @@ def demo_kali_agent():
             if len(tools) > 5:
                 print(f"    ... and {len(tools) - 5} more")
             print()
-    
+
     # Demonstrate authorization
     print("🔐 Authorization Demo:")
     print()
-    
+
     authorized, msg = agent.check_authorization("nmap")
     print(f"  Nmap without auth: {msg}")
-    
+
     agent.set_authorization(AuthorizationLevel.BASIC)
     authorized, msg = agent.check_authorization("nmap")
     print(f"  Nmap with BASIC auth: {msg}")
-    
+
     authorized, msg = agent.check_authorization("metasploit")
     print(f"  Metasploit with BASIC auth: {msg}")
-    
+
     agent.set_authorization(AuthorizationLevel.CRITICAL)
     authorized, msg = agent.check_authorization("metasploit")
     print(f"  Metasploit with CRITICAL auth: {msg}")
     print()
-    
+
     # Demonstrate dry-run
     print("🧪 Dry-Run Execution Demo:")
     print()
-    
+
     agent.enable_dry_run()
-    
+
     exec_result = agent.nmap_scan(
         target="scanme.nmap.org",
         ports="1-100",
         version_detect=True
     )
-    
+
     print(f"  Tool: {exec_result.tool_name}")
     print(f"  Status: {exec_result.status}")
     print(f"  Command: {exec_result.command}")
     print(f"  Output: {exec_result.stdout[:200]}..." if exec_result.stdout else "  Output: (dry-run)")
     print()
-    
+
     agent.disable_dry_run()
-    
+
     # Show execution history
     print("📊 Execution History:")
     print()
-    
+
     history = agent.get_execution_history()
     for exec_record in history:
         print(f"  {exec_record.execution_id}: {exec_record.tool_name} - {exec_record.status}")
-    
+
     print()
-    
+
     # Generate report
     print("📄 Generated Report (first 500 chars):")
     print()
-    
+
     report = agent.generate_report(output_format="markdown")
     print(report[:500])
     print("...")
     print()
-    
+
     print("=" * 70)
     print("DEMONSTRATION COMPLETE")
     print("=" * 70)

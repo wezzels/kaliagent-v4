@@ -163,7 +163,7 @@ class RiskAgent:
     Risk Agent for Enterprise Risk Management (ERM),
     risk registers, KRIs, and risk reporting.
     """
-    
+
     def __init__(self, agent_id: str = "risk-agent"):
         self.agent_id = agent_id
         self.risks: Dict[str, Risk] = {}
@@ -171,7 +171,7 @@ class RiskAgent:
         self.kris: Dict[str, KeyRiskIndicator] = {}
         self.assessments: Dict[str, RiskAssessment] = {}
         self.events: Dict[str, RiskEvent] = {}
-        
+
         # Risk scoring matrix
         self.risk_matrix = {
             1: RiskLevel.VERY_LOW,
@@ -189,7 +189,7 @@ class RiskAgent:
             20: RiskLevel.CRITICAL,
             25: RiskLevel.CRITICAL,
         }
-        
+
         # Default risk appetite by category
         self.risk_appetite = {
             RiskCategory.STRATEGIC: {'tolerance': 'medium', 'limit': 15},
@@ -199,11 +199,11 @@ class RiskAgent:
             RiskCategory.CYBERSECURITY: {'tolerance': 'low', 'limit': 10},
             RiskCategory.REPUTATIONAL: {'tolerance': 'very_low', 'limit': 5},
         }
-    
+
     # ============================================
     # Risk Management
     # ============================================
-    
+
     def identify_risk(
         self,
         title: str,
@@ -216,7 +216,7 @@ class RiskAgent:
     ) -> Risk:
         """Identify a new risk."""
         inherent_score = inherent_likelihood * inherent_impact
-        
+
         risk = Risk(
             risk_id=self._generate_id("risk"),
             title=title,
@@ -232,11 +232,11 @@ class RiskAgent:
             residual_score=inherent_score,
             tags=tags or [],
         )
-        
+
         self.risks[risk.risk_id] = risk
         logger.info(f"Identified risk: {risk.title}")
         return risk
-    
+
     def assess_risk(
         self,
         risk_id: str,
@@ -247,23 +247,23 @@ class RiskAgent:
         """Assess risk with controls consideration."""
         if risk_id not in self.risks:
             return False
-        
+
         risk = self.risks[risk_id]
         risk.status = RiskStatus.ASSESSED
         risk.assessed_at = datetime.utcnow()
-        
+
         if controls:
             risk.controls = controls
-        
+
         if residual_likelihood:
             risk.residual_likelihood = residual_likelihood
-        
+
         if residual_impact:
             risk.residual_impact = residual_impact
-        
+
         risk.residual_score = risk.residual_likelihood * risk.residual_impact
         return True
-    
+
     def plan_treatment(
         self,
         risk_id: str,
@@ -274,17 +274,17 @@ class RiskAgent:
         """Plan risk treatment."""
         if risk_id not in self.risks:
             return False
-        
+
         risk = self.risks[risk_id]
         risk.treatment_strategy = strategy
         risk.treatment_plan = treatment_plan
         risk.status = RiskStatus.TREATMENT_PLANNED
-        
+
         if target_resolution:
             risk.target_resolution = target_resolution
-        
+
         return True
-    
+
     def update_risk_status(
         self,
         risk_id: str,
@@ -293,14 +293,14 @@ class RiskAgent:
         """Update risk status."""
         if risk_id not in self.risks:
             return False
-        
+
         self.risks[risk_id].status = status
-        
+
         if status == RiskStatus.CLOSED:
             self.risks[risk_id].closed_at = datetime.utcnow()
-        
+
         return True
-    
+
     def get_risks(
         self,
         category: Optional[RiskCategory] = None,
@@ -310,40 +310,40 @@ class RiskAgent:
     ) -> List[Risk]:
         """Get risks with filtering."""
         risks = list(self.risks.values())
-        
+
         if category:
             risks = [r for r in risks if r.category == category]
-        
+
         if status:
             risks = [r for r in risks if r.status == status]
-        
+
         if min_score:
             risks = [r for r in risks if r.residual_score >= min_score]
-        
+
         if owner:
             risks = [r for r in risks if r.owner == owner]
-        
+
         return risks
-    
+
     def get_high_priority_risks(self, limit: int = 20) -> List[Risk]:
         """Get high priority risks sorted by score."""
         risks = list(self.risks.values())
-        
+
         # Filter open risks
         open_risks = [
             r for r in risks
             if r.status not in [RiskStatus.CLOSED, RiskStatus.ACCEPTED]
         ]
-        
+
         # Sort by residual score descending
         open_risks.sort(key=lambda r: r.residual_score, reverse=True)
-        
+
         return open_risks[:limit]
-    
+
     # ============================================
     # Control Management
     # ============================================
-    
+
     def create_control(
         self,
         name: str,
@@ -365,16 +365,16 @@ class RiskAgent:
             frequency=frequency,
             automated=automated,
         )
-        
+
         self.controls[control.control_id] = control
-        
+
         # Link to risk
         if risk_id and risk_id in self.risks:
             if control.control_id not in self.risks[risk_id].controls:
                 self.risks[risk_id].controls.append(control.control_id)
-        
+
         return control
-    
+
     def test_control(
         self,
         control_id: str,
@@ -384,14 +384,14 @@ class RiskAgent:
         """Test control effectiveness."""
         if control_id not in self.controls:
             return False
-        
+
         control = self.controls[control_id]
         control.effectiveness = effectiveness
         control.test_results = test_results
         control.last_tested = datetime.utcnow()
-        
+
         return True
-    
+
     def get_controls(
         self,
         control_type: Optional[str] = None,
@@ -400,22 +400,22 @@ class RiskAgent:
     ) -> List[Control]:
         """Get controls with filtering."""
         controls = list(self.controls.values())
-        
+
         if control_type:
             controls = [c for c in controls if c.control_type == control_type]
-        
+
         if effectiveness:
             controls = [c for c in controls if c.effectiveness == effectiveness]
-        
+
         if risk_id:
             controls = [c for c in controls if c.risk_id == risk_id]
-        
+
         return controls
-    
+
     # ============================================
     # Key Risk Indicators
     # ============================================
-    
+
     def create_kri(
         self,
         name: str,
@@ -441,10 +441,10 @@ class RiskAgent:
             direction=direction,
             risk_id=risk_id,
         )
-        
+
         self.kris[kri.kri_id] = kri
         return kri
-    
+
     def update_kri_value(
         self,
         kri_id: str,
@@ -453,11 +453,11 @@ class RiskAgent:
         """Update KRI value and calculate status."""
         if kri_id not in self.kris:
             return False
-        
+
         kri = self.kris[kri_id]
         kri.current_value = current_value
         kri.last_measured = datetime.utcnow()
-        
+
         # Determine status based on thresholds and direction
         if kri.direction == "lower_is_better":
             if current_value <= kri.threshold_green:
@@ -473,12 +473,12 @@ class RiskAgent:
                 kri.status = "yellow"
             else:
                 kri.status = "red"
-        
+
         # Determine trend (simplified)
         kri.trend = "stable"  # In real impl, compare to historical values
-        
+
         return True
-    
+
     def get_kris(
         self,
         category: Optional[RiskCategory] = None,
@@ -486,23 +486,23 @@ class RiskAgent:
     ) -> List[KeyRiskIndicator]:
         """Get KRIs with filtering."""
         kris = list(self.kris.values())
-        
+
         if category:
             kris = [k for k in kris if k.category == category]
-        
+
         if status:
             kris = [k for k in kris if k.status == status]
-        
+
         return kris
-    
+
     def get_kris_at_risk(self) -> List[KeyRiskIndicator]:
         """Get KRIs in yellow or red status."""
         return [k for k in self.kris.values() if k.status in ['yellow', 'red']]
-    
+
     # ============================================
     # Risk Assessments
     # ============================================
-    
+
     def create_assessment(
         self,
         name: str,
@@ -519,10 +519,10 @@ class RiskAgent:
             start_date=start_date,
             assessor=assessor,
         )
-        
+
         self.assessments[assessment.assessment_id] = assessment
         return assessment
-    
+
     def complete_assessment(
         self,
         assessment_id: str,
@@ -533,34 +533,34 @@ class RiskAgent:
         """Complete a risk assessment."""
         if assessment_id not in self.assessments:
             return False
-        
+
         assessment = self.assessments[assessment_id]
         assessment.status = "completed"
         assessment.end_date = datetime.utcnow()
         assessment.risks_identified = risks_identified
         assessment.findings = findings or []
         assessment.recommendations = recommendations or []
-        
+
         # Count high/critical risks
         high_risks = [f for f in assessment.findings if f.get('severity') in ['high', 'critical']]
         assessment.high_risks = len([f for f in high_risks if f.get('severity') == 'high'])
         assessment.critical_risks = len([f for f in high_risks if f.get('severity') == 'critical'])
-        
+
         return True
-    
+
     def get_assessments(self, status: Optional[str] = None) -> List[RiskAssessment]:
         """Get assessments with filtering."""
         assessments = list(self.assessments.values())
-        
+
         if status:
             assessments = [a for a in assessments if a.status == status]
-        
+
         return assessments
-    
+
     # ============================================
     # Risk Events
     # ============================================
-    
+
     def report_event(
         self,
         title: str,
@@ -578,11 +578,11 @@ class RiskAgent:
             actual_impact=actual_impact,
             financial_impact=financial_impact,
         )
-        
+
         self.events[event.event_id] = event
         logger.warning(f"Risk event reported: {event.title}")
         return event
-    
+
     def resolve_event(
         self,
         event_id: str,
@@ -592,14 +592,14 @@ class RiskAgent:
         """Resolve a risk event."""
         if event_id not in self.events:
             return False
-        
+
         event = self.events[event_id]
         event.status = "resolved"
         event.root_cause = root_cause
         event.lessons_learned = lessons_learned
-        
+
         return True
-    
+
     def get_events(
         self,
         risk_id: Optional[str] = None,
@@ -607,33 +607,33 @@ class RiskAgent:
     ) -> List[RiskEvent]:
         """Get events with filtering."""
         events = list(self.events.values())
-        
+
         if risk_id:
             events = [e for e in events if e.risk_id == risk_id]
-        
+
         if status:
             events = [e for e in events if e.status == status]
-        
+
         return events
-    
+
     # ============================================
     # Reporting
     # ============================================
-    
+
     def get_risk_register(self) -> Dict[str, Any]:
         """Generate risk register report."""
         risks = list(self.risks.values())
-        
+
         # By category
         by_category = {}
         for cat in RiskCategory:
             by_category[cat.value] = len([r for r in risks if r.category == cat])
-        
+
         # By status
         by_status = {}
         for status in RiskStatus:
             by_status[status.value] = len([r for r in risks if r.status == status])
-        
+
         # By score
         by_score = {
             'critical': len([r for r in risks if r.residual_score >= 20]),
@@ -642,7 +642,7 @@ class RiskAgent:
             'medium': len([r for r in risks if 5 <= r.residual_score < 10]),
             'low': len([r for r in risks if r.residual_score < 5]),
         }
-        
+
         return {
             'total_risks': len(risks),
             'by_category': by_category,
@@ -651,26 +651,26 @@ class RiskAgent:
             'open_risks': len([r for r in risks if r.status not in [RiskStatus.CLOSED, RiskStatus.ACCEPTED]]),
             'avg_residual_score': round(sum(r.residual_score for r in risks) / len(risks), 1) if risks else 0,
         }
-    
+
     def get_risk_dashboard(self) -> Dict[str, Any]:
         """Generate risk dashboard summary."""
         risks = list(self.risks.values())
         events = list(self.events.values())
         kris = list(self.kris.values())
-        
+
         # Top risks
         top_risks = sorted(risks, key=lambda r: r.residual_score, reverse=True)[:5]
-        
+
         # KRIs at risk
         kris_at_risk = [k for k in kris if k.status in ['yellow', 'red']]
-        
+
         # Events this month
         this_month = datetime.utcnow() - timedelta(days=30)
         recent_events = [e for e in events if e.occurred_at >= this_month]
-        
+
         # Financial impact
         total_financial_impact = sum(e.financial_impact for e in events)
-        
+
         return {
             'overview': {
                 'total_risks': len(risks),
@@ -705,17 +705,17 @@ class RiskAgent:
                 'effective': len([c for c in self.controls.values() if c.effectiveness == 'effective']),
             },
         }
-    
+
     def get_risk_appetite_status(self) -> Dict[str, Any]:
         """Get risk appetite compliance status."""
         status = {}
-        
+
         for category, appetite in self.risk_appetite.items():
             risks_in_cat = [r for r in self.risks.values() if r.category == category]
-            
+
             # Count risks above appetite limit
             above_limit = len([r for r in risks_in_cat if r.residual_score > appetite['limit']])
-            
+
             status[category.value] = {
                 'tolerance': appetite['tolerance'],
                 'limit': appetite['limit'],
@@ -724,13 +724,13 @@ class RiskAgent:
                 'compliant': above_limit == 0,
                 'max_score': max([r.residual_score for r in risks_in_cat], default=0),
             }
-        
+
         return status
-    
+
     # ============================================
     # Utilities
     # ============================================
-    
+
     def _score_to_level(self, score: int) -> RiskLevel:
         """Convert score to risk level."""
         if score <= 2:
@@ -743,13 +743,13 @@ class RiskAgent:
             return RiskLevel.HIGH
         else:
             return RiskLevel.VERY_HIGH
-    
+
     def _generate_id(self, prefix: str) -> str:
         """Generate a unique ID."""
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         random_suffix = secrets.token_hex(4)
         return f"{prefix}-{timestamp}-{random_suffix}"
-    
+
     def get_state(self) -> Dict[str, Any]:
         """Get agent state summary."""
         risks = list(self.risks.values())
@@ -805,7 +805,7 @@ def get_capabilities() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     agent = RiskAgent()
-    
+
     # Identify risks
     risk1 = agent.identify_risk(
         title="Data Breach",
@@ -816,9 +816,9 @@ if __name__ == "__main__":
         inherent_impact=5,
         tags=['data', 'security', 'privacy'],
     )
-    
+
     print(f"Identified risk: {risk1.title} (Score: {risk1.inherent_score})")
-    
+
     # Assess risk with controls
     control = agent.create_control(
         name="Multi-Factor Authentication",
@@ -828,16 +828,16 @@ if __name__ == "__main__":
         risk_id=risk1.risk_id,
         automated=True,
     )
-    
+
     agent.assess_risk(
         risk1.risk_id,
         controls=[control.control_id],
         residual_likelihood=2,
         residual_impact=5,
     )
-    
+
     print(f"Residual score: {risk1.residual_score}")
-    
+
     # Plan treatment
     agent.plan_treatment(
         risk1.risk_id,
@@ -845,7 +845,7 @@ if __name__ == "__main__":
         treatment_plan="Implement additional monitoring and DLP",
         target_resolution=datetime.utcnow() + timedelta(days=90),
     )
-    
+
     # Create KRI
     kri = agent.create_kri(
         name="Failed Login Attempts",
@@ -858,11 +858,11 @@ if __name__ == "__main__":
         direction="lower_is_better",
         risk_id=risk1.risk_id,
     )
-    
+
     # Update KRI value
     agent.update_kri_value(kri.kri_id, current_value=750)
     print(f"KRI Status: {kri.status}")
-    
+
     # Create assessment
     assessment = agent.create_assessment(
         name="Q1 Cybersecurity Assessment",
@@ -870,7 +870,7 @@ if __name__ == "__main__":
         assessor="risk-team@example.com",
         start_date=datetime.utcnow(),
     )
-    
+
     agent.complete_assessment(
         assessment.assessment_id,
         risks_identified=15,
@@ -880,7 +880,7 @@ if __name__ == "__main__":
         ],
         recommendations=["Patch management program", "System upgrades"],
     )
-    
+
     # Report event
     event = agent.report_event(
         title="Phishing Attack",
@@ -889,24 +889,24 @@ if __name__ == "__main__":
         financial_impact=5000.0,
         risk_id=risk1.risk_id,
     )
-    
+
     agent.resolve_event(
         event.event_id,
         root_cause="Insufficient security awareness training",
         lessons_learned=["Need more frequent training", "Implement email filtering"],
     )
-    
+
     # Get risk dashboard
     dashboard = agent.get_risk_dashboard()
     print(f"\nRisk Dashboard:")
     print(f"  Total Risks: {dashboard['overview']['total_risks']}")
     print(f"  Critical: {dashboard['overview']['critical_risks']}")
     print(f"  KRIs at Risk: {dashboard['kris']['at_risk']}")
-    
+
     # Get risk register
     register = agent.get_risk_register()
     print(f"\nRisk Register:")
     print(f"  By Category: {register['by_category']}")
     print(f"  By Score: {register['by_score']}")
-    
+
     print(f"\nState: {agent.get_state()}")

@@ -29,7 +29,7 @@ __all__ = [
     # Blue Team
     'SecurityOperationsAgent',
     'VulnerabilityManagementAgent',
-    
+
     # Red Team
     'RedTeamAgent',
     'RedTeamAgentV2',
