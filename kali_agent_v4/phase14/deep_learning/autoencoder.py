@@ -95,8 +95,26 @@ class AutoencoderDetector:
         self.novelty_threshold = None
         
         if TORCH_AVAILABLE:
-            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-            logger.info(f"🔧 Using device: {self.device}")
+            # Check for sm_120 (RTX 50-series / Blackwell) compatibility
+            if torch.cuda.is_available():
+                gpu_name = torch.cuda.get_device_name(0)
+                # RTX 50-series uses sm_120, not supported by PyTorch yet
+                if any(x in gpu_name for x in ['RTX 50', '5060', '5070', '5080', '5090', 'Blackwell']):
+                    logger.warning(f"⚠️  GPU detected: {gpu_name} (sm_120 / Blackwell)")
+                    logger.warning("⚠️  PyTorch does not yet support sm_120 compute capability")
+                    logger.warning("⚠️  Falling back to CPU mode for compatibility")
+                    logger.warning("💡  PyTorch 2.8+ will add sm_120 support")
+                    self.device = torch.device('cpu')
+                else:
+                    self.device = torch.device('cuda')
+                    logger.info(f"🔧 Using GPU: {gpu_name}")
+            else:
+                self.device = torch.device('cpu')
+                logger.info("🔧 Using device: CPU")
+            
+            if self.device.type == 'cpu' and torch.cuda.is_available():
+                logger.info(f"   GPU VRAM: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB (not used - CPU mode)")
+            
             self._build_model()
         
         logger.info(f"🧠 Autoencoder v{self.VERSION}")
