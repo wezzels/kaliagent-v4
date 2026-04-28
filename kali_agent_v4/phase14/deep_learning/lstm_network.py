@@ -144,27 +144,27 @@ class LSTMSecurityDetector:
         self.anomaly_threshold = 0.5
         
         if TORCH_AVAILABLE:
-            # Check for sm_120 (RTX 50-series / Blackwell) compatibility
+            # Default to GPU if available
+            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            
+            # Check if GPU is usable (test tensor operation)
             if torch.cuda.is_available():
                 gpu_name = torch.cuda.get_device_name(0)
-                # RTX 50-series uses sm_120, not supported by PyTorch yet
-                if any(x in gpu_name for x in ['RTX 50', '5060', '5070', '5080', '5090', 'Blackwell']):
-                    logger.warning(f"⚠️  GPU detected: {gpu_name} (sm_120 / Blackwell)")
-                    logger.warning("⚠️  PyTorch does not yet support sm_120 compute capability")
-                    logger.warning("⚠️  Falling back to CPU mode for compatibility")
-                    logger.warning("💡  PyTorch 2.8+ will add sm_120 support")
-                    self.device = torch.device('cpu')
-                else:
-                    self.device = torch.device('cuda')
+                try:
+                    # Test if CUDA actually works
+                    test_tensor = torch.zeros(1).cuda()
+                    test_tensor = test_tensor + 1
                     logger.info(f"🔧 Using GPU: {gpu_name}")
+                    logger.info(f"   VRAM: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
+                except RuntimeError as e:
+                    # CUDA doesn't work (e.g., sm_120 on old PyTorch)
+                    logger.warning(f"⚠️  GPU detected: {gpu_name}")
+                    logger.warning(f"⚠️  CUDA error: {str(e)[:100]}")
+                    logger.warning("⚠️  Falling back to CPU mode")
+                    self.device = torch.device('cpu')
             else:
-                self.device = torch.device('cpu')
                 logger.info("🔧 Using device: CPU")
             
-            if self.device.type == 'cpu' and torch.cuda.is_available():
-                logger.info(f"   GPU VRAM: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB (not used - CPU mode)")
-            
-            # Initialize model
             self._build_model()
         else:
             logger.warning("⚠️  Running in NumPy fallback mode (limited functionality)")
