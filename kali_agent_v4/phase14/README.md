@@ -25,10 +25,14 @@ Phase 14 introduces enterprise-grade machine learning and deep learning capabili
 
 **Test Results:**
 ```
-✅ Accuracy: 93.04%
+✅ Accuracy: 93.91%
 ✅ Precision: 100.00%
-✅ Recall: 20.00%
-✅ F1 Score: 33.33%
+✅ Recall: 46.15%
+✅ F1 Score: 63.16%
+
+GPU: RTX 5060 Ti 16GB
+Training: ~2 seconds (30 epochs)
+Inference: ~1ms
 ```
 
 ### 2. Autoencoder (`deep_learning/autoencoder.py`)
@@ -56,7 +60,48 @@ Phase 14 introduces enterprise-grade machine learning and deep learning capabili
 ✅ Precision: 100.00%
 ✅ Recall: 100.00%
 ✅ F1 Score: 100.00%
+
+GPU: RTX 5060 Ti 16GB
+Training: ~120 seconds (50 epochs)
+Inference: ~5ms
 ```
+
+### 3. Threat Intel Extractor (`nlp/threat_intel_extractor.py`)
+
+**Purpose:** Automatic extraction of IOCs and threat intelligence from text
+
+**Key Advantage:** BERT-based NLP + rule-based extraction (works even without transformers!)
+
+**Use Cases:**
+- Automatic IOC extraction from threat reports
+- Threat actor identification
+- Malware family classification
+- CVE and MITRE ATT&CK extraction
+- Executive summary generation
+- STIX 2.1 export
+
+**Extracted Entities:**
+- **IOCs:** IP addresses, domains, URLs, emails, file hashes (MD5/SHA1/SHA256)
+- **Threat Actors:** APT groups, cybercriminal organizations (40+ known groups)
+- **Malware:** Family names (30+ known families)
+- **Vulnerabilities:** CVE IDs
+- **TTPs:** MITRE ATT&CK technique IDs
+- **Classification:** Threat type, severity, targeted industries/regions
+
+**Test Results:**
+```
+✅ Extracted: 1 IP, 1 domain, 1 SHA256
+✅ Threat Actors: APT29, CozyBear
+✅ Malware: WellMess, RAT
+✅ CVE: CVE-2024-1234
+✅ MITRE: T1566 (Phishing)
+✅ Type: Phishing | Severity: HIGH
+✅ Industries: Defense, Energy, Government
+```
+
+**Export Formats:**
+- JSON
+- STIX 2.1
 
 ## Installation
 
