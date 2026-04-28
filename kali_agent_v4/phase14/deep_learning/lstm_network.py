@@ -499,8 +499,8 @@ class LSTMSecurityDetector:
             # Find which features contribute most to anomaly
             feature_importance = np.std(sequence, axis=0)
             top_features = np.argsort(feature_importance)[-3:][::-1]
-            top_names = [feature_names[int(i)] if int(i) < len(feature_names) else f"Feature_{int(i)}"
-                        for i in top_features]
+            top_names = [feature_names[idx] if idx < len(feature_names) else f"Feature_{idx}"
+                        for idx in top_features]
             features_str = ", ".join(top_names)
             return f"{severity} anomaly (score={score:.3f}). Top contributing features: {features_str}"
         else:
@@ -693,7 +693,7 @@ Hardware: Optimized for RTX 5060 Ti 16GB (darth/10.0.0.117)
         
         # Test single detection
         print("\n🔍 Testing single sequence detection...")
-        test_seq = X_test[0]
+        test_seq = X_test[0]  # Shape: (seq_length, num_features) = (50, 5)
         result = detector.detect(test_seq, feature_names=[
             'bytes_sent', 'bytes_recv', 'packets_sent', 'packets_recv', 'connections'
         ])
