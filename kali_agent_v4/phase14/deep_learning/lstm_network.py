@@ -499,7 +499,7 @@ class LSTMSecurityDetector:
             # Find which features contribute most to anomaly
             feature_importance = np.std(sequence, axis=0)
             top_features = np.argsort(feature_importance)[-3:][::-1]
-            top_names = [feature_names[i] if i < len(feature_names) else f"Feature_{i}"
+            top_names = [feature_names[int(i)] if int(i) < len(feature_names) else f"Feature_{int(i)}"
                         for i in top_features]
             features_str = ", ".join(top_names)
             return f"{severity} anomaly (score={score:.3f}). Top contributing features: {features_str}"
