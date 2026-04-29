@@ -126,12 +126,12 @@ class SecurityLogTransformer(nn.Module):
         pe = self.pos_encoding[:, :seq_len, :].to(embedded.device)
         encoded = embedded + pe
         
-        # Create attention mask (0 for real tokens, -inf for padding)
-        mask = (src == 0).unsqueeze(1).unsqueeze(2)  # [batch, 1, 1, seq]
-        mask = mask.expand(batch_size, 1, seq_len, seq_len)  # [batch, 1, seq, seq]
+        # Create attention mask for padding (2D: [seq, seq])
+        # True means mask this position (padding)
+        src_key_padding_mask = (src == 0)  # [batch, seq]
         
         # Transformer encoder
-        transformer_out = self.transformer_encoder(encoded, mask=mask)  # [batch, seq, d_model]
+        transformer_out = self.transformer_encoder(encoded, src_key_padding_mask=src_key_padding_mask)  # [batch, seq, d_model]
         
         # Global average pooling (ignore padding)
         mask_2d = (src != 0).float().unsqueeze(-1)  # [batch, seq, 1]
