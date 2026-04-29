@@ -154,7 +154,7 @@ class SecurityLogTransformer(nn.Module):
         self.anomaly_head = nn.Sequential(
             nn.Linear(config.d_model, config.d_model),
             nn.ReLU(),
-            nn.Linear(config.d_model, config.vocab_size)
+            nn.Linear(config.d_model, config.d_model)  # Match embedding dimension
         )
         
         # Initialize weights
