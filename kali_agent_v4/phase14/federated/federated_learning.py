@@ -161,6 +161,11 @@ class FederatedClient:
                 
                 optimizer.zero_grad()
                 outputs = self.model(batch_X).squeeze()
+                
+                # Ensure outputs and targets have same shape
+                if outputs.dim() == 0:
+                    outputs = outputs.unsqueeze(0)
+                
                 loss = criterion(outputs, batch_y)
                 
                 # Differential privacy: add noise to gradients
