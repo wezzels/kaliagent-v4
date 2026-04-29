@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kaliagent-ml-config
+  namespace: ml-platform
+data:
+  LOG_LEVEL: "info"
+  ENABLE_GPU: "true"
+  BATCH_SIZE: "32"
+  CACHE_TTL: "300"
+  MODEL_REGISTRY_PATH: "/data/models"
+  METRICS_PORT: "9090"

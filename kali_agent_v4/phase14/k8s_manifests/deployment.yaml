@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kaliagent-ml
+  namespace: ml-platform
+  labels:
+    app: kaliagent-ml
+    version: v5.0.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kaliagent-ml
+  template:
+    metadata:
+      labels:
+        app: kaliagent-ml
+        version: v5.0.0
+    spec:
+      containers:
+      - name: kaliagent-ml
+        image: kaliagent-ml:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: KALIAGENT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: kaliagent-ml-secrets
+              key: api-key
+        - name: KALIAGENT_HOST
+          value: "0.0.0.0"
+        - name: KALIAGENT_PORT
+          value: "8000"
+      imagePullSecrets:
+      - name: registry-secret
