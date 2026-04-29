@@ -198,7 +198,7 @@ class SecurityLogTransformer(nn.Module):
         
         # Transformer encoder
         if src_mask is None:
-            src_mask = self.generate_square_subsequent_mask(encoded.size(1))
+            src_mask = self.generate_square_subsequent_mask(encoded.size(1)).to(encoded.device)
         
         transformer_out = self.transformer_encoder(encoded, src_mask)
         
