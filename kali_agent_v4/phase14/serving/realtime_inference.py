@@ -279,18 +279,21 @@ def demo():
     
     # Simple model for demo
     class DummyModel(torch.nn.Module):
-        def __init__(self):
+        def __init__(self, device=None):
             super().__init__()
             self.linear = torch.nn.Linear(10, 1)
+            if device:
+                self.to(device)
         
         def forward(self, x):
             return torch.sigmoid(self.linear(x))
     
-    model = DummyModel()
-    
     # Initialize engine
     config = InferenceConfig(batch_size=16, gpu_acceleration=True)
     engine = RealTimeInferenceEngine(config)
+    
+    # Create model on same device as engine
+    model = DummyModel(device=engine.device)
     
     # Single inference
     print("\n⚡ Testing single inference...")
