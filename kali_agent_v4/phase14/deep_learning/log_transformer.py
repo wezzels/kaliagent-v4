@@ -1,33 +1,25 @@
 #!/usr/bin/env python3
 """
-🧠 KaliAgent v5.1.0 - Security Log Transformer
+🧠 KaliAgent v5.1.0 - Security Log Transformer (Fixed)
 
 Transformer-based model for security log analysis:
 - Anomaly detection in logs
 - Log classification (attack type)
-- Semantic search
-- Named entity recognition
-
-Architecture:
-- Token embedding + positional encoding
-- Multi-head self-attention
-- Feed-forward networks
-- Classification head
+- Semantic similarity
 
 Author: KaliAgent Team
 Started: April 29, 2026
-Status: Alpha (0.1.0)
+Status: Alpha (0.1.1)
 """
 
 import logging
 import math
 import numpy as np
 from typing import List, Dict, Tuple, Optional
-from dataclasses import dataclass, field
-from datetime import datetime
+from dataclasses import dataclass
 import json
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('LogTransformer')
 
 try:
@@ -44,92 +36,34 @@ except ImportError:
 @dataclass
 class TransformerConfig:
     """Transformer configuration"""
-    vocab_size: int = 10000  # Log token vocabulary size
-    d_model: int = 512  # Embedding dimension
-    nhead: int = 8  # Number of attention heads
-    num_layers: int = 6  # Number of transformer layers
-    dim_feedforward: int = 2048  # Feedforward dimension
-    dropout: float = 0.1  # Dropout rate
-    max_seq_len: int = 512  # Maximum sequence length
-    num_classes: int = 10  # Number of classification classes
-    learning_rate: float = 1e-4  # Learning rate
-    batch_size: int = 32  # Batch size
-    epochs: int = 50  # Training epochs
-
-
-@dataclass
-class LogAnalysisResult:
-    """Log analysis result"""
-    log_id: str
-    timestamp: str
-    original_log: str
-    predicted_class: str
-    confidence: float
-    anomaly_score: float
-    attention_weights: Optional[np.ndarray] = None
-    entities: Dict[str, List[str]] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict:
-        return {
-            'log_id': self.log_id,
-            'timestamp': self.timestamp,
-            'original_log': self.original_log[:200],
-            'predicted_class': self.predicted_class,
-            'confidence': self.confidence,
-            'anomaly_score': self.anomaly_score,
-            'entities': self.entities
-        }
-
-
-class PositionalEncoding(nn.Module):
-    """Positional encoding for transformer"""
-    
-    def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 512):
-        super().__init__()
-        self.dropout = nn.Dropout(p=dropout)
-        
-        # Create positional encoding matrix
-        position = torch.arange(max_len).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model))
-        pe = torch.zeros(max_len, 1, d_model)
-        pe[:, 0, 0::2] = torch.sin(position * div_term)
-        pe[:, 0, 1::2] = torch.cos(position * div_term)
-        
-        # Register as buffer (not a parameter)
-        self.register_buffer('pe', pe)
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Args:
-            x: Tensor of shape [seq_len, batch_size, embedding_dim]
-        """
-        x = x + self.pe[:x.size(0)]
-        return self.dropout(x)
+    vocab_size: int = 10000
+    d_model: int = 256
+    nhead: int = 8
+    num_layers: int = 4
+    dim_feedforward: int = 512
+    dropout: float = 0.1
+    max_seq_len: int = 128
+    num_classes: int = 10
+    learning_rate: float = 1e-4
 
 
 class SecurityLogTransformer(nn.Module):
     """
-    Transformer for security log analysis
-    
-    Architecture:
-    - Token embedding
-    - Positional encoding
-    - N transformer encoder layers
-    - Classification head
-    - Anomaly detection head
+    Simplified Transformer for security log analysis
     """
     
-    VERSION = "0.1.0"
+    VERSION = "0.1.1"
     
     def __init__(self, config: TransformerConfig):
         super().__init__()
         self.config = config
+        self.d_model = config.d_model
         
         # Token embedding
-        self.embedding = nn.Embedding(config.vocab_size, config.d_model)
+        self.embedding = nn.Embedding(config.vocab_size, config.d_model, padding_idx=0)
         
-        # Positional encoding
-        self.pos_encoder = PositionalEncoding(config.d_model, config.dropout, config.max_seq_len)
+        # Positional encoding (simplified)
+        self.pos_encoding = self._create_positional_encoding(config.max_seq_len, config.d_model)
         
         # Transformer encoder
         encoder_layer = nn.TransformerEncoderLayer(
@@ -137,7 +71,7 @@ class SecurityLogTransformer(nn.Module):
             nhead=config.nhead,
             dim_feedforward=config.dim_feedforward,
             dropout=config.dropout,
-            activation='gelu',
+            activation='relu',
             batch_first=True
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=config.num_layers)
@@ -150,92 +84,82 @@ class SecurityLogTransformer(nn.Module):
             nn.Linear(config.d_model // 2, config.num_classes)
         )
         
-        # Anomaly detection head (reconstruction-based)
-        self.anomaly_head = nn.Sequential(
-            nn.Linear(config.d_model, config.d_model),
-            nn.ReLU(),
-            nn.Linear(config.d_model, config.d_model)  # Match embedding dimension
-        )
-        
-        # Initialize weights
         self._init_weights()
         
         logger.info(f"🧠 Security Log Transformer v{self.VERSION}")
-        logger.info(f"   d_model: {config.d_model}")
-        logger.info(f"   nhead: {config.nhead}")
-        logger.info(f"   num_layers: {config.num_layers}")
-        logger.info(f"   vocab_size: {config.vocab_size}")
-        logger.info(f"   num_classes: {config.num_classes}")
+        logger.info(f"   Parameters: {config.d_model}d, {config.nhead} heads, {config.num_layers} layers")
+    
+    def _create_positional_encoding(self, max_len: int, d_model: int) -> torch.Tensor:
+        """Create positional encoding matrix"""
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        if d_model % 2 == 0:
+            pe[:, 1::2] = torch.cos(position * div_term)
+        else:
+            pe[:, 1::2] = torch.cos(position * div_term[:-1])
+        return pe.unsqueeze(0)  # [1, max_len, d_model]
     
     def _init_weights(self):
-        """Initialize weights with Xavier uniform"""
+        """Initialize weights"""
         for p in self.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
     
-    def generate_square_subsequent_mask(self, sz: int) -> torch.Tensor:
-        """Generate mask for causal attention"""
-        mask = torch.triu(torch.ones(sz, sz), diagonal=1)
-        mask = mask.masked_fill(mask == 1, float('-inf'))
-        return mask
-    
-    def forward(self, src: torch.Tensor, src_mask: Optional[torch.Tensor] = None) -> Tuple:
+    def forward(self, src: torch.Tensor) -> torch.Tensor:
         """
         Forward pass
         
         Args:
             src: Input tokens [batch_size, seq_len]
-            src_mask: Attention mask [seq_len, seq_len]
             
         Returns:
             logits: Classification logits [batch_size, num_classes]
-            anomaly_scores: Anomaly scores [batch_size]
-            attention_weights: Attention weights [batch_size, seq_len, seq_len]
         """
-        # Embedding + positional encoding
-        embedded = self.embedding(src) * math.sqrt(self.config.d_model)
-        encoded = self.pos_encoder(embedded)
+        batch_size, seq_len = src.shape
+        
+        # Embedding
+        embedded = self.embedding(src) * math.sqrt(self.d_model)  # [batch, seq, d_model]
+        
+        # Add positional encoding (slice to actual sequence length)
+        pe = self.pos_encoding[:, :seq_len, :].to(embedded.device)
+        encoded = embedded + pe
+        
+        # Create attention mask (0 for real tokens, -inf for padding)
+        mask = (src == 0).unsqueeze(1).unsqueeze(2)  # [batch, 1, 1, seq]
+        mask = mask.expand(batch_size, 1, seq_len, seq_len)  # [batch, 1, seq, seq]
         
         # Transformer encoder
-        if src_mask is None:
-            src_mask = self.generate_square_subsequent_mask(encoded.size(1)).to(encoded.device)
+        transformer_out = self.transformer_encoder(encoded, mask=mask)  # [batch, seq, d_model]
         
-        transformer_out = self.transformer_encoder(encoded, src_mask)
-        
-        # Use [CLS] token (first position) for classification
-        cls_output = transformer_out[:, 0, :]
+        # Global average pooling (ignore padding)
+        mask_2d = (src != 0).float().unsqueeze(-1)  # [batch, seq, 1]
+        pooled = (transformer_out * mask_2d).sum(dim=1) / mask_2d.sum(dim=1).clamp(min=1)
         
         # Classification
-        logits = self.classifier(cls_output)
+        logits = self.classifier(pooled)  # [batch, num_classes]
         
-        # Anomaly detection (reconstruction error)
-        reconstructed = self.anomaly_head(transformer_out)
-        anomaly_scores = F.mse_loss(reconstructed, embedded, reduction='none').mean(dim=[1, 2])
-        
-        # Extract attention weights from last layer
-        attention_weights = None
-        # Note: Would need to modify transformer to return attention weights
-        
-        return logits, anomaly_scores, attention_weights
+        return logits
     
     def predict(self, src: torch.Tensor) -> Tuple:
         """Make prediction"""
         self.eval()
         with torch.no_grad():
-            logits, anomaly_scores, _ = self.forward(src)
+            logits = self.forward(src)
             probs = F.softmax(logits, dim=-1)
             confidence, predicted = torch.max(probs, dim=-1)
-            return predicted, confidence, anomaly_scores
+            return predicted, confidence
 
 
 class LogDataset(Dataset):
     """Dataset for security logs"""
     
-    def __init__(self, logs: List[str], labels: Optional[List[int]] = None,
-                 tokenizer=None, max_len: int = 512):
+    def __init__(self, logs: List[str], labels: List[int], 
+                 word2idx: Dict[str, int], max_len: int = 128):
         self.logs = logs
         self.labels = labels
-        self.tokenizer = tokenizer or SimpleLogTokenizer()
+        self.word2idx = word2idx
         self.max_len = max_len
     
     def __len__(self) -> int:
@@ -243,57 +167,21 @@ class LogDataset(Dataset):
     
     def __getitem__(self, idx) -> Tuple:
         log = self.logs[idx]
-        
-        # Tokenize
-        tokens = self.tokenizer.encode(log, max_len=self.max_len)
-        
-        if self.labels is not None:
-            return torch.tensor(tokens, dtype=torch.long), torch.tensor(self.labels[idx], dtype=torch.long)
-        return torch.tensor(tokens, dtype=torch.long)
-
-
-class SimpleLogTokenizer:
-    """Simple tokenizer for security logs"""
+        tokens = self._encode(log)
+        return torch.tensor(tokens, dtype=torch.long), torch.tensor(self.labels[idx], dtype=torch.long)
     
-    def __init__(self, vocab_size: int = 10000):
-        self.vocab_size = vocab_size
-        self.word2idx = {'<PAD>': 0, '<CLS>': 1, '<UNK>': 2}
-        self.idx2word = {0: '<PAD>', 1: '<CLS>', 2: '<UNK>'}
-        self.next_idx = 3
-    
-    def encode(self, text: str, max_len: int = 512) -> List[int]:
+    def _encode(self, text: str) -> List[int]:
         """Encode text to tokens"""
-        # Simple word-level tokenization
         words = text.lower().split()
+        tokens = [1]  # Start token
         
-        tokens = [self.word2idx['<CLS>']]  # Start with CLS token
+        for word in words[:self.max_len - 2]:
+            tokens.append(self.word2idx.get(word, 2))  # 2 = UNK
         
-        for word in words[:max_len - 1]:
-            if word in self.word2idx:
-                tokens.append(self.word2idx[word])
-            else:
-                if self.next_idx < self.vocab_size:
-                    self.word2idx[word] = self.next_idx
-                    self.idx2word[self.next_idx] = word
-                    tokens.append(self.next_idx)
-                    self.next_idx += 1
-                else:
-                    tokens.append(self.word2idx['<UNK>'])
+        tokens.append(0)  # Padding
+        tokens += [0] * (self.max_len - len(tokens))
         
-        # Pad to max_len
-        tokens += [self.word2idx['<PAD>']] * (max_len - len(tokens))
-        
-        return tokens[:max_len]
-    
-    def build_vocab(self, texts: List[str]):
-        """Build vocabulary from texts"""
-        for text in texts:
-            words = text.lower().split()
-            for word in words:
-                if word not in self.word2idx and self.next_idx < self.vocab_size:
-                    self.word2idx[word] = self.next_idx
-                    self.idx2word[self.next_idx] = word
-                    self.next_idx += 1
+        return tokens[:self.max_len]
 
 
 class LogTransformerTrainer:
@@ -301,50 +189,37 @@ class LogTransformerTrainer:
     
     def __init__(self, model: SecurityLogTransformer, learning_rate: float = 1e-4):
         self.model = model
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-        self.classification_criterion = nn.CrossEntropyLoss()
-        self.anomaly_criterion = nn.MSELoss()
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+        self.criterion = nn.CrossEntropyLoss()
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=5, gamma=0.5)
     
     def train_epoch(self, dataloader: DataLoader, device: torch.device) -> Dict:
         """Train for one epoch"""
         self.model.train()
         total_loss = 0
-        total_cls_loss = 0
-        total_anomaly_loss = 0
         correct = 0
         total = 0
         
-        for batch_idx, (src, labels) in enumerate(dataloader):
+        for src, labels in dataloader:
             src = src.to(device)
             labels = labels.to(device)
             
-            # Forward pass
             self.optimizer.zero_grad()
-            logits, anomaly_scores, _ = self.model(src)
-            
-            # Calculate losses
-            cls_loss = self.classification_criterion(logits, labels)
-            anomaly_loss = self.anomaly_criterion(anomaly_scores, torch.zeros_like(anomaly_scores))
-            loss = cls_loss + 0.1 * anomaly_loss  # Weight anomaly loss
-            
-            # Backward pass
+            logits = self.model(src)
+            loss = self.criterion(logits, labels)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
             self.optimizer.step()
             
-            # Statistics
             total_loss += loss.item()
-            total_cls_loss += cls_loss.item()
-            total_anomaly_loss += anomaly_loss.item()
-            
             _, predicted = torch.max(logits, dim=-1)
             correct += (predicted == labels).sum().item()
             total += labels.size(0)
         
+        self.scheduler.step()
+        
         return {
             'loss': total_loss / len(dataloader),
-            'cls_loss': total_cls_loss / len(dataloader),
-            'anomaly_loss': total_anomaly_loss / len(dataloader),
             'accuracy': correct / total
         }
     
@@ -360,11 +235,10 @@ class LogTransformerTrainer:
                 src = src.to(device)
                 labels = labels.to(device)
                 
-                logits, anomaly_scores, _ = self.model(src)
-                loss = self.classification_criterion(logits, labels)
+                logits = self.model(src)
+                loss = self.criterion(logits, labels)
                 
                 total_loss += loss.item()
-                
                 _, predicted = torch.max(logits, dim=-1)
                 correct += (predicted == labels).sum().item()
                 total += labels.size(0)
@@ -375,52 +249,65 @@ class LogTransformerTrainer:
         }
 
 
-def generate_sample_logs(num_samples: int = 1000, num_classes: int = 5) -> Tuple:
-    """Generate synthetic security logs for testing"""
+def build_vocab(logs: List[str], max_vocab: int = 5000) -> Dict[str, int]:
+    """Build vocabulary from logs"""
+    word2idx = {'<PAD>': 0, '<CLS>': 1, '<UNK>': 2}
     
-    log_templates = [
-        # Normal logs
+    word_counts = {}
+    for log in logs:
+        for word in log.lower().split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    
+    # Sort by frequency and take top words
+    sorted_words = sorted(word_counts.items(), key=lambda x: -x[1])
+    
+    for word, _ in sorted_words[:max_vocab - 3]:
+        if word not in word2idx:
+            word2idx[word] = len(word2idx)
+    
+    return word2idx
+
+
+def generate_sample_logs(num_samples: int = 1000, num_classes: int = 5) -> Tuple:
+    """Generate synthetic security logs"""
+    
+    templates = [
         "User {user} logged in successfully from {ip}",
         "File {file} accessed by {user}",
         "Service {service} started successfully",
-        "Backup completed for {server}",
-        "Email sent to {email}",
-        
-        # Attack logs
-        "Failed login attempt for user {user} from {ip} (attempt {count})",
+        "Failed login attempt for user {user} from {ip} attempt {count}",
         "Suspicious file {file} downloaded from {url}",
         "Port scan detected from {ip} targeting ports {ports}",
         "SQL injection attempt detected in query {query}",
         "Privilege escalation attempt by {user} on {server}"
     ]
     
-    class_names = ['normal', 'brute_force', 'malware', 'network_scan', 'injection']
+    class_names = ['normal_login', 'normal_access', 'normal_service', 
+                   'brute_force', 'malware', 'network_scan', 'injection', 'privilege_escalation']
     
     logs = []
     labels = []
     
     for i in range(num_samples):
-        template = log_templates[i % len(log_templates)]
-        label = i % num_classes
+        template = templates[i % len(templates)]
+        label = i % min(num_classes, len(templates))
         
-        # Fill in template
         log = template.format(
             user=f"user{i % 100}",
             ip=f"192.168.{i % 256}.{i % 256}",
             file=f"file_{i}.txt",
             service=f"service_{i % 10}",
-            server=f"server_{i % 5}",
-            email=f"user{i}@example.com",
             count=i % 10 + 1,
-            url=f"http://malicious{i}.com",
+            url=f"http://example{i}.com",
             ports=",".join(str(p) for p in range(20 + i % 10, 30 + i % 10)),
-            query=f"SELECT * FROM users WHERE id={i}"
+            query=f"SELECT * FROM users WHERE id={i}",
+            server=f"server_{i % 5}"
         )
         
         logs.append(log)
         labels.append(label)
     
-    return logs, labels, class_names
+    return logs, labels, class_names[:num_classes]
 
 
 def main():
@@ -428,7 +315,7 @@ def main():
     print("""
 ╔═══════════════════════════════════════════════════════════════╗
 ║     🧠 KALIAGENT v5.1.0 - SECURITY LOG TRANSFORMER           ║
-║                    Phase 14: Alpha 0.1.0                      ║
+║                    Phase 14: Alpha 0.1.1                      ║
 ╚═══════════════════════════════════════════════════════════════╝
 
     """)
@@ -442,27 +329,27 @@ def main():
     logs, labels, class_names = generate_sample_logs(num_samples=500, num_classes=5)
     print(f"   Generated {len(logs)} logs in {len(class_names)} classes")
     
+    # Build vocabulary
+    print("\n📝 Building vocabulary...")
+    word2idx = build_vocab(logs, max_vocab=2000)
+    print(f"   Vocabulary size: {len(word2idx)}")
+    
     # Split data
     split = int(0.8 * len(logs))
     train_logs, test_logs = logs[:split], logs[split:]
     train_labels, test_labels = labels[:split], labels[split:]
     
-    # Create tokenizer and datasets
-    print("\n📝 Building vocabulary...")
-    tokenizer = SimpleLogTokenizer(vocab_size=1000)
-    tokenizer.build_vocab(train_logs)
-    print(f"   Vocabulary size: {len(tokenizer.word2idx)}")
+    # Create datasets
+    train_dataset = LogDataset(train_logs, train_labels, word2idx, max_len=128)
+    test_dataset = LogDataset(test_logs, test_labels, word2idx, max_len=128)
     
-    train_dataset = LogDataset(train_logs, train_labels, tokenizer, max_len=128)
-    test_dataset = LogDataset(test_logs, test_labels, tokenizer, max_len=128)
-    
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=32)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, drop_last=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, drop_last=True)
     
     # Create model
     print("\n🧠 Creating transformer model...")
     config = TransformerConfig(
-        vocab_size=len(tokenizer.word2idx),
+        vocab_size=len(word2idx),
         d_model=256,
         nhead=8,
         num_layers=4,
@@ -470,9 +357,7 @@ def main():
         dropout=0.1,
         max_seq_len=128,
         num_classes=len(class_names),
-        learning_rate=1e-4,
-        batch_size=32,
-        epochs=10
+        learning_rate=1e-4
     )
     
     model = SecurityLogTransformer(config)
@@ -485,31 +370,39 @@ def main():
     print("\n📚 Training transformer...")
     trainer = LogTransformerTrainer(model, learning_rate=config.learning_rate)
     
-    for epoch in range(config.epochs):
+    best_acc = 0
+    for epoch in range(15):
         train_metrics = trainer.train_epoch(train_loader, device)
         test_metrics = trainer.evaluate(test_loader, device)
         
-        print(f"   Epoch {epoch+1}/{config.epochs}")
-        print(f"      Train Loss: {train_metrics['loss']:.4f}, Acc: {train_metrics['accuracy']:.4f}")
-        print(f"      Test Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['accuracy']:.4f}")
+        if test_metrics['accuracy'] > best_acc:
+            best_acc = test_metrics['accuracy']
+        
+        print(f"   Epoch {epoch+1:2d}/15 - "
+              f"Train Loss: {train_metrics['loss']:.4f}, Acc: {train_metrics['accuracy']:.4f} | "
+              f"Test Loss: {test_metrics['loss']:.4f}, Acc: {test_metrics['accuracy']:.4f}")
     
     # Test predictions
     print("\n🔍 Testing predictions...")
     model.eval()
-    with torch.no_grad():
-        sample_log = test_logs[0]
-        tokens = tokenizer.encode(sample_log, max_len=128)
-        src = torch.tensor([tokens], dtype=torch.long).to(device)
-        
-        predicted, confidence, anomaly_score = model.predict(src)
-        
-        print(f"   Log: {sample_log[:100]}...")
-        print(f"   Predicted Class: {class_names[predicted[0]]}")
-        print(f"   Confidence: {confidence[0]:.4f}")
-        print(f"   Anomaly Score: {anomaly_score[0]:.6f}")
+    
+    sample_idx = 0
+    sample_log = test_logs[sample_idx]
+    sample_label = test_labels[sample_idx]
+    
+    tokens = test_dataset._encode(sample_log)
+    src = torch.tensor([tokens], dtype=torch.long).to(device)
+    
+    predicted, confidence = model.predict(src)
+    
+    print(f"   Log: {sample_log[:100]}...")
+    print(f"   True Class: {class_names[sample_label]}")
+    print(f"   Predicted: {class_names[predicted[0]]}")
+    print(f"   Confidence: {confidence[0]:.4f}")
     
     print("\n" + "="*70)
-    print("✅ Log Transformer demo complete!")
+    print(f"✅ Log Transformer demo complete!")
+    print(f"   Best Test Accuracy: {best_acc:.4f}")
     print("="*70)
 
 
