@@ -332,7 +332,7 @@ class FederatedCoordinator:
         logger.info(f"{'='*70}")
         
         # Select random subset of clients (simulates real FL)
-        num_participating = min(self.num_clients, np.random.randint(5, self.num_clients + 1))
+        num_participating = min(self.num_clients, max(3, np.random.randint(3, self.num_clients + 1)))
         participating_clients = np.random.choice(self.clients, num_participating, replace=False)
         
         # Get current global model
